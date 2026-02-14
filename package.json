@@ -1,0 +1,80 @@
+{
+  "name": "hew-lang",
+  "displayName": "Hew Language",
+  "description": "Syntax highlighting and language support for the Hew programming language",
+  "version": "0.1.0",
+  "publisher": "hew-lang",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "hew",
+    "actor",
+    "concurrency",
+    "systems programming"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hew-lang/hew"
+  },
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "hew",
+        "aliases": [
+          "Hew",
+          "hew"
+        ],
+        "extensions": [
+          ".hew"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/hew-light.png",
+          "dark": "./icons/hew-dark.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "hew",
+        "scopeName": "source.hew",
+        "path": "./syntaxes/hew.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "Hew",
+      "properties": {
+        "hew.lsp.serverPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the hew-lsp binary. If empty, searches workspace target/ directories and PATH."
+        }
+      }
+    }
+  },
+  "activationEvents": [
+    "onLanguage:hew"
+  ],
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "package": "npx esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node && vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.3",
+    "@types/vscode": "^1.109.0",
+    "@vscode/vsce": "^2.22.0",
+    "esbuild": "^0.27.3",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1",
+    "vscode-languageserver-protocol": "^3.17.5"
+  }
+}
