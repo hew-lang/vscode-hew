@@ -2,11 +2,12 @@
   "name": "hew-lang",
   "displayName": "Hew Language",
   "description": "Syntax highlighting and language support for the Hew programming language",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "hew-lang",
   "license": "Apache-2.0",
+  "icon": "icons/hew-dark.png",
   "engines": {
-    "vscode": "^1.75.0"
+    "vscode": "^1.109.0"
   },
   "categories": [
     "Programming Languages"
@@ -19,8 +20,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/hew-lang/hew"
+    "url": "https://github.com/hew-lang/vscode-hew"
   },
+  "bugs": {
+    "url": "https://github.com/hew-lang/vscode-hew/issues"
+  },
+  "homepage": "https://github.com/hew-lang/vscode-hew#readme",
   "main": "./out/extension.js",
   "contributes": {
     "languages": [
@@ -63,23 +68,22 @@
       }
     }
   },
-  "activationEvents": [
-    "onLanguage:hew"
-  ],
   "scripts": {
     "compile": "tsc -p .",
     "watch": "tsc -watch -p .",
-    "package": "npx esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node && vsce package"
+    "build": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --minify --sourcemap",
+    "build:dev": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
+    "vscode:prepublish": "npm run build",
+    "package": "npm run build && vsce package"
   },
   "devDependencies": {
     "@types/node": "^25.2.3",
     "@types/vscode": "^1.109.0",
-    "@vscode/vsce": "^2.22.0",
+    "@vscode/vsce": "^3.7.1",
     "esbuild": "^0.27.3",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "vscode-languageclient": "^9.0.1",
-    "vscode-languageserver-protocol": "^3.17.5"
+    "vscode-languageclient": "^9.0.1"
   }
 }
