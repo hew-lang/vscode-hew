@@ -1,0 +1,78 @@
+// SYNTAX TEST "source.hew"
+
+// -- Arrow operators --
+
+x -> y
+//^^ keyword.operator.arrow.hew
+
+x => y
+//^^ keyword.operator.arrow.hew
+
+// -- Send operator --
+
+actor <- msg
+//    ^^ keyword.operator.send.hew
+
+// -- Range operators --
+
+    x..y
+//   ^^ keyword.operator.range.hew
+
+    x..=y
+//   ^^^ keyword.operator.range.hew
+
+// -- Comparison operators --
+
+x == y
+//^^ keyword.operator.comparison.hew
+
+x != y
+//^^ keyword.operator.comparison.hew
+
+x <= y
+//^^ keyword.operator.comparison.hew
+
+x >= y
+//^^ keyword.operator.comparison.hew
+
+// -- Compound assignment --
+
+x += 1
+//^^ keyword.operator.assignment.compound.hew
+
+x -= 1
+//^^ keyword.operator.assignment.compound.hew
+
+x *= 2
+//^^ keyword.operator.assignment.compound.hew
+
+x /= 2
+//^^ keyword.operator.assignment.compound.hew
+
+x %= 3
+//^^ keyword.operator.assignment.compound.hew
+
+// -- Assignment --
+
+x = 5
+//^ keyword.operator.assignment.hew
+
+// -- Error propagation --
+
+result?
+//    ^ keyword.operator.question.hew
+
+// -- Logical not --
+
+!valid
+// <- keyword.operator.not.hew
+
+// -- Namespace --
+
+std::io
+// ^^ keyword.operator.namespace.hew
+
+// -- At (attribute/wire marker) --
+
+@field
+// <- keyword.operator.at.hew

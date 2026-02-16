@@ -1,0 +1,57 @@
+// SYNTAX TEST "source.hew"
+
+// -- Function definitions --
+
+fn hello() {
+// <- keyword.declaration.hew
+// ^^^^^ entity.name.function.hew
+
+fn _private_fn(x: i32) -> bool {
+// <- keyword.declaration.hew
+// ^^^^^^^^^^^ entity.name.function.hew
+
+// -- Generator functions --
+
+gen fn items() {
+// <- keyword.declaration.hew
+//  ^^ keyword.declaration.hew
+//     ^^^^^ entity.name.function.hew
+
+async gen fn stream() {
+// <- keyword.declaration.hew
+//    ^^^ keyword.declaration.hew
+//        ^^ keyword.declaration.hew
+//           ^^^^^^ entity.name.function.hew
+
+// -- Receive functions --
+
+    receive fn handle(msg: Message) {
+//  ^^^^^^^ keyword.actor.hew
+//          ^^ keyword.declaration.hew
+//             ^^^^^^ entity.name.function.hew
+
+    receive gen fn events() {
+//  ^^^^^^^ keyword.declaration.hew
+//          ^^^ keyword.declaration.hew
+//              ^^ keyword.declaration.hew
+//                 ^^^^^^ entity.name.function.hew
+
+    receive Ping() {
+//  ^^^^^^^ keyword.actor.hew
+//          ^^^^ entity.name.function.hew
+
+// -- Function calls --
+
+foo()
+// <- entity.name.function.call.hew
+
+bar(1, 2, 3)
+// <- entity.name.function.call.hew
+
+some_function(arg)
+// <- entity.name.function.call.hew
+
+// -- Method calls --
+
+x.method(arg)
+//^^^^^^ entity.name.function.call.hew

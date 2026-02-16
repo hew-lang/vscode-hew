@@ -1,0 +1,44 @@
+// SYNTAX TEST "source.hew"
+
+// -- Regular strings --
+
+"hello world"
+// <- string.quoted.double.hew
+
+"with escape \n inside"
+//           ^^ constant.character.escape.hew
+
+"tab\there"
+//  ^^ constant.character.escape.hew
+
+"return\r"
+//     ^^ constant.character.escape.hew
+
+"null\0char"
+//   ^^ constant.character.escape.hew
+
+"escaped\\backslash"
+//      ^^ constant.character.escape.hew
+
+"escaped\"quote"
+//      ^^ constant.character.escape.hew
+
+"hex \x41 escape"
+//   ^^^^ constant.character.escape.hew
+
+// -- Raw strings --
+
+r"no escapes \n here"
+// <- string.quoted.raw.hew
+
+// -- Interpolated strings --
+
+f"hello {name}"
+// <- string.interpolated.hew
+//      ^ punctuation.section.interpolation.begin.hew
+//           ^ punctuation.section.interpolation.end.hew
+
+f"count: {x + 1}"
+// <- string.interpolated.hew
+//       ^ punctuation.section.interpolation.begin.hew
+//             ^ punctuation.section.interpolation.end.hew

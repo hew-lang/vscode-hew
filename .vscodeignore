@@ -11,3 +11,6 @@ tsconfig.json
 *.vsix
 **/*.map
 package-lock.json
+tests/**
+vitest.config.ts
+CLAUDE.md

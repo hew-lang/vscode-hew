@@ -1,0 +1,118 @@
+// SYNTAX TEST "source.hew"
+
+// -- Keywords before parens should NOT be function calls --
+
+if(x > 0) {
+// <- keyword.control.hew
+
+match(value) {
+// <- keyword.control.hew
+
+while(running) {
+// <- keyword.control.hew
+
+for(item) {
+// <- keyword.control.hew
+
+return(value)
+// <- keyword.control.hew
+
+// -- But regular identifiers before parens ARE function calls --
+
+foo(x)
+// <- entity.name.function.call.hew
+
+my_func(1, 2)
+// <- entity.name.function.call.hew
+
+// -- self keyword --
+
+self.field
+// <- variable.language.self.hew
+
+// -- Wildcard pattern --
+
+    _ => default
+//  ^ variable.language.wildcard.hew
+
+// -- Loop labels --
+
+'outer: loop {
+// <- entity.name.label.hew
+
+// -- Attributes --
+
+#[test]
+// <- meta.attribute.hew
+//^^^^ entity.name.function.attribute.hew
+
+#[inline]
+// <- meta.attribute.hew
+//^^^^^^ entity.name.function.attribute.hew
+
+// -- Impl for --
+
+impl Display for Counter {
+// <- keyword.declaration.hew
+//   ^^^^^^^ entity.name.type.trait.hew
+//           ^^^ keyword.declaration.hew
+//               ^^^^^^^ entity.name.type.hew
+
+// -- Supervisor strategies --
+
+    strategy one_for_all
+//  ^^^^^^^^ keyword.supervisor.hew
+//           ^^^^^^^^^^^ constant.language.strategy.hew
+
+    strategy rest_for_one
+//  ^^^^^^^^ keyword.supervisor.hew
+//           ^^^^^^^^^^^^ constant.language.strategy.hew
+
+// -- Overflow policies --
+
+    overflow drop_new
+//  ^^^^^^^^ keyword.actor.hew
+//           ^^^^^^^^ constant.language.strategy.hew
+
+    overflow block
+//  ^^^^^^^^ keyword.actor.hew
+//           ^^^^^ constant.language.strategy.hew
+
+// -- Complex patterns --
+
+fn process(self, msg: Message) -> Result {
+// <- keyword.declaration.hew
+// ^^^^^^^ entity.name.function.hew
+
+    receive gen fn events() {
+//  ^^^^^^^ keyword.declaration.hew
+//          ^^^ keyword.declaration.hew
+//              ^^ keyword.declaration.hew
+//                 ^^^^^^ entity.name.function.hew
+
+// -- Punctuation --
+
+(a, b)
+// <- punctuation.brackets.round.hew
+//^ punctuation.separator.comma.hew
+
+{x: 1}
+// <- punctuation.brackets.curly.hew
+
+[1, 2]
+// <- punctuation.brackets.square.hew
+
+    a.b
+//   ^ punctuation.separator.dot.hew
+
+    x: i32
+//   ^ punctuation.separator.colon.hew
+
+a | b
+//^ punctuation.separator.pipe.hew
+
+a & b
+//^ punctuation.separator.ampersand.hew
+
+let x = 5;
+//       ^ punctuation.terminator.semicolon.hew

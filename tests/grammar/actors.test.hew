@@ -1,0 +1,42 @@
+// SYNTAX TEST "source.hew"
+
+actor Counter {
+// <- keyword.actor.hew
+//    ^^^^^^^ entity.name.type.actor.hew
+
+supervisor AppSupervisor {
+// <- keyword.supervisor.hew
+//         ^^^^^^^^^^^^^ entity.name.type.supervisor.hew
+
+    child worker: Worker
+//  ^^^^^ keyword.supervisor.hew
+//        ^^^^^^ variable.other.hew
+//                ^^^^^^ entity.name.type.hew
+
+    strategy one_for_one
+//  ^^^^^^^^ keyword.supervisor.hew
+//           ^^^^^^^^^^^ constant.language.strategy.hew
+
+    restart budget(5, 30s)
+//  ^^^^^^^ keyword.supervisor.hew
+//          ^^^^^^ keyword.supervisor.hew
+
+spawn Counter { count: 0 }
+// <- keyword.actor.hew
+//    ^^^^^^^ entity.name.type.hew
+
+    receive fn handle_msg(msg: Message) {
+//  ^^^^^^^ keyword.actor.hew
+//          ^^ keyword.declaration.hew
+//             ^^^^^^^^^^ entity.name.function.hew
+
+    receive Increment(amount: i32) {
+//  ^^^^^^^ keyword.actor.hew
+//          ^^^^^^^^^ entity.name.function.hew
+
+    init(name: string) {
+//  ^^^^ keyword.actor.hew
+
+    async move || {
+//  ^^^^^ keyword.actor.hew
+//        ^^^^ keyword.actor.hew

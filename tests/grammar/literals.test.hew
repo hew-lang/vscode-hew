@@ -1,0 +1,72 @@
+// SYNTAX TEST "source.hew"
+
+// -- Decimal integers --
+
+42
+// <- constant.numeric.integer.hew
+
+1_000_000
+// <- constant.numeric.integer.hew
+
+// -- Hex integers --
+
+0xFF
+// <- constant.numeric.hex.hew
+
+0xDEAD_BEEF
+// <- constant.numeric.hex.hew
+
+// -- Binary integers --
+
+0b1010
+// <- constant.numeric.binary.hew
+
+0b1111_0000
+// <- constant.numeric.binary.hew
+
+// -- Floats --
+
+3.14
+// <- constant.numeric.float.hew
+
+1.0e10
+// <- constant.numeric.float.hew
+
+2.5e-3
+// <- constant.numeric.float.hew
+
+1_000.000_1
+// <- constant.numeric.float.hew
+
+// -- Duration literals --
+
+100ms
+// <- constant.numeric.duration.hew
+
+5s
+// <- constant.numeric.duration.hew
+
+1h
+// <- constant.numeric.duration.hew
+
+500us
+// <- constant.numeric.duration.hew
+
+10ns
+// <- constant.numeric.duration.hew
+
+30m
+// <- constant.numeric.duration.hew
+
+// -- Boolean literals --
+
+true
+// <- constant.language.boolean.hew
+
+false
+// <- constant.language.boolean.hew
+
+// -- None literal --
+
+None
+// <- constant.language.none.hew

@@ -1,0 +1,156 @@
+// SYNTAX TEST "source.hew"
+
+// -- Control flow --
+
+if x > 0 {
+// <- keyword.control.hew
+
+} else {
+//^^^^ keyword.control.hew
+
+match value {
+// <- keyword.control.hew
+
+for item in collection {
+// <- keyword.control.hew
+//       ^^ keyword.control.hew
+
+while running {
+// <- keyword.control.hew
+
+loop {
+// <- keyword.control.hew
+
+    break
+//  ^^^^^ keyword.control.hew
+
+    continue
+//  ^^^^^^^^ keyword.control.hew
+
+    return result
+//  ^^^^^^ keyword.control.hew
+
+try {
+// <- keyword.control.hew
+
+} catch err {
+//^^^^^ keyword.control.hew
+
+select {
+// <- keyword.control.hew
+
+join {
+// <- keyword.control.hew
+
+    yield value
+//  ^^^^^ keyword.control.hew
+
+    cooperate
+//  ^^^^^^^^^ keyword.control.hew
+
+after 100ms {
+// <- keyword.control.hew
+
+from source {
+// <- keyword.control.hew
+
+await task
+// <- keyword.control.hew
+
+scope {
+// <- keyword.control.hew
+
+launch task
+// <- keyword.control.hew
+
+cancel task
+// <- keyword.control.hew
+
+race {
+// <- keyword.control.hew
+
+// -- Declarations --
+
+let x = 5
+// <- keyword.declaration.hew
+
+var y = 10
+// <- keyword.declaration.hew
+
+const Z = 42
+// <- keyword.declaration.hew
+
+type Alias = i32
+// <- keyword.declaration.hew
+
+import std::io
+// <- keyword.declaration.hew
+
+pub fn hello() {
+// <- keyword.declaration.hew
+
+export fn world() {
+// <- keyword.declaration.hew
+
+    where T: Display
+//  ^^^^^ keyword.declaration.hew
+
+x as i32
+//^^ keyword.declaration.hew
+
+let mut x = 5
+//  ^^^ keyword.declaration.hew
+
+// -- Other keywords --
+
+dyn Trait
+// <- keyword.other.hew
+
+unsafe {
+// <- keyword.other.hew
+
+extern fn c_call()
+// <- keyword.other.hew
+
+foreign {
+// <- keyword.other.hew
+
+isolated fn pure_fn() {
+// <- keyword.other.hew
+
+// -- Logical operators --
+
+x and y
+//^^^ keyword.operator.logical.hew
+
+x or y
+//^^ keyword.operator.logical.hew
+
+// -- Constants --
+
+true
+// <- constant.language.boolean.hew
+
+false
+// <- constant.language.boolean.hew
+
+None
+// <- constant.language.none.hew
+
+one_for_one
+// <- constant.language.strategy.hew
+
+one_for_all
+// <- constant.language.strategy.hew
+
+rest_for_one
+// <- constant.language.strategy.hew
+
+permanent
+// <- constant.language.strategy.hew
+
+transient
+// <- constant.language.strategy.hew
+
+temporary
+// <- constant.language.strategy.hew

@@ -1,0 +1,13 @@
+// SYNTAX TEST "source.hew"
+
+// line comment
+// <- comment.line.double-slash.hew
+
+/// doc comment
+// <- comment.line.documentation.hew
+
+/* block comment */
+// <- comment.block.hew
+
+/* nested /* block */ comment */
+// <- comment.block.hew

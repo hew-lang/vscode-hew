@@ -1,0 +1,123 @@
+// SYNTAX TEST "source.hew"
+
+// -- Numeric types --
+
+let x: i8 = 0
+//     ^^ storage.type.numeric.hew
+
+let y: i16 = 0
+//     ^^^ storage.type.numeric.hew
+
+let z: i32 = 0
+//     ^^^ storage.type.numeric.hew
+
+let w: i64 = 0
+//     ^^^ storage.type.numeric.hew
+
+let a: u8 = 0
+//     ^^ storage.type.numeric.hew
+
+let b: u16 = 0
+//     ^^^ storage.type.numeric.hew
+
+let c: u32 = 0
+//     ^^^ storage.type.numeric.hew
+
+let d: u64 = 0
+//     ^^^ storage.type.numeric.hew
+
+let e: f32 = 0.0
+//     ^^^ storage.type.numeric.hew
+
+let f: f64 = 0.0
+//     ^^^ storage.type.numeric.hew
+
+let g: isize = 0
+//     ^^^^^ storage.type.numeric.hew
+
+let h: usize = 0
+//     ^^^^^ storage.type.numeric.hew
+
+// -- Primitive types --
+
+let s: string = "hello"
+//     ^^^^^^ storage.type.primitive.hew
+
+let b: bool = true
+//     ^^^^ storage.type.primitive.hew
+
+let c: char = 'a'
+//     ^^^^ storage.type.primitive.hew
+
+let v: void
+//     ^^^^ storage.type.primitive.hew
+
+let data: bytes
+//        ^^^^^ storage.type.primitive.hew
+
+// -- Generic / collection types --
+
+let r: Result = ok(1)
+//     ^^^^^^ storage.type.generic.hew
+
+let o: Option = None
+//     ^^^^^^ storage.type.generic.hew
+
+let v: Vec = items
+//     ^^^ storage.type.generic.hew
+
+let m: HashMap = entries
+//     ^^^^^^^ storage.type.generic.hew
+
+let s: HashSet = uniq
+//     ^^^^^^^ storage.type.generic.hew
+
+let b: Box = value
+//     ^^^ storage.type.generic.hew
+
+let a: Arc = shared
+//     ^^^ storage.type.generic.hew
+
+// -- Concurrency types --
+
+let actor: ActorRef = ref
+//         ^^^^^^^^ storage.type.concurrency.hew
+
+let t: Task = work
+//     ^^^^ storage.type.concurrency.hew
+
+let g: Generator = gen
+//     ^^^^^^^^^ storage.type.concurrency.hew
+
+let a: AsyncGenerator = stream
+//     ^^^^^^^^^^^^^^ storage.type.concurrency.hew
+
+// -- Trait names (standalone, not in declarations) --
+
+let x: Send = value
+//     ^^^^ storage.type.trait.hew
+
+let y: Copy = value
+//     ^^^^ storage.type.trait.hew
+
+let z: Display = value
+//     ^^^^^^^ storage.type.trait.hew
+
+// -- Self type --
+
+fn method(self) -> Self {
+//                 ^^^^ storage.type.self.hew
+
+// -- PascalCase types --
+
+let p: MyCustomType = value
+//     ^^^^^^^^^^^^ entity.name.type.hew
+
+struct Point {
+//     ^^^^^ entity.name.type.struct.hew
+
+enum Color {
+//   ^^^^^ entity.name.type.enum.hew
+
+trait Drawable {
+//    ^^^^^^^^ entity.name.type.trait.hew

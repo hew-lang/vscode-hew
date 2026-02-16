@@ -1,0 +1,44 @@
+// SYNTAX TEST "source.hew"
+
+// -- Wire declarations --
+
+wire struct Message {
+// <- keyword.wire.hew
+//   ^^^^^^ keyword.declaration.hew
+//          ^^^^^^^ entity.name.type.wire.hew
+
+wire enum Command {
+// <- keyword.wire.hew
+//   ^^^^ keyword.declaration.hew
+//        ^^^^^^^ entity.name.type.wire.hew
+
+// -- Wire field tags --
+
+    name: string @1
+//               ^^ constant.numeric.wire-tag.hew
+
+    value: i32 @2
+//             ^^ constant.numeric.wire-tag.hew
+
+// -- Wire keywords --
+
+reserved 5
+// <- keyword.wire.hew
+
+optional field: i32
+// <- keyword.wire.hew
+
+deprecated old_field: string
+// <- keyword.wire.hew
+
+default 0
+// <- keyword.wire.hew
+
+list items: i32
+// <- keyword.wire.hew
+
+// -- Attributes on wire types --
+
+#[version(1)]
+// <- meta.attribute.hew
+//^^^^^^^ entity.name.function.attribute.hew
