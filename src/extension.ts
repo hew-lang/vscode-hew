@@ -1,19 +1,32 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
+import { execFile, execFileSync } from 'child_process';
 import {
     LanguageClient,
     LanguageClientOptions,
     ServerOptions,
+    State,
     TransportKind,
 } from 'vscode-languageclient/node';
 
-let client: LanguageClient;
+let client: LanguageClient | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
-    const serverPath = findServerPath();
+    const outputChannel = vscode.window.createOutputChannel('Hew Language Server');
+    context.subscriptions.push(outputChannel);
+
+    const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+    statusBar.text = '$(zap) Hew';
+    statusBar.tooltip = 'Hew Language Server';
+    context.subscriptions.push(statusBar);
+
+    const serverPath = findBinaryPath('lsp.serverPath', 'hew-lsp');
 
     if (!serverPath) {
+        statusBar.text = '$(warning) Hew';
+        statusBar.tooltip = 'hew-lsp not found';
+        statusBar.show();
         vscode.window.showWarningMessage(
             'hew-lsp not found. Build it with: cd <hew-project> && cargo build -p hew-lsp'
         );
@@ -27,10 +40,11 @@ export function activate(context: vscode.ExtensionContext) {
     };
 
     const clientOptions: LanguageClientOptions = {
-        documentSelector: [{ scheme: 'file', language: 'hew' }],
-        synchronize: {
-            fileEvents: vscode.workspace.createFileSystemWatcher('**/*.hew'),
-        },
+        documentSelector: [
+            { scheme: 'file', language: 'hew' },
+            { scheme: 'untitled', language: 'hew' },
+        ],
+        outputChannel,
     };
 
     client = new LanguageClient(
@@ -40,21 +54,34 @@ export function activate(context: vscode.ExtensionContext) {
         clientOptions
     );
 
-    client.start();
-
-    context.subscriptions.push({
-        dispose: () => {
-            if (client) {
-                client.stop();
-            }
+    context.subscriptions.push(client.onDidChangeState(({ newState }) => {
+        if (newState === State.Running) {
+            statusBar.text = '$(zap) Hew';
+            statusBar.tooltip = 'Hew Language Server active';
+        } else if (newState === State.Stopped) {
+            statusBar.text = '$(warning) Hew';
+            statusBar.tooltip = 'Hew Language Server stopped';
         }
+    }));
+
+    client.start().catch(err => {
+        statusBar.text = '$(error) Hew';
+        statusBar.tooltip = `Hew LSP failed: ${err.message}`;
+        outputChannel.appendLine(`Failed to start hew-lsp: ${err.message}`);
+        vscode.window.showErrorMessage(`Hew LSP failed to start: ${err.message}`);
     });
 
-    const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-    statusBar.text = '$(zap) Hew';
-    statusBar.tooltip = 'Hew Language Server active';
     statusBar.show();
-    context.subscriptions.push(statusBar);
+    context.subscriptions.push(client);
+
+    // Register document formatter
+    context.subscriptions.push(
+        vscode.languages.registerDocumentFormattingEditProvider('hew', {
+            provideDocumentFormattingEdits(document: vscode.TextDocument): Thenable<vscode.TextEdit[]> {
+                return formatDocument(document, outputChannel);
+            }
+        })
+    );
 }
 
 export function deactivate(): Thenable<void> | undefined {
@@ -64,23 +91,67 @@ export function deactivate(): Thenable<void> | undefined {
     return client.stop();
 }
 
-function findServerPath(): string | undefined {
-    // Check workspace folders for target/debug/hew-lsp or target/release/hew-lsp
+function formatDocument(
+    document: vscode.TextDocument,
+    outputChannel: vscode.OutputChannel
+): Thenable<vscode.TextEdit[]> {
+    const hewPath = findBinaryPath('formatterPath', 'hew');
+    if (!hewPath) {
+        vscode.window.showWarningMessage(
+            'hew binary not found. Build it with: cd <hew-project> && cargo build -p hew-cli'
+        );
+        return Promise.resolve([]);
+    }
+
+    return new Promise((resolve) => {
+        const child = execFile(hewPath, ['fmt', '-'], { timeout: 10000 }, (error, stdout, stderr) => {
+            if (error) {
+                outputChannel.appendLine(`hew fmt error: ${stderr || error.message}`);
+                vscode.window.showErrorMessage(`hew fmt failed: ${stderr || error.message}`);
+                resolve([]);
+                return;
+            }
+
+            const fullRange = new vscode.Range(
+                document.positionAt(0),
+                document.positionAt(document.getText().length)
+            );
+            resolve([vscode.TextEdit.replace(fullRange, stdout)]);
+        });
+        child.stdin?.write(document.getText());
+        child.stdin?.end();
+    });
+}
+
+/**
+ * Find a binary by checking: config setting → workspace target/ dirs → PATH.
+ * Consistent search order for both hew-lsp and hew binaries.
+ */
+function findBinaryPath(configKey: string, binaryName: string): string | undefined {
+    const ext = process.platform === 'win32' ? '.exe' : '';
+
+    // Check configuration
+    const config = vscode.workspace.getConfiguration('hew');
+    const configPath = config.get<string>(configKey);
+    if (configPath && fs.existsSync(configPath)) return configPath;
+
+    // Check workspace folders for target/release or target/debug builds
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (workspaceFolders) {
         for (const folder of workspaceFolders) {
-            const releasePath = path.join(folder.uri.fsPath, 'target', 'release', 'hew-lsp');
-            const debugPath = path.join(folder.uri.fsPath, 'target', 'debug', 'hew-lsp');
+            const releasePath = path.join(folder.uri.fsPath, 'target', 'release', `${binaryName}${ext}`);
+            const debugPath = path.join(folder.uri.fsPath, 'target', 'debug', `${binaryName}${ext}`);
             if (fs.existsSync(releasePath)) return releasePath;
             if (fs.existsSync(debugPath)) return debugPath;
         }
     }
 
-    // Check configuration
-    const config = vscode.workspace.getConfiguration('hew');
-    const configPath = config.get<string>('lsp.serverPath');
-    if (configPath) return configPath;
-
-    // Fallback: assume it's on PATH
-    return 'hew-lsp';
+    // Check if binary is on PATH
+    const whichCmd = process.platform === 'win32' ? 'where' : 'which';
+    try {
+        execFileSync(whichCmd, [binaryName], { stdio: 'pipe' });
+        return binaryName;
+    } catch {
+        return undefined;
+    }
 }

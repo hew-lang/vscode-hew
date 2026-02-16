@@ -54,6 +54,11 @@
           "type": "string",
           "default": "",
           "description": "Path to the hew-lsp binary. If empty, searches workspace target/ directories and PATH."
+        },
+        "hew.formatterPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the hew binary used for formatting. If empty, searches workspace target/ directories and PATH."
         }
       }
     }
