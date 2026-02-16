@@ -143,7 +143,7 @@
         {
           "comment": "Control flow",
           "name": "keyword.control.hew",
-          "match": "\\b(if|else|match|loop|for|in|while|break|continue|return|try|catch|select|join|yield|cooperate|after|from|await|scope|launch|cancel)\\b"
+          "match": "\\b(if|else|match|loop|for|in|while|break|continue|return|try|catch|select|join|race|yield|cooperate|after|from|await|scope|launch|cancel)\\b"
         },
         {
           "comment": "Declarations",
@@ -173,7 +173,7 @@
         {
           "comment": "Other keywords",
           "name": "keyword.other.hew",
-          "match": "\\b(dyn|unsafe|extern|package)\\b"
+          "match": "\\b(dyn|unsafe|extern|package|foreign|isolated)\\b"
         },
         {
           "comment": "Logical operators as keywords",
