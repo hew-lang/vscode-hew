@@ -69,6 +69,15 @@
           ]
         },
         {
+          "comment": "Regex literal: re\"pattern\"",
+          "name": "string.regexp.hew",
+          "begin": "re\"",
+          "end": "\"",
+          "patterns": [
+            { "include": "#string-escape" }
+          ]
+        },
+        {
           "comment": "Raw string: r\"no escapes\"",
           "name": "string.quoted.raw.hew",
           "begin": "r\"",
@@ -80,6 +89,29 @@
           "begin": "\"",
           "end": "\"",
           "patterns": [
+            { "include": "#string-escape" }
+          ]
+        },
+        {
+          "comment": "Template literal: `hello ${expr}`",
+          "name": "string.template.hew",
+          "begin": "`",
+          "end": "`",
+          "patterns": [
+            {
+              "name": "meta.template.expression.hew",
+              "begin": "\\$\\{",
+              "end": "\\}",
+              "beginCaptures": {
+                "0": { "name": "punctuation.section.interpolation.begin.hew" }
+              },
+              "endCaptures": {
+                "0": { "name": "punctuation.section.interpolation.end.hew" }
+              },
+              "patterns": [
+                { "include": "$self" }
+              ]
+            },
             { "include": "#string-escape" }
           ]
         }
@@ -96,6 +128,11 @@
           "comment": "Hex integer: 0xFF",
           "name": "constant.numeric.hex.hew",
           "match": "\\b0[xX][0-9a-fA-F][0-9a-fA-F_]*\\b"
+        },
+        {
+          "comment": "Octal integer: 0o17",
+          "name": "constant.numeric.octal.hew",
+          "match": "\\b0[oO][0-7][0-7_]*\\b"
         },
         {
           "comment": "Binary integer: 0b1010",
@@ -378,9 +415,24 @@
           "match": "\\.\\.=|\\.\\.(?!\\.)"
         },
         {
+          "comment": "Regex match operators",
+          "name": "keyword.operator.regex.hew",
+          "match": "=~|!~"
+        },
+        {
           "comment": "Comparison operators",
           "name": "keyword.operator.comparison.hew",
           "match": "==|!=|<=|>=|<|>"
+        },
+        {
+          "comment": "Bitwise shift compound assignment",
+          "name": "keyword.operator.assignment.compound.hew",
+          "match": "<<=|>>="
+        },
+        {
+          "comment": "Bitwise compound assignment",
+          "name": "keyword.operator.assignment.compound.bitwise.hew",
+          "match": "&=|\\|=|\\^="
         },
         {
           "comment": "Compound assignment operators",
@@ -391,6 +443,16 @@
           "comment": "Assignment operator",
           "name": "keyword.operator.assignment.hew",
           "match": "="
+        },
+        {
+          "comment": "Bitwise shift operators",
+          "name": "keyword.operator.bitwise.shift.hew",
+          "match": "<<|>>"
+        },
+        {
+          "comment": "Bitwise NOT operator",
+          "name": "keyword.operator.bitwise.not.hew",
+          "match": "~"
         },
         {
           "comment": "Arithmetic operators",
