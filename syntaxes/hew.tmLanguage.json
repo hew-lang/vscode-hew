@@ -180,7 +180,7 @@
         {
           "comment": "Control flow",
           "name": "keyword.control.hew",
-          "match": "\\b(if|else|match|loop|for|in|while|break|continue|return|try|catch|select|join|race|yield|cooperate|after|from|await|scope|launch|cancel)\\b"
+          "match": "\\b(if|else|match|loop|for|in|while|break|continue|return|try|catch|select|join|race|yield|cooperate|after|from|await|scope|launch|cancel|defer)\\b"
         },
         {
           "comment": "Declarations",
