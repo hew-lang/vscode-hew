@@ -5,7 +5,7 @@ Syntax highlighting and language support for the [Hew programming language](http
 ## Features
 
 - **Full syntax highlighting** for Hew v0.6 constructs
-- **Language Server Protocol** — diagnostics, hover, go-to-definition (requires `hew-lsp`)
+- **Language Server Protocol** — completion, hover, definition, document symbols, semantic tokens, diagnostics (requires `hew-lsp`)
 - **Document formatting** — format on save via `hew fmt` (requires `hew` CLI)
 - **Actor declarations** — `actor`, `receive fn`, `receive`, `init`
 - **Supervisor trees** — `supervisor`, `child`, `restart`, `budget`, `strategy`

@@ -4,11 +4,9 @@ import * as vscode from 'vscode';
 import { execFile, execFileSync } from 'child_process';
 import {
     LanguageClient,
-    LanguageClientOptions,
-    ServerOptions,
     State,
-    TransportKind,
 } from 'vscode-languageclient/node';
+import { createLspWiring } from './lsp-wiring';
 
 let client: LanguageClient | undefined;
 
@@ -21,59 +19,6 @@ export function activate(context: vscode.ExtensionContext) {
     statusBar.tooltip = 'Hew Language Server';
     context.subscriptions.push(statusBar);
 
-    const serverPath = findBinaryPath('lsp.serverPath', 'hew-lsp');
-
-    if (!serverPath) {
-        statusBar.text = '$(warning) Hew';
-        statusBar.tooltip = 'hew-lsp not found';
-        statusBar.show();
-        vscode.window.showWarningMessage(
-            'hew-lsp not found. Build it with: cd <hew-project> && cargo build -p hew-lsp'
-        );
-        return;
-    }
-
-    const serverOptions: ServerOptions = {
-        command: serverPath,
-        args: [],
-        transport: TransportKind.stdio,
-    };
-
-    const clientOptions: LanguageClientOptions = {
-        documentSelector: [
-            { scheme: 'file', language: 'hew' },
-            { scheme: 'untitled', language: 'hew' },
-        ],
-        outputChannel,
-    };
-
-    client = new LanguageClient(
-        'hewLanguageServer',
-        'Hew Language Server',
-        serverOptions,
-        clientOptions
-    );
-
-    context.subscriptions.push(client.onDidChangeState(({ newState }) => {
-        if (newState === State.Running) {
-            statusBar.text = '$(zap) Hew';
-            statusBar.tooltip = 'Hew Language Server active';
-        } else if (newState === State.Stopped) {
-            statusBar.text = '$(warning) Hew';
-            statusBar.tooltip = 'Hew Language Server stopped';
-        }
-    }));
-
-    client.start().catch(err => {
-        statusBar.text = '$(error) Hew';
-        statusBar.tooltip = `Hew LSP failed: ${err.message}`;
-        outputChannel.appendLine(`Failed to start hew-lsp: ${err.message}`);
-        vscode.window.showErrorMessage(`Hew LSP failed to start: ${err.message}`);
-    });
-
-    statusBar.show();
-    context.subscriptions.push(client);
-
     // Register document formatter
     context.subscriptions.push(
         vscode.languages.registerDocumentFormattingEditProvider('hew', {
@@ -82,6 +27,47 @@ export function activate(context: vscode.ExtensionContext) {
             }
         })
     );
+
+    const serverPath = findBinaryPath('lsp.serverPath', 'hew-lsp');
+
+    if (serverPath) {
+        const { serverOptions, clientOptions } = createLspWiring(serverPath, outputChannel);
+
+        client = new LanguageClient(
+            'hewLanguageServer',
+            'Hew Language Server',
+            serverOptions,
+            clientOptions
+        );
+
+        context.subscriptions.push(client.onDidChangeState(({ newState }) => {
+            if (newState === State.Running) {
+                statusBar.text = '$(zap) Hew';
+                statusBar.tooltip = 'Hew Language Server active';
+            } else if (newState === State.Stopped) {
+                statusBar.text = '$(warning) Hew';
+                statusBar.tooltip = 'Hew Language Server stopped';
+            }
+        }));
+
+        client.start().catch(err => {
+            statusBar.text = '$(error) Hew';
+            statusBar.tooltip = `Hew LSP failed: ${err.message}`;
+            outputChannel.appendLine(`Failed to start hew-lsp: ${err.message}`);
+            vscode.window.showErrorMessage(`Hew LSP failed to start: ${err.message}`);
+        });
+
+        context.subscriptions.push(client);
+    } else {
+        statusBar.text = '$(warning) Hew';
+        statusBar.tooltip = 'hew-lsp not found (formatter still available)';
+        outputChannel.appendLine('hew-lsp not found. LSP features are disabled until it is installed.');
+        vscode.window.showWarningMessage(
+            'hew-lsp not found. Build it with: cd <hew-project> && cargo build -p hew-lsp'
+        );
+    }
+
+    statusBar.show();
 }
 
 export function deactivate(): Thenable<void> | undefined {

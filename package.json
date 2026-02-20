@@ -27,6 +27,12 @@
   },
   "homepage": "https://github.com/hew-lang/vscode-hew#readme",
   "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:hew"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
   "contributes": {
     "languages": [
       {
