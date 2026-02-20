@@ -37,7 +37,7 @@ self.field
 
 // -- Loop labels --
 
-'outer: loop {
+@outer: loop {
 // <- entity.name.label.hew
 
 // -- Attributes --

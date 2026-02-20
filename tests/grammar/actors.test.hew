@@ -30,10 +30,6 @@ spawn Counter { count: 0 }
 //          ^^ keyword.declaration.hew
 //             ^^^^^^^^^^ entity.name.function.hew
 
-    receive Increment(amount: i32) {
-//  ^^^^^^^ keyword.actor.hew
-//          ^^^^^^^^^ entity.name.function.hew
-
     init(name: string) {
 //  ^^^^ keyword.actor.hew
 

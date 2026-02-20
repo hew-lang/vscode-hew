@@ -11,7 +11,7 @@ Syntax highlighting and language support for the [Hew programming language](http
 - **Supervisor trees** — `supervisor`, `child`, `restart`, `budget`, `strategy`
 - **Structured concurrency** — `scope`, `launch`, `cancel`, `spawn`, `await`
 - **Generators** — `gen fn`, `async gen fn`, `yield`, `cooperate`
-- **Wire types** — `wire struct`, `wire enum`, field tags with `@`
+- **Wire types** — `wire type`, `wire enum`, field tags with `@`
 - **Traits and generics** — `trait`, `impl ... for`, type parameters `[T: Send]`
 - **Pattern matching** — `match`, `=>`, guards, destructuring
 - **All built-in types** — `i8`–`i64`, `u8`–`u64`, `f32`, `f64`, `bool`, `char`, `string`

@@ -91,29 +91,6 @@
           "patterns": [
             { "include": "#string-escape" }
           ]
-        },
-        {
-          "comment": "Template literal: `hello ${expr}`",
-          "name": "string.template.hew",
-          "begin": "`",
-          "end": "`",
-          "patterns": [
-            {
-              "name": "meta.template.expression.hew",
-              "begin": "\\$\\{",
-              "end": "\\}",
-              "beginCaptures": {
-                "0": { "name": "punctuation.section.interpolation.begin.hew" }
-              },
-              "endCaptures": {
-                "0": { "name": "punctuation.section.interpolation.end.hew" }
-              },
-              "patterns": [
-                { "include": "$self" }
-              ]
-            },
-            { "include": "#string-escape" }
-          ]
         }
       ]
     },
@@ -171,9 +148,19 @@
       ]
     },
     "wire-annotations": {
-      "comment": "Wire field tags: @1, @2",
-      "name": "constant.numeric.wire-tag.hew",
-      "match": "@\\d+"
+      "comment": "Wire field tags (@1, @2) and loop labels (@outer, @inner)",
+      "patterns": [
+        {
+          "comment": "Wire field tag: @1, @2",
+          "name": "constant.numeric.wire-tag.hew",
+          "match": "@\\d+"
+        },
+        {
+          "comment": "Loop / block label: @outer, @inner",
+          "name": "entity.name.label.hew",
+          "match": "@[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
     },
     "keywords": {
       "patterns": [
@@ -289,14 +276,6 @@
           }
         },
         {
-          "comment": "Receive function definition (no fn keyword in actors)",
-          "match": "\\b(receive)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
-          "captures": {
-            "1": { "name": "keyword.actor.hew" },
-            "2": { "name": "entity.name.function.hew" }
-          }
-        },
-        {
           "comment": "Function definition",
           "match": "\\b(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
           "captures": {
@@ -370,8 +349,8 @@
           }
         },
         {
-          "comment": "Wire struct/enum declaration",
-          "match": "\\b(wire)\\s+(struct|enum)\\s+([A-Z][a-zA-Z0-9_]*)",
+          "comment": "Wire type/enum declaration",
+          "match": "\\b(wire)\\s+(type|enum)\\s+([A-Z][a-zA-Z0-9_]*)",
           "captures": {
             "1": { "name": "keyword.wire.hew" },
             "2": { "name": "keyword.declaration.hew" },
@@ -527,11 +506,6 @@
           "comment": "self reference",
           "name": "variable.language.self.hew",
           "match": "\\bself\\b"
-        },
-        {
-          "comment": "Loop label: 'outer",
-          "name": "entity.name.label.hew",
-          "match": "'[a-zA-Z_][a-zA-Z0-9_]*"
         },
         {
           "comment": "Wildcard pattern",

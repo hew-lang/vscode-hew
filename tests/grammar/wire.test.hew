@@ -2,10 +2,10 @@
 
 // -- Wire declarations --
 
-wire struct Message {
+wire type Message {
 // <- keyword.wire.hew
-//   ^^^^^^ keyword.declaration.hew
-//          ^^^^^^^ entity.name.type.wire.hew
+//   ^^^^ keyword.declaration.hew
+//        ^^^^^^^ entity.name.type.wire.hew
 
 wire enum Command {
 // <- keyword.wire.hew
