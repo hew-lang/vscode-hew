@@ -50,6 +50,10 @@
     "comments": {
       "patterns": [
         {
+          "name": "comment.line.documentation.inner.hew",
+          "match": "//!.*$"
+        },
+        {
           "name": "comment.line.documentation.hew",
           "match": "///.*$"
         },
