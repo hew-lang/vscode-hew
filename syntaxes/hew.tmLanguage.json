@@ -2,21 +2,49 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Hew",
   "scopeName": "source.hew",
-  "fileTypes": ["hew"],
+  "fileTypes": [
+    "hew"
+  ],
   "patterns": [
-    { "include": "#comments" },
-    { "include": "#strings" },
-    { "include": "#numbers" },
-    { "include": "#attributes" },
-    { "include": "#wire-annotations" },
-    { "include": "#function-definitions" },
-    { "include": "#actors" },
-    { "include": "#keywords" },
-    { "include": "#function-calls" },
-    { "include": "#types" },
-    { "include": "#operators" },
-    { "include": "#punctuation" },
-    { "include": "#variables" }
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#attributes"
+    },
+    {
+      "include": "#wire-annotations"
+    },
+    {
+      "include": "#function-definitions"
+    },
+    {
+      "include": "#actors"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#function-calls"
+    },
+    {
+      "include": "#types"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#punctuation"
+    },
+    {
+      "include": "#variables"
+    }
   ],
   "repository": {
     "comments": {
@@ -34,7 +62,9 @@
           "begin": "/\\*",
           "end": "\\*/",
           "patterns": [
-            { "include": "#comments" }
+            {
+              "include": "#comments"
+            }
           ]
         }
       ]
@@ -56,16 +86,24 @@
               "begin": "\\{",
               "end": "\\}",
               "beginCaptures": {
-                "0": { "name": "punctuation.section.interpolation.begin.hew" }
+                "0": {
+                  "name": "punctuation.section.interpolation.begin.hew"
+                }
               },
               "endCaptures": {
-                "0": { "name": "punctuation.section.interpolation.end.hew" }
+                "0": {
+                  "name": "punctuation.section.interpolation.end.hew"
+                }
               },
               "patterns": [
-                { "include": "$self" }
+                {
+                  "include": "$self"
+                }
               ]
             },
-            { "include": "#string-escape" }
+            {
+              "include": "#string-escape"
+            }
           ]
         },
         {
@@ -74,7 +112,9 @@
           "begin": "re\"",
           "end": "\"",
           "patterns": [
-            { "include": "#string-escape" }
+            {
+              "include": "#string-escape"
+            }
           ]
         },
         {
@@ -89,7 +129,9 @@
           "begin": "\"",
           "end": "\"",
           "patterns": [
-            { "include": "#string-escape" }
+            {
+              "include": "#string-escape"
+            }
           ]
         }
       ]
@@ -134,17 +176,23 @@
       "begin": "#\\[",
       "end": "\\]",
       "beginCaptures": {
-        "0": { "name": "punctuation.definition.attribute.begin.hew" }
+        "0": {
+          "name": "punctuation.definition.attribute.begin.hew"
+        }
       },
       "endCaptures": {
-        "0": { "name": "punctuation.definition.attribute.end.hew" }
+        "0": {
+          "name": "punctuation.definition.attribute.end.hew"
+        }
       },
       "patterns": [
         {
           "name": "entity.name.function.attribute.hew",
           "match": "[a-zA-Z_][a-zA-Z0-9_]*"
         },
-        { "include": "#strings" }
+        {
+          "include": "#strings"
+        }
       ]
     },
     "wire-annotations": {
@@ -167,37 +215,37 @@
         {
           "comment": "Control flow",
           "name": "keyword.control.hew",
-          "match": "\\b(if|else|match|loop|for|in|while|break|continue|return|try|catch|select|join|race|yield|cooperate|after|from|await|scope|launch|cancel|defer)\\b"
+          "match": "\\b(after|await|break|continue|cooperate|defer|else|for|from|if|in|join|loop|match|return|scope|select|while|yield)\\b"
         },
         {
           "comment": "Declarations",
           "name": "keyword.declaration.hew",
-          "match": "\\b(let|var|const|fn|gen|type|struct|enum|trait|impl|import|pub|export|super|where|as|mut)\\b"
+          "match": "\\b(async|const|enum|extern|fn|gen|impl|import|let|package|pub|super|trait|type|var|where)\\b"
         },
         {
           "comment": "Actor and concurrency",
           "name": "keyword.actor.hew",
-          "match": "\\b(actor|receive|init|spawn|async|move|mailbox|overflow)\\b"
+          "match": "\\b(actor|init|move|receive|spawn)\\b"
         },
         {
           "comment": "Supervisor",
           "name": "keyword.supervisor.hew",
-          "match": "\\b(supervisor|child|restart|budget|strategy)\\b"
+          "match": "\\b(budget|child|restart|strategy|supervisor)\\b"
         },
         {
           "comment": "Supervisor strategy and overflow policy values",
           "name": "constant.language.strategy.hew",
-          "match": "\\b(one_for_one|one_for_all|rest_for_one|permanent|transient|temporary|block|drop_new|drop_old|fail|coalesce|fallback)\\b"
+          "match": "\\b(one_for_all|one_for_one|permanent|rest_for_one|temporary|transient)\\b"
         },
         {
           "comment": "Wire protocol keywords",
           "name": "keyword.wire.hew",
-          "match": "\\b(wire|reserved|optional|deprecated|default|list)\\b"
+          "match": "\\b(default|deprecated|optional|reserved|wire)\\b"
         },
         {
           "comment": "Other keywords",
           "name": "keyword.other.hew",
-          "match": "\\b(dyn|unsafe|extern|package|foreign|isolated)\\b"
+          "match": "\\b(dyn|isolated|unsafe)\\b"
         },
         {
           "comment": "Logical operators as keywords",
@@ -207,12 +255,17 @@
         {
           "comment": "Boolean literals",
           "name": "constant.language.boolean.hew",
-          "match": "\\b(true|false)\\b"
+          "match": "\\b(false|true)\\b"
         },
         {
           "comment": "None literal",
           "name": "constant.language.none.hew",
           "match": "\\bNone\\b"
+        },
+        {
+          "comment": "Reserved keywords (not yet used in the language)",
+          "name": "keyword.reserved.hew",
+          "match": "\\b(catch|foreign|race|struct|try)\\b"
         }
       ]
     },
@@ -221,27 +274,27 @@
         {
           "comment": "Numeric types",
           "name": "storage.type.numeric.hew",
-          "match": "\\b(i8|i16|i32|i64|u8|u16|u32|u64|f32|f64|isize|usize)\\b"
+          "match": "\\b(f32|f64|i16|i32|i64|i8|isize|u16|u32|u64|u8|usize)\\b"
         },
         {
           "comment": "Primitive types",
           "name": "storage.type.primitive.hew",
-          "match": "\\b(bool|char|string|bytes|void)\\b"
+          "match": "\\b(bool|char|never|string|void)\\b"
         },
         {
           "comment": "Generic / collection types",
           "name": "storage.type.generic.hew",
-          "match": "\\b(Result|Option|Vec|HashMap|HashSet|Box|Arc|Rc|Weak)\\b"
+          "match": "\\b(ActorStream|Arc|Err|HashMap|Ok|Option|Range|Rc|Result|Some|Vec|Weak)\\b"
         },
         {
           "comment": "Concurrency types",
           "name": "storage.type.concurrency.hew",
-          "match": "\\b(Actor|ActorRef|Task|Scope|Generator|AsyncGenerator|ActorStream)\\b"
+          "match": "\\b(ActorRef|AsyncGenerator|Generator|Scope|Sink|Stream|Task)\\b"
         },
         {
           "comment": "Built-in trait names",
           "name": "storage.type.trait.hew",
-          "match": "\\b(Send|Frozen|Copy|Drop|Clone|Eq|Ord|Hash|Display|Debug|Default|Iterator|AsyncIterator|IntoIterator|Into|From|Try|Allocator)\\b"
+          "match": "\\b(Copy|Frozen|Send)\\b"
         },
         {
           "comment": "Self types",
@@ -261,26 +314,42 @@
           "comment": "Generator function definition (gen fn, async gen fn, receive gen fn)",
           "match": "\\b((?:receive\\s+)?(?:async\\s+)?gen)\\s+(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.declaration.hew" },
-            "2": { "name": "keyword.declaration.hew" },
-            "3": { "name": "entity.name.function.hew" }
+            "1": {
+              "name": "keyword.declaration.hew"
+            },
+            "2": {
+              "name": "keyword.declaration.hew"
+            },
+            "3": {
+              "name": "entity.name.function.hew"
+            }
           }
         },
         {
           "comment": "Receive fn definition",
           "match": "\\b(receive)\\s+(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.actor.hew" },
-            "2": { "name": "keyword.declaration.hew" },
-            "3": { "name": "entity.name.function.hew" }
+            "1": {
+              "name": "keyword.actor.hew"
+            },
+            "2": {
+              "name": "keyword.declaration.hew"
+            },
+            "3": {
+              "name": "entity.name.function.hew"
+            }
           }
         },
         {
           "comment": "Function definition",
           "match": "\\b(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.declaration.hew" },
-            "2": { "name": "entity.name.function.hew" }
+            "1": {
+              "name": "keyword.declaration.hew"
+            },
+            "2": {
+              "name": "entity.name.function.hew"
+            }
           }
         }
       ]
@@ -291,7 +360,9 @@
           "comment": "Function call (placed after keywords to prevent matching if/match/etc.)",
           "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()",
           "captures": {
-            "1": { "name": "entity.name.function.call.hew" }
+            "1": {
+              "name": "entity.name.function.call.hew"
+            }
           }
         }
       ]
@@ -302,76 +373,120 @@
           "comment": "Actor declaration",
           "match": "\\b(actor)\\s+([A-Z][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.actor.hew" },
-            "2": { "name": "entity.name.type.actor.hew" }
+            "1": {
+              "name": "keyword.actor.hew"
+            },
+            "2": {
+              "name": "entity.name.type.actor.hew"
+            }
           }
         },
         {
           "comment": "Supervisor declaration",
           "match": "\\b(supervisor)\\s+([A-Z][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.supervisor.hew" },
-            "2": { "name": "entity.name.type.supervisor.hew" }
+            "1": {
+              "name": "keyword.supervisor.hew"
+            },
+            "2": {
+              "name": "entity.name.type.supervisor.hew"
+            }
           }
         },
         {
           "comment": "Trait declaration",
           "match": "\\b(trait)\\s+([A-Z][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.declaration.hew" },
-            "2": { "name": "entity.name.type.trait.hew" }
+            "1": {
+              "name": "keyword.declaration.hew"
+            },
+            "2": {
+              "name": "entity.name.type.trait.hew"
+            }
           }
         },
         {
           "comment": "Struct declaration",
           "match": "\\b(struct)\\s+([A-Z][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.declaration.hew" },
-            "2": { "name": "entity.name.type.struct.hew" }
+            "1": {
+              "name": "keyword.declaration.hew"
+            },
+            "2": {
+              "name": "entity.name.type.struct.hew"
+            }
           }
         },
         {
           "comment": "Enum declaration",
           "match": "\\b(enum)\\s+([A-Z][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.declaration.hew" },
-            "2": { "name": "entity.name.type.enum.hew" }
+            "1": {
+              "name": "keyword.declaration.hew"
+            },
+            "2": {
+              "name": "entity.name.type.enum.hew"
+            }
           }
         },
         {
           "comment": "Impl Trait for Type",
           "match": "\\b(impl)\\s+([A-Z][a-zA-Z0-9_]*)\\s+(for)\\s+([A-Z][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.declaration.hew" },
-            "2": { "name": "entity.name.type.trait.hew" },
-            "3": { "name": "keyword.declaration.hew" },
-            "4": { "name": "entity.name.type.hew" }
+            "1": {
+              "name": "keyword.declaration.hew"
+            },
+            "2": {
+              "name": "entity.name.type.trait.hew"
+            },
+            "3": {
+              "name": "keyword.declaration.hew"
+            },
+            "4": {
+              "name": "entity.name.type.hew"
+            }
           }
         },
         {
           "comment": "Wire type/enum declaration",
           "match": "\\b(wire)\\s+(type|enum)\\s+([A-Z][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.wire.hew" },
-            "2": { "name": "keyword.declaration.hew" },
-            "3": { "name": "entity.name.type.wire.hew" }
+            "1": {
+              "name": "keyword.wire.hew"
+            },
+            "2": {
+              "name": "keyword.declaration.hew"
+            },
+            "3": {
+              "name": "entity.name.type.wire.hew"
+            }
           }
         },
         {
           "comment": "Child spec in supervisor",
           "match": "\\b(child)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*:\\s*([A-Z][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.supervisor.hew" },
-            "2": { "name": "variable.other.hew" },
-            "3": { "name": "entity.name.type.hew" }
+            "1": {
+              "name": "keyword.supervisor.hew"
+            },
+            "2": {
+              "name": "variable.other.hew"
+            },
+            "3": {
+              "name": "entity.name.type.hew"
+            }
           }
         },
         {
           "comment": "Spawn expression",
           "match": "\\b(spawn)\\s+([A-Z][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.actor.hew" },
-            "2": { "name": "entity.name.type.hew" }
+            "1": {
+              "name": "keyword.actor.hew"
+            },
+            "2": {
+              "name": "entity.name.type.hew"
+            }
           }
         }
       ]
@@ -511,6 +626,11 @@
           "comment": "Wildcard pattern",
           "name": "variable.language.wildcard.hew",
           "match": "\\b_\\b"
+        },
+        {
+          "comment": "Contextual identifiers (special meaning in specific contexts)",
+          "name": "variable.language.contextual.hew",
+          "match": "\\b(block|coalesce|drop_new|drop_old|export|fail|fallback|json|mailbox|max_restarts|mut|overflow|repeated|window|yaml)\\b"
         },
         {
           "comment": "Identifier (catch-all for variables, parameters, fields)",
