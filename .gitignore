@@ -4,3 +4,8 @@ out/
 .vscode-test/
 *.log
 .DS_Store
+
+# AI assistant config
+CLAUDE.md
+.claude/
+.github/copilot-instructions.md
