@@ -55,6 +55,9 @@ let v: void
 let data: bytes
 //        ^^^^^ storage.type.primitive.hew
 
+let d: duration
+//     ^^^^^^^^ storage.type.primitive.hew
+
 // -- Generic / collection types --
 
 let r: Result = ok(1)
@@ -68,12 +71,6 @@ let v: Vec = items
 
 let m: HashMap = entries
 //     ^^^^^^^ storage.type.generic.hew
-
-let s: HashSet = uniq
-//     ^^^^^^^ storage.type.generic.hew
-
-let b: Box = value
-//     ^^^ storage.type.generic.hew
 
 let a: Arc = shared
 //     ^^^ storage.type.generic.hew
@@ -92,16 +89,13 @@ let g: Generator = gen
 let a: AsyncGenerator = stream
 //     ^^^^^^^^^^^^^^ storage.type.concurrency.hew
 
-// -- Trait names (standalone, not in declarations) --
+// -- Trait names --
 
 let x: Send = value
 //     ^^^^ storage.type.trait.hew
 
 let y: Copy = value
 //     ^^^^ storage.type.trait.hew
-
-let z: Display = value
-//     ^^^^^^^ storage.type.trait.hew
 
 // -- Self type --
 

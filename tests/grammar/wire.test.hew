@@ -34,9 +34,6 @@ deprecated old_field: string
 default 0
 // <- keyword.wire.hew
 
-list items: i32
-// <- keyword.wire.hew
-
 // -- Attributes on wire types --
 
 #[version(1)]

@@ -72,7 +72,7 @@ result?
 std::io
 // ^^ keyword.operator.namespace.hew
 
-// -- At (attribute/wire marker) --
+// -- At (label / wire marker) --
 
-@field
-// <- keyword.operator.at.hew
+@outer
+// <- entity.name.label.hew

@@ -34,5 +34,5 @@ spawn Counter { count: 0 }
 //  ^^^^ keyword.actor.hew
 
     async move || {
-//  ^^^^^ keyword.actor.hew
+//  ^^^^^ keyword.declaration.hew
 //        ^^^^ keyword.actor.hew

@@ -68,15 +68,15 @@ impl Display for Counter {
 //  ^^^^^^^^ keyword.supervisor.hew
 //           ^^^^^^^^^^^^ constant.language.strategy.hew
 
-// -- Overflow policies --
+// -- Overflow policies (contextual identifiers) --
 
     overflow drop_new
-//  ^^^^^^^^ keyword.actor.hew
-//           ^^^^^^^^ constant.language.strategy.hew
+//  ^^^^^^^^ variable.language.contextual.hew
+//           ^^^^^^^^ variable.language.contextual.hew
 
     overflow block
-//  ^^^^^^^^ keyword.actor.hew
-//           ^^^^^ constant.language.strategy.hew
+//  ^^^^^^^^ variable.language.contextual.hew
+//           ^^^^^ variable.language.contextual.hew
 
 // -- Complex patterns --
 

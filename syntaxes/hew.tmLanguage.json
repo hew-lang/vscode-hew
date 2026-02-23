@@ -224,7 +224,7 @@
         {
           "comment": "Declarations",
           "name": "keyword.declaration.hew",
-          "match": "\\b(async|const|enum|extern|fn|gen|impl|import|let|package|pub|super|trait|type|var|where)\\b"
+          "match": "\\b(as|async|const|enum|extern|fn|gen|impl|import|let|package|pub|struct|super|trait|type|var|where)\\b"
         },
         {
           "comment": "Actor and concurrency",
@@ -249,12 +249,7 @@
         {
           "comment": "Other keywords",
           "name": "keyword.other.hew",
-          "match": "\\b(dyn|isolated|unsafe)\\b"
-        },
-        {
-          "comment": "Logical operators as keywords",
-          "name": "keyword.operator.logical.hew",
-          "match": "\\b(and|or)\\b"
+          "match": "\\b(dyn|pure|unsafe)\\b"
         },
         {
           "comment": "Boolean literals",
@@ -269,7 +264,7 @@
         {
           "comment": "Reserved keywords (not yet used in the language)",
           "name": "keyword.reserved.hew",
-          "match": "\\b(catch|foreign|race|struct|try)\\b"
+          "match": "\\b(and|catch|foreign|isolated|or|race|try)\\b"
         }
       ]
     },
@@ -283,7 +278,7 @@
         {
           "comment": "Primitive types",
           "name": "storage.type.primitive.hew",
-          "match": "\\b(bool|char|never|string|void)\\b"
+          "match": "\\b(bool|bytes|char|duration|never|string|void)\\b"
         },
         {
           "comment": "Generic / collection types",
@@ -315,8 +310,8 @@
     "function-definitions": {
       "patterns": [
         {
-          "comment": "Generator function definition (gen fn, async gen fn, receive gen fn)",
-          "match": "\\b((?:receive\\s+)?(?:async\\s+)?gen)\\s+(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "comment": "Generator function definition (gen fn, async gen fn, receive gen fn, pure gen fn)",
+          "match": "\\b((?:pure\\s+)?(?:receive\\s+)?(?:async\\s+)?gen)\\s+(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
           "captures": {
             "1": {
               "name": "keyword.declaration.hew"
@@ -330,8 +325,8 @@
           }
         },
         {
-          "comment": "Receive fn definition",
-          "match": "\\b(receive)\\s+(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "comment": "Receive fn definition (optionally pure)",
+          "match": "\\b((?:pure\\s+)?receive)\\s+(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
           "captures": {
             "1": {
               "name": "keyword.actor.hew"
@@ -345,8 +340,20 @@
           }
         },
         {
-          "comment": "Function definition",
-          "match": "\\b(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "comment": "Named receive handler: receive Ping(...)",
+          "match": "\\b(receive)\\s+([A-Z][a-zA-Z0-9_]*)\\s*(?=\\()",
+          "captures": {
+            "1": {
+              "name": "keyword.actor.hew"
+            },
+            "2": {
+              "name": "entity.name.function.hew"
+            }
+          }
+        },
+        {
+          "comment": "Function definition (optionally pure)",
+          "match": "\\b((?:pure\\s+)?fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
           "captures": {
             "1": {
               "name": "keyword.declaration.hew"
@@ -410,6 +417,18 @@
           }
         },
         
+        {
+          "comment": "Struct declaration",
+          "match": "\\b(struct)\\s+([A-Z][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.hew"
+            },
+            "2": {
+              "name": "entity.name.type.struct.hew"
+            }
+          }
+        },
         {
           "comment": "Enum declaration",
           "match": "\\b(enum)\\s+([A-Z][a-zA-Z0-9_]*)",
