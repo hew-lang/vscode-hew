@@ -43,8 +43,15 @@ build_platform() {
 
     echo "==> Building hew-lsp for $platform ($rust_target)"
 
+    # Set cross-compile linker if needed
+    local linker_env=""
+    case "$rust_target" in
+        aarch64-unknown-linux-gnu) linker_env="CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" ;;
+        x86_64-unknown-linux-gnu)  linker_env="" ;;  # native
+    esac
+
     # Cross-compile hew-lsp
-    (cd "$HEW_DIR" && cargo build --release -p hew-lsp --target "$rust_target")
+    (cd "$HEW_DIR" && env $linker_env cargo build --release -p hew-lsp --target "$rust_target")
 
     # Prepare server directory
     rm -rf "$EXT_DIR/server/"*

@@ -2,7 +2,7 @@
   "name": "hew-lang",
   "displayName": "Hew Language",
   "description": "Syntax highlighting and language support for the Hew programming language",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "hew-lang",
   "license": "Apache-2.0",
   "icon": "icons/hew-dark.png",
