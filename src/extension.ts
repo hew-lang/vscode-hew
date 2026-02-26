@@ -23,12 +23,12 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.languages.registerDocumentFormattingEditProvider('hew', {
             provideDocumentFormattingEdits(document: vscode.TextDocument): Thenable<vscode.TextEdit[]> {
-                return formatDocument(document, outputChannel);
+                return formatDocument(document, outputChannel, context.extensionPath);
             }
         })
     );
 
-    const serverPath = findBinaryPath('lsp.serverPath', 'hew-lsp');
+    const serverPath = findBinaryPath('lsp.serverPath', 'hew-lsp', context.extensionPath);
 
     if (serverPath) {
         const { serverOptions, clientOptions } = createLspWiring(serverPath, outputChannel);
@@ -79,9 +79,10 @@ export function deactivate(): Thenable<void> | undefined {
 
 function formatDocument(
     document: vscode.TextDocument,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.OutputChannel,
+    extensionPath: string
 ): Thenable<vscode.TextEdit[]> {
-    const hewPath = findBinaryPath('formatterPath', 'hew');
+    const hewPath = findBinaryPath('formatterPath', 'hew', extensionPath);
     if (!hewPath) {
         vscode.window.showWarningMessage(
             'hew binary not found. Build it with: cd <hew-project> && cargo build -p hew-cli'
@@ -110,10 +111,10 @@ function formatDocument(
 }
 
 /**
- * Find a binary by checking: config setting → workspace target/ dirs → PATH.
+ * Find a binary by checking: config setting → workspace target/ dirs → PATH → bundled extension server/.
  * Consistent search order for both hew-lsp and hew binaries.
  */
-function findBinaryPath(configKey: string, binaryName: string): string | undefined {
+function findBinaryPath(configKey: string, binaryName: string, extensionPath: string): string | undefined {
     const ext = process.platform === 'win32' ? '.exe' : '';
 
     // Check configuration
@@ -138,6 +139,12 @@ function findBinaryPath(configKey: string, binaryName: string): string | undefin
         execFileSync(whichCmd, [binaryName], { stdio: 'pipe' });
         return binaryName;
     } catch {
-        return undefined;
+        // no-op: binary not on PATH
     }
+
+    // Check for bundled server binary in the extension
+    const bundledPath = path.join(extensionPath, 'server', `${binaryName}${ext}`);
+    if (fs.existsSync(bundledPath)) return bundledPath;
+
+    return undefined;
 }

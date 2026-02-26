@@ -14,3 +14,4 @@ package-lock.json
 tests/**
 vitest.config.ts
 CLAUDE.md
+!server/**
