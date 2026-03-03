@@ -47,17 +47,13 @@ export interface MIBackend {
 }
 
 // ---------------------------------------------------------------------------
-// GDB Backend
+// Base MI Backend (shared command formatting)
 // ---------------------------------------------------------------------------
 
-export class GDBBackend implements MIBackend {
-    name = 'gdb';
-
-    spawn(extraArgs: string[] = []): ChildProcess {
-        return spawn('gdb', ['--interpreter=mi3', '--quiet', ...extraArgs], {
-            stdio: ['pipe', 'pipe', 'pipe'],
-        });
-    }
+abstract class BaseMIBackend implements MIBackend {
+    abstract name: string;
+    abstract spawn(extraArgs?: string[]): ChildProcess;
+    abstract loadHelperScript(): string | undefined;
 
     execAndSymbolsCmd(executable: string): string {
         return `-file-exec-and-symbols "${executable}"`;
@@ -108,6 +104,20 @@ export class GDBBackend implements MIBackend {
 
     exitCmd(): string {
         return '-gdb-exit';
+    }
+}
+
+// ---------------------------------------------------------------------------
+// GDB Backend
+// ---------------------------------------------------------------------------
+
+export class GDBBackend extends BaseMIBackend {
+    name = 'gdb';
+
+    spawn(extraArgs: string[] = []): ChildProcess {
+        return spawn('gdb', ['--interpreter=mi3', '--quiet', ...extraArgs], {
+            stdio: ['pipe', 'pipe', 'pipe'],
+        });
     }
 
     loadHelperScript(): string | undefined {
@@ -119,64 +129,13 @@ export class GDBBackend implements MIBackend {
 // LLDB Backend
 // ---------------------------------------------------------------------------
 
-export class LLDBBackend implements MIBackend {
+export class LLDBBackend extends BaseMIBackend {
     name = 'lldb';
 
     spawn(extraArgs: string[] = []): ChildProcess {
         return spawn('lldb-mi', [...extraArgs], {
             stdio: ['pipe', 'pipe', 'pipe'],
         });
-    }
-
-    execAndSymbolsCmd(executable: string): string {
-        return `-file-exec-and-symbols "${executable}"`;
-    }
-
-    execRunCmd(args: string[]): string {
-        if (args.length > 0) {
-            return `-exec-arguments ${args.join(' ')}\n-exec-run`;
-        }
-        return '-exec-run';
-    }
-
-    breakInsertCmd(file: string, line: number): string {
-        return `-break-insert ${file}:${line}`;
-    }
-
-    threadInfoCmd(): string {
-        return '-thread-info';
-    }
-
-    stackListFramesCmd(threadId: number): string {
-        return `-stack-list-frames --thread ${threadId}`;
-    }
-
-    stackListVariablesCmd(threadId: number, frameId: number): string {
-        return `-stack-list-variables --thread ${threadId} --frame ${frameId} --all-values`;
-    }
-
-    continueCmd(threadId?: number): string {
-        return threadId !== undefined ? `-exec-continue --thread ${threadId}` : '-exec-continue';
-    }
-
-    nextCmd(threadId?: number): string {
-        return threadId !== undefined ? `-exec-next --thread ${threadId}` : '-exec-next';
-    }
-
-    stepCmd(threadId?: number): string {
-        return threadId !== undefined ? `-exec-step --thread ${threadId}` : '-exec-step';
-    }
-
-    finishCmd(threadId?: number): string {
-        return threadId !== undefined ? `-exec-finish --thread ${threadId}` : '-exec-finish';
-    }
-
-    evalCmd(expr: string): string {
-        return `-data-evaluate-expression "${expr.replace(/"/g, '\\"')}"`;
-    }
-
-    exitCmd(): string {
-        return '-gdb-exit';
     }
 
     loadHelperScript(): string | undefined {

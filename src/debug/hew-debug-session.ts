@@ -26,9 +26,12 @@ import { DebugProtocol } from '@vscode/debugprotocol';
 import { MISession, MIResponse } from './mi-session';
 import { MIRecord, MITuple, MIList } from './mi-parser';
 import { detectBackend, MIBackend } from './mi-backend';
-import { execFileSync } from 'child_process';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
 import * as path from 'path';
 import * as fs from 'fs';
+
+const execFileAsync = promisify(execFile);
 
 // ---------------------------------------------------------------------------
 // Launch configuration
@@ -194,33 +197,35 @@ export class HewDebugSession extends DebugSession {
         // For simplicity, we'll just insert new ones; GDB handles duplicates.
         // A more robust approach would track breakpoint numbers.
 
-        const breakpoints: DebugProtocol.Breakpoint[] = [];
-
-        for (const bp of requestedLines) {
-            if (!this.mi) {
-                breakpoints.push({ verified: false, line: bp.line });
-                continue;
-            }
-
-            try {
-                const result = await this.mi.sendCommand(
-                    this.backend!.breakInsertCmd(filePath, bp.line)
-                );
-                const bkpt = result.results['bkpt'] as MITuple | undefined;
-                const line = bkpt ? parseInt(bkpt['line'] as string, 10) : bp.line;
-                breakpoints.push({
-                    verified: true,
-                    line,
-                    id: bkpt ? parseInt(bkpt['number'] as string, 10) : undefined,
-                });
-            } catch (err: any) {
-                breakpoints.push({
-                    verified: false,
-                    line: bp.line,
-                    message: err.message,
-                });
-            }
+        if (!this.mi) {
+            response.body = { breakpoints: requestedLines.map(bp => ({ verified: false, line: bp.line })) };
+            this.sendResponse(response);
+            return;
         }
+
+        const results = await Promise.allSettled(
+            requestedLines.map(bp =>
+                this.mi!.sendCommand(this.backend!.breakInsertCmd(filePath, bp.line))
+                    .then(result => {
+                        const bkpt = result.results['bkpt'] as MITuple | undefined;
+                        const line = bkpt ? parseInt(bkpt['line'] as string, 10) : bp.line;
+                        return {
+                            verified: true,
+                            line,
+                            id: bkpt ? parseInt(bkpt['number'] as string, 10) : undefined,
+                        } as DebugProtocol.Breakpoint;
+                    })
+                    .catch((err: any) => ({
+                        verified: false,
+                        line: bp.line,
+                        message: err.message,
+                    } as DebugProtocol.Breakpoint))
+            )
+        );
+
+        const breakpoints = results.map(r =>
+            r.status === 'fulfilled' ? r.value : { verified: false } as DebugProtocol.Breakpoint
+        );
 
         response.body = { breakpoints };
         this.sendResponse(response);
@@ -635,6 +640,10 @@ export class HewDebugSession extends DebugSession {
         const threadId = threadIdStr ? parseInt(threadIdStr, 10) : 1;
 
         if (cls === 'stopped') {
+            // Clear stale variable references from previous stop
+            this.variableRefs.clear();
+            this.nextVarRef = LOCALS_SCOPE_REF;
+
             if (!reason || reason.startsWith('exited')) {
                 this.sendEvent(new TerminatedEvent());
                 return;
@@ -667,12 +676,8 @@ export class HewDebugSession extends DebugSession {
         }
     }
 
-    private handleNotify(record: MIRecord): void {
-        // We could handle =breakpoint-modified etc. here for dynamic updates
-        // For now, just log notifications
-        if (record.class === 'thread-group-exited') {
-            // Process group exited
-        }
+    private handleNotify(_record: MIRecord): void {
+        // No-op — =breakpoint-modified, =thread-group-exited etc. are ignored for now
     }
 
     // -----------------------------------------------------------------------
@@ -695,8 +700,8 @@ export class HewDebugSession extends DebugSession {
         return program;
     }
 
-    private compileHew(sourceFile: string, cwd?: string): string {
-        const hewPath = this.findHewBinary();
+    private async compileHew(sourceFile: string, cwd?: string): Promise<string> {
+        const hewPath = await this.findHewBinary();
         if (!hewPath) {
             throw new Error(
                 'hew compiler not found. Set hew.debugger.hewPath in settings, ' +
@@ -712,15 +717,14 @@ export class HewDebugSession extends DebugSession {
         this.log(`Compiling ${sourceFile} with --debug...`);
 
         try {
-            const result = execFileSync(hewPath, ['build', '--debug', sourceFile, '-o', outputPath], {
+            const { stdout } = await execFileAsync(hewPath, ['build', '--debug', sourceFile, '-o', outputPath], {
                 cwd: cwd ?? path.dirname(sourceFile),
                 timeout: 60000,
                 encoding: 'utf-8',
-                stdio: ['pipe', 'pipe', 'pipe'],
             });
 
-            if (result) {
-                this.log(result);
+            if (stdout) {
+                this.log(stdout);
             }
         } catch (err: any) {
             const stderr = err.stderr ?? '';
@@ -742,7 +746,7 @@ export class HewDebugSession extends DebugSession {
      * Uses the same search order as the extension's findBinaryPath:
      * config → workspace target/ → PATH → bundled.
      */
-    private findHewBinary(): string | undefined {
+    private async findHewBinary(): Promise<string | undefined> {
         // The debug session runs in the debug adapter process, which may not
         // have access to vscode API. We rely on launch config or PATH.
 
@@ -754,13 +758,11 @@ export class HewDebugSession extends DebugSession {
         const ext = process.platform === 'win32' ? '.exe' : '';
         const whichCmd = process.platform === 'win32' ? 'where' : 'which';
         try {
-            const result = execFileSync(whichCmd, [`hew${ext}`], {
-                stdio: 'pipe',
+            const { stdout } = await execFileAsync(whichCmd, [`hew${ext}`], {
                 encoding: 'utf-8',
             });
-            const found = result.trim().split('\n')[0];
+            const found = stdout.trim().split('\n')[0];
             if (found && fs.existsSync(found)) return found;
-            // On some systems, 'which' returns the name itself if found on PATH
             return `hew${ext}`;
         } catch {
             // Not on PATH

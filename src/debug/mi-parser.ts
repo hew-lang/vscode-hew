@@ -76,6 +76,17 @@ function unescapeCString(s: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// Character classification
+// ---------------------------------------------------------------------------
+
+/** Check if a character is valid in an MI variable name: [a-zA-Z0-9_-]. */
+function isVarChar(ch: string): boolean {
+    const c = ch.charCodeAt(0);
+    return (c >= 97 && c <= 122) || (c >= 65 && c <= 90) ||
+           (c >= 48 && c <= 57) || c === 95 || c === 45;
+}
+
+// ---------------------------------------------------------------------------
 // Recursive descent parser for MI values
 // ---------------------------------------------------------------------------
 
@@ -222,7 +233,7 @@ class MIValueParser {
     /** Parse a variable name (letters, digits, -, _). */
     private parseVariable(): string {
         let name = '';
-        while (this.pos < this.input.length && /[a-zA-Z0-9_-]/.test(this.input[this.pos])) {
+        while (this.pos < this.input.length && isVarChar(this.input[this.pos])) {
             name += this.input[this.pos];
             this.pos++;
         }
@@ -235,7 +246,7 @@ class MIValueParser {
         if (ch === '"' || ch === '{' || ch === '[') return false;
         // Look ahead for variable=
         let ahead = this.pos;
-        while (ahead < this.input.length && /[a-zA-Z0-9_-]/.test(this.input[ahead])) {
+        while (ahead < this.input.length && isVarChar(this.input[ahead])) {
             ahead++;
         }
         return ahead > this.pos && this.input[ahead] === '=';

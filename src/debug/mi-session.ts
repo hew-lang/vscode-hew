@@ -129,13 +129,11 @@ export class MISession extends EventEmitter {
     // ---------------------------------------------------------------------------
 
     private onData(chunk: string): void {
-        this.buffer += chunk;
-
-        let newlineIdx: number;
-        while ((newlineIdx = this.buffer.indexOf('\n')) !== -1) {
-            const line = this.buffer.substring(0, newlineIdx).replace(/\r$/, '');
-            this.buffer = this.buffer.substring(newlineIdx + 1);
-            this.processLine(line);
+        const data = this.buffer + chunk;
+        const lines = data.split('\n');
+        this.buffer = lines.pop() ?? '';
+        for (const raw of lines) {
+            this.processLine(raw.endsWith('\r') ? raw.slice(0, -1) : raw);
         }
     }
 

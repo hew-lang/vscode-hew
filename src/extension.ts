@@ -104,7 +104,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('hew.debug.breakOnReceive', (item: ActorTreeItem) => {
             const session = vscode.debug.activeDebugSession;
             if (session) {
-                session.customRequest('hew/breakOnReceive', { actorName: item.actorName });
+                session.customRequest('hew/breakOnReceive', { actor: item.actorName });
             }
         })
     );
