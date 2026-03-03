@@ -8,6 +8,7 @@ import {
 } from 'vscode-languageclient/node';
 import { createLspWiring } from './lsp-wiring';
 import { HewDebugSession } from './debug/hew-debug-session';
+import { HewActorsProvider, ActorTreeItem } from './debug/actors-tree-view';
 
 let client: LanguageClient | undefined;
 
@@ -91,6 +92,30 @@ export function activate(context: vscode.ExtensionContext) {
             'hew',
             new HewDebugConfigProvider()
         )
+    );
+
+    // Register Hew Actors tree view for debug panel
+    const actorsProvider = new HewActorsProvider();
+    context.subscriptions.push(
+        vscode.window.registerTreeDataProvider('hewActors', actorsProvider)
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('hew.debug.breakOnReceive', (item: ActorTreeItem) => {
+            const session = vscode.debug.activeDebugSession;
+            if (session) {
+                session.customRequest('hew/breakOnReceive', { actorName: item.actorName });
+            }
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('hew.debug.toggleRuntimeFrames', () => {
+            const session = vscode.debug.activeDebugSession;
+            if (session) {
+                session.customRequest('hew/toggleRuntimeFrames');
+            }
+        })
     );
 }
 

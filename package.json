@@ -147,6 +147,36 @@
           }
         ]
       }
+    ],
+    "views": {
+      "debug": [
+        {
+          "id": "hewActors",
+          "name": "Hew Actors",
+          "when": "debugType == 'hew'"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "hew.debug.breakOnReceive",
+          "when": "view == hewActors",
+          "group": "navigation"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "hew.debug.breakOnReceive",
+        "title": "Break on Receive",
+        "category": "Hew Debug"
+      },
+      {
+        "command": "hew.debug.toggleRuntimeFrames",
+        "title": "Toggle Runtime Frames in Call Stack",
+        "category": "Hew Debug"
+      }
     ]
   },
   "scripts": {
