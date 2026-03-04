@@ -247,6 +247,11 @@
           "match": "\\b(default|deprecated|optional|reserved|wire)\\b"
         },
         {
+          "comment": "State machine keywords",
+          "name": "keyword.control.machine.hew",
+          "match": "\\b(event|machine|on|state|when)\\b"
+        },
+        {
           "comment": "Other keywords",
           "name": "keyword.other.hew",
           "match": "\\b(dyn|pure|unsafe)\\b"
@@ -417,6 +422,18 @@
           }
         },
         
+        {
+          "comment": "Machine declaration",
+          "match": "\\b(machine)\\s+([A-Z][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "keyword.control.machine.hew"
+            },
+            "2": {
+              "name": "entity.name.type.machine.hew"
+            }
+          }
+        },
         {
           "comment": "Struct declaration",
           "match": "\\b(struct)\\s+([A-Z][a-zA-Z0-9_]*)",
