@@ -28,7 +28,8 @@
   "homepage": "https://github.com/hew-lang/vscode-hew#readme",
   "main": "./out/extension.js",
   "activationEvents": [
-    "onLanguage:hew"
+    "onLanguage:hew",
+    "onDebugResolve:hew"
   ],
   "extensionKind": [
     "workspace"
@@ -70,9 +71,113 @@
           "type": "string",
           "default": "",
           "description": "Path to the hew binary used for formatting. If empty, searches workspace target/ directories and PATH."
+        },
+        "hew.debugger.hewPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the hew compiler binary for debug builds. If empty, uses the same search as hew.formatterPath."
         }
       }
-    }
+    },
+    "debuggers": [
+      {
+        "type": "hew",
+        "label": "Hew Debug",
+        "languages": [
+          "hew"
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "required": [
+              "program"
+            ],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Path to .hew source file or compiled binary to debug"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": [],
+                "description": "Command-line arguments for the program"
+              },
+              "cwd": {
+                "type": "string",
+                "description": "Working directory for the program"
+              },
+              "stopOnEntry": {
+                "type": "boolean",
+                "default": false,
+                "description": "Stop at entry point of the program"
+              },
+              "debuggerBackend": {
+                "type": "string",
+                "enum": [
+                  "gdb",
+                  "lldb",
+                  "auto"
+                ],
+                "default": "auto",
+                "description": "Debugger backend: gdb, lldb, or auto (LLDB on macOS, GDB on Linux)"
+              }
+            }
+          }
+        },
+        "configurationSnippets": [
+          {
+            "label": "Hew: Launch Program",
+            "description": "Build and debug a Hew program",
+            "body": {
+              "type": "hew",
+              "request": "launch",
+              "name": "Debug ${1:main.hew}",
+              "program": "^\"\\${workspaceFolder}/${2:main.hew}\""
+            }
+          }
+        ],
+        "initialConfigurations": [
+          {
+            "type": "hew",
+            "request": "launch",
+            "name": "Debug Hew Program",
+            "program": "${workspaceFolder}/main.hew"
+          }
+        ]
+      }
+    ],
+    "views": {
+      "debug": [
+        {
+          "id": "hewActors",
+          "name": "Hew Actors",
+          "when": "debugType == 'hew'"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "hew.debug.breakOnReceive",
+          "when": "view == hewActors",
+          "group": "navigation"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "hew.debug.breakOnReceive",
+        "title": "Break on Receive",
+        "category": "Hew Debug"
+      },
+      {
+        "command": "hew.debug.toggleRuntimeFrames",
+        "title": "Toggle Runtime Frames in Call Stack",
+        "category": "Hew Debug"
+      }
+    ]
   },
   "scripts": {
     "compile": "tsc -p .",
@@ -94,6 +199,8 @@
     "vscode-tmgrammar-test": "^0.1.3"
   },
   "dependencies": {
+    "@vscode/debugadapter": "^1.68.0",
+    "@vscode/debugprotocol": "^1.68.0",
     "vscode-languageclient": "^9.0.1"
   }
 }
