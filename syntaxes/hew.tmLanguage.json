@@ -254,7 +254,7 @@
         {
           "comment": "Other keywords",
           "name": "keyword.other.hew",
-          "match": "\\b(dyn|isolated|pure|unsafe)\\b"
+          "match": "\\b(dyn|pure|unsafe)\\b"
         },
         {
           "comment": "Boolean literals",
