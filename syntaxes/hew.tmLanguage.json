@@ -224,7 +224,7 @@
         {
           "comment": "Declarations",
           "name": "keyword.declaration.hew",
-          "match": "\\b(as|async|const|enum|extern|fn|gen|impl|import|let|package|pub|struct|super|trait|type|var|where)\\b"
+          "match": "\\b(as|async|const|enum|extern|fn|gen|impl|import|indirect|let|package|pub|struct|super|trait|type|var|where)\\b"
         },
         {
           "comment": "Actor and concurrency",
@@ -254,7 +254,7 @@
         {
           "comment": "Other keywords",
           "name": "keyword.other.hew",
-          "match": "\\b(dyn|pure|unsafe)\\b"
+          "match": "\\b(dyn|isolated|pure|unsafe)\\b"
         },
         {
           "comment": "Boolean literals",
@@ -269,7 +269,12 @@
         {
           "comment": "Reserved keywords (not yet used in the language)",
           "name": "keyword.reserved.hew",
-          "match": "\\b(and|catch|foreign|isolated|or|race|try)\\b"
+          "match": "\\b(catch|foreign|race|try)\\b"
+        },
+        {
+          "comment": "Generated from syntax-data.json",
+          "name": "keyword.operator.logical.hew",
+          "match": "\\b(and|or)\\b"
         }
       ]
     },
@@ -421,7 +426,6 @@
             }
           }
         },
-        
         {
           "comment": "Machine declaration",
           "match": "\\b(machine)\\s+([A-Z][a-zA-Z0-9_]*)",
