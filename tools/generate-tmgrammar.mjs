@@ -77,12 +77,11 @@ const keywordGroups = {
 
   'keyword.wire.hew': [...kw.wire],
 
+  'keyword.control.machine.hew': [...kw.machine],
+
   'keyword.other.hew': [
     ...kw.other,
-    'isolated',
   ],
-
-  'keyword.operator.logical.hew': ['and', 'or'],
 
   'constant.language.boolean.hew': ['true', 'false'],
 
