@@ -270,11 +270,6 @@
           "comment": "Reserved keywords (not yet used in the language)",
           "name": "keyword.reserved.hew",
           "match": "\\b(catch|foreign|race|try)\\b"
-        },
-        {
-          "comment": "Generated from syntax-data.json",
-          "name": "keyword.operator.logical.hew",
-          "match": "\\b(and|or)\\b"
         }
       ]
     },

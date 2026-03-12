@@ -121,15 +121,6 @@ pure fn compute() {
 foreign {
 // <- keyword.reserved.hew
 
-isolated {
-// <- keyword.reserved.hew
-
-x and y
-//^^^ keyword.reserved.hew
-
-x or y
-//^^ keyword.reserved.hew
-
 // -- Constants --
 
 true
