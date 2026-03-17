@@ -1,5 +1,64 @@
 # Change Log
 
+## [1.2.0] - 2026-03-16
+
+### Added
+- State machine keywords: `machine`, `state`, `event`, `on`, `when` (scope: `keyword.control.machine.hew`)
+- `this` keyword in actor scope (`keyword.actor.hew`)
+- `indirect` keyword in declaration scope
+- `foreign` keyword in reserved scope
+- Bundled hew-lsp v0.2.0 for all platforms (linux-x64, linux-arm64, darwin-x64, darwin-arm64, win32-x64)
+
+### Fixed
+- Removed stale keywords from grammar: `isolated`, `and`, `or`
+- Removed stale keywords from grammar sync tool
+- Grammar fully aligned with Hew compiler v0.2.0 syntax-data.json
+
+### Changed
+- Grammar sync now uses compiler's `syntax-data.json` v0.9.0 as canonical source
+
+## [1.1.1] - 2026-03-04
+
+### Changed
+- Bumped bundled hew-lsp to v0.1.7
+
+## [1.1.0] - 2026-03-04
+
+### Added
+- Interactive debugging via Debug Adapter Protocol (DAP) with GDB/LLDB MI backends
+- Hew Actors tree view panel in debug sidebar
+- "Break on Receive" context menu command for actor debugging
+- "Toggle Runtime Frames" command to filter internal frames from call stack
+- Debug configuration snippets and auto-launch for `.hew` files
+- CI test workflow for PR and push
+
+## [1.0.1] - 2026-02-26
+
+### Added
+- Bundled hew-lsp binary in platform-specific extension packages (`tools/package-all.sh`)
+- Cross-compile support for linux-x64, linux-arm64, darwin-x64, darwin-arm64, win32-x64
+
+### Fixed
+- Cross-compile linker configuration for aarch64-linux-gnu
+
+## [1.0.0] - 2026-02-23
+
+### Added
+- TextMate grammar generator (`tools/generate-tmgrammar.mjs`) auto-syncs from compiler syntax-data.json
+- Inner doc comment (`//!`) highlighting
+
+### Changed
+- Grammar updated to match Hew v0.9.0 syntax
+- Removed stale `struct` declaration pattern (Hew uses `type` keyword)
+
+## [0.2.1] - 2026-02-20
+
+### Added
+- `defer` keyword syntax highlighting
+
+### Changed
+- Aligned extension with latest Hew LSP
+
 ## [0.2.0] - 2026-02-16
 
 ### Fixed
