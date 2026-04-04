@@ -25,7 +25,11 @@ import {
 import { DebugProtocol } from '@vscode/debugprotocol';
 import { MISession, MIResponse } from './mi-session';
 import { MIRecord, MITuple, MIList } from './mi-parser';
-import { detectBackend, MIBackend } from './mi-backend';
+import {
+    checkBackendAvailability,
+    DebuggerBackendPreference,
+    MIBackend,
+} from './mi-backend';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import * as path from 'path';
@@ -42,7 +46,7 @@ interface HewLaunchRequestArguments extends DebugProtocol.LaunchRequestArguments
     args?: string[];
     cwd?: string;
     stopOnEntry?: boolean;
-    debuggerBackend?: 'gdb' | 'lldb' | 'auto';
+    debuggerBackend?: DebuggerBackendPreference;
 }
 
 // ---------------------------------------------------------------------------
@@ -136,9 +140,14 @@ export class HewDebugSession extends DebugSession {
             // Step 1: Determine executable path
             const executable = await this.resolveExecutable(args);
 
-            // Step 2: Set up debugger backend
-            this.backend = detectBackend(args.debuggerBackend ?? 'auto');
-            this.log(`Using debugger backend: ${this.backend.name}`);
+            // Step 2: Preflight debugger backend before spawning MI
+            const backendCheck = checkBackendAvailability(args.debuggerBackend ?? 'auto');
+            if (backendCheck.message) {
+                throw new Error(backendCheck.message);
+            }
+
+            this.backend = backendCheck.backend;
+            this.log(`Using debugger backend: ${this.backend.name} (${backendCheck.resolvedPath})`);
 
             // Step 3: Create MI session and spawn debugger
             this.mi = new MISession(this.backend);

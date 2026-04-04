@@ -8,6 +8,7 @@ import {
 import { discoverBinaryPath, BinaryLookupResult } from './binary-discovery';
 import { createLspWiring } from './lsp-wiring';
 import { HewDebugSession } from './debug/hew-debug-session';
+import { checkBackendAvailability, DebuggerBackendPreference } from './debug/mi-backend';
 import { HewActorsProvider, ActorTreeItem } from './debug/actors-tree-view';
 
 let client: LanguageClient | undefined;
@@ -287,6 +288,13 @@ class HewDebugConfigProvider implements vscode.DebugConfigurationProvider {
             return vscode.window.showInformationMessage(
                 'Cannot debug: no program specified'
             ).then(_ => undefined);
+        }
+
+        const backendCheck = checkBackendAvailability(
+            (config.debuggerBackend ?? 'auto') as DebuggerBackendPreference
+        );
+        if (backendCheck.message) {
+            return vscode.window.showErrorMessage(backendCheck.message).then(_ => undefined);
         }
 
         return config;

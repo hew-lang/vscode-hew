@@ -138,10 +138,10 @@
                   "auto"
                 ],
                 "default": "auto",
-                "description": "Debugger backend: gdb, lldb, or auto (LLDB on macOS, GDB on Linux)"
+                "description": "Debugger backend: gdb, lldb, or auto. Requires gdb or lldb-mi on PATH; auto uses LLDB on macOS and GDB elsewhere."
+              }
               }
             }
-          }
         },
         "configurationSnippets": [
           {

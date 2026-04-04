@@ -27,4 +27,10 @@ describe('package manifest security settings', () => {
             default: false,
         });
     });
+
+    it('documents debugger backend prerequisites in launch help text', () => {
+        expect(
+            manifest.contributes?.debuggers?.[0]?.configurationAttributes?.launch?.properties?.debuggerBackend?.description
+        ).toContain('lldb-mi');
+    });
 });
