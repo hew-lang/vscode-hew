@@ -5,7 +5,7 @@
  * GDB (via --interpreter=mi3) and LLDB (via lldb-mi).
  */
 
-import { ChildProcess, spawn } from 'child_process';
+import { ChildProcess, execFileSync, spawn } from 'child_process';
 import * as os from 'os';
 import * as fs from 'fs';
 
@@ -13,9 +13,13 @@ import * as fs from 'fs';
 // Interface
 // ---------------------------------------------------------------------------
 
+export type DebuggerBackendPreference = 'gdb' | 'lldb' | 'auto';
+
 export interface MIBackend {
     /** Human-readable name ("gdb" or "lldb"). */
     name: string;
+    /** Command name expected on PATH. */
+    command: string;
     /** Spawn the debugger process with optional extra arguments. */
     spawn(extraArgs?: string[]): ChildProcess;
     /** MI command to load an executable and its symbols. */
@@ -52,6 +56,7 @@ export interface MIBackend {
 
 abstract class BaseMIBackend implements MIBackend {
     abstract name: string;
+    abstract command: string;
     abstract spawn(extraArgs?: string[]): ChildProcess;
     abstract loadHelperScript(): string | undefined;
 
@@ -113,9 +118,10 @@ abstract class BaseMIBackend implements MIBackend {
 
 export class GDBBackend extends BaseMIBackend {
     name = 'gdb';
+    command = 'gdb';
 
     spawn(extraArgs: string[] = []): ChildProcess {
-        return spawn('gdb', ['--interpreter=mi3', '--quiet', ...extraArgs], {
+        return spawn(this.command, ['--interpreter=mi3', '--quiet', ...extraArgs], {
             stdio: ['pipe', 'pipe', 'pipe'],
         });
     }
@@ -131,9 +137,10 @@ export class GDBBackend extends BaseMIBackend {
 
 export class LLDBBackend extends BaseMIBackend {
     name = 'lldb';
+    command = 'lldb-mi';
 
     spawn(extraArgs: string[] = []): ChildProcess {
-        return spawn('lldb-mi', [...extraArgs], {
+        return spawn(this.command, [...extraArgs], {
             stdio: ['pipe', 'pipe', 'pipe'],
         });
     }
@@ -163,13 +170,92 @@ export class LLDBBackend extends BaseMIBackend {
  * - 'lldb' → LLDBBackend
  * - 'auto' → LLDB on macOS, GDB elsewhere
  */
-export function detectBackend(preference: string): MIBackend {
+export function detectBackend(
+    preference: DebuggerBackendPreference | string,
+    platform: NodeJS.Platform = os.platform()
+): MIBackend {
     if (preference === 'lldb') return new LLDBBackend();
     if (preference === 'gdb') return new GDBBackend();
 
     // Auto: macOS → LLDB, Linux/Windows → GDB
-    if (os.platform() === 'darwin') {
+    if (platform === 'darwin') {
         return new LLDBBackend();
     }
     return new GDBBackend();
+}
+
+export interface BackendAvailabilityOptions {
+    platform?: NodeJS.Platform;
+    findOnPath?: (candidateName: string) => string | undefined;
+}
+
+export interface BackendAvailabilityResult {
+    backend: MIBackend;
+    resolvedPath?: string;
+    message?: string;
+}
+
+export function checkBackendAvailability(
+    preference: DebuggerBackendPreference | string,
+    options: BackendAvailabilityOptions = {}
+): BackendAvailabilityResult {
+    const platform = options.platform ?? os.platform();
+    const backend = detectBackend(preference, platform);
+    const findOnPath = options.findOnPath
+        ?? ((candidateName: string) => findCommandOnPath(candidateName, platform));
+    const resolvedPath = findOnPath(backend.command);
+
+    if (resolvedPath) {
+        return { backend, resolvedPath };
+    }
+
+    return {
+        backend,
+        message: getBackendUnavailableMessage(preference, backend, platform),
+    };
+}
+
+function findCommandOnPath(
+    candidateName: string,
+    platform: NodeJS.Platform
+): string | undefined {
+    const whichCmd = platform === 'win32' ? 'where' : 'which';
+
+    try {
+        const stdout = execFileSync(whichCmd, [candidateName], {
+            encoding: 'utf-8',
+            stdio: ['ignore', 'pipe', 'ignore'],
+        });
+        return stdout.trim().split(/\r?\n/)[0];
+    } catch {
+        return undefined;
+    }
+}
+
+function getBackendUnavailableMessage(
+    preference: DebuggerBackendPreference | string,
+    backend: MIBackend,
+    platform: NodeJS.Platform
+): string {
+    const backendLabel = backend.name === 'lldb' ? 'LLDB' : 'GDB';
+    const alternatePreference = backend.name === 'lldb' ? 'gdb' : 'lldb';
+    const alternateCommand = alternatePreference === 'gdb' ? 'gdb' : 'lldb-mi';
+    const selectionMessage = preference === 'auto'
+        ? `"debuggerBackend": "auto" selected the ${backendLabel} backend on ${platformLabel(platform)}.`
+        : `"debuggerBackend": "${preference}" requires the ${backendLabel} backend.`;
+
+    return `Cannot start Hew debugging: ${selectionMessage} ` +
+        `The "${backend.command}" command was not found on PATH. Install it or switch ` +
+        `launch.json to "debuggerBackend": "${alternatePreference}" if "${alternateCommand}" is installed.`;
+}
+
+function platformLabel(platform: NodeJS.Platform): string {
+    switch (platform) {
+        case 'darwin':
+            return 'macOS';
+        case 'win32':
+            return 'Windows';
+        default:
+            return platform;
+    }
 }

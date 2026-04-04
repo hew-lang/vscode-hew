@@ -87,6 +87,35 @@ fn main() -> i32 {
 
 Workspace-built `hew` and `hew-lsp` binaries are only auto-selected in trusted workspaces by default. In Restricted Mode, trust the workspace or set `hew.allowUntrustedWorkspaceBinaries` in user settings to opt in.
 
+## Debugging
+
+Before launching a Hew debug session:
+
+- If `program` points to a `.hew` source file, make sure `hew.debugger.hewPath` is set or `hew` is on `PATH` so the extension can run `hew build --debug`.
+- Make sure the selected backend executable is on `PATH`:
+  - `debuggerBackend: "auto"` picks `lldb-mi` on macOS and `gdb` elsewhere.
+  - `debuggerBackend: "lldb"` requires `lldb-mi`.
+  - `debuggerBackend: "gdb"` requires `gdb`.
+
+Example `.vscode/launch.json`:
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "hew",
+      "request": "launch",
+      "name": "Debug Hew Program",
+      "program": "${workspaceFolder}/main.hew",
+      "debuggerBackend": "auto"
+    }
+  ]
+}
+```
+
+If preflight reports that a backend is unavailable, either install the required tool or switch `debuggerBackend` to a backend that is already installed on your system.
+
 ## Supported Token Scopes
 
 | Hew Construct | TextMate Scope |
