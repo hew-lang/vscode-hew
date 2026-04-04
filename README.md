@@ -80,8 +80,12 @@ fn main() -> i32 {
 
 | Setting | Default | Description |
 |---|---|---|
-| `hew.lsp.serverPath` | `""` | Path to `hew-lsp` binary. If empty, searches workspace `target/` and `PATH`. |
-| `hew.formatterPath` | `""` | Path to `hew` binary for formatting. If empty, searches workspace `target/` and `PATH`. |
+| `hew.lsp.serverPath` | `""` | Path to `hew-lsp` binary. If empty, searches trusted workspace `target/`, `PATH`, and bundled binaries. |
+| `hew.formatterPath` | `""` | Path to `hew` binary for formatting. If empty, searches trusted workspace `target/`, `PATH`, and bundled binaries. |
+| `hew.debugger.hewPath` | `""` | Path to the `hew` compiler used for debug builds. If empty, uses the same trusted search as `hew.formatterPath`. |
+| `hew.allowUntrustedWorkspaceBinaries` | `false` | Allows auto-detecting workspace `target/release` and `target/debug` binaries even in Restricted Mode. Set this in user settings only when you explicitly trust those workspace binaries. |
+
+Workspace-built `hew` and `hew-lsp` binaries are only auto-selected in trusted workspaces by default. In Restricted Mode, trust the workspace or set `hew.allowUntrustedWorkspaceBinaries` in user settings to opt in.
 
 ## Supported Token Scopes
 

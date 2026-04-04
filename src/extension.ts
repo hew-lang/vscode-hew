@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import { execFile, execFileSync } from 'child_process';
@@ -6,11 +5,14 @@ import {
     LanguageClient,
     State,
 } from 'vscode-languageclient/node';
+import { discoverBinaryPath, BinaryLookupResult } from './binary-discovery';
 import { createLspWiring } from './lsp-wiring';
 import { HewDebugSession } from './debug/hew-debug-session';
 import { HewActorsProvider, ActorTreeItem } from './debug/actors-tree-view';
 
 let client: LanguageClient | undefined;
+const ALLOW_UNTRUSTED_WORKSPACE_BINARIES_SETTING = 'hew.allowUntrustedWorkspaceBinaries';
+const blockedWorkspaceBinaryWarnings = new Set<string>();
 
 export function activate(context: vscode.ExtensionContext) {
     const outputChannel = vscode.window.createOutputChannel('Hew Language Server');
@@ -30,7 +32,13 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    const serverPath = findBinaryPath('lsp.serverPath', 'hew-lsp', context.extensionPath);
+    const serverPathResult = findBinaryPath(
+        'lsp.serverPath',
+        'hew-lsp',
+        context.extensionPath,
+        outputChannel
+    );
+    const serverPath = serverPathResult.path;
 
     if (serverPath) {
         const { serverOptions, clientOptions } = createLspWiring(serverPath, outputChannel);
@@ -65,15 +73,15 @@ export function activate(context: vscode.ExtensionContext) {
         statusBar.tooltip = 'hew-lsp not found (formatter still available)';
         outputChannel.appendLine('hew-lsp not found. LSP features are disabled until it is installed.');
         vscode.window.showWarningMessage(
-            'hew-lsp not found. Build it with: cd <hew-project> && cargo build -p hew-lsp'
+            getMissingBinaryMessage('hew-lsp', 'hew.lsp.serverPath', serverPathResult)
         );
     }
 
     statusBar.show();
 
     // Register debug adapter
-    const hewPath = findBinaryPath('debugger.hewPath', 'hew', context.extensionPath)
-        ?? findBinaryPath('formatterPath', 'hew', context.extensionPath);
+    const hewPath = findBinaryPath('debugger.hewPath', 'hew', context.extensionPath, outputChannel).path
+        ?? findBinaryPath('formatterPath', 'hew', context.extensionPath, outputChannel).path;
 
     // Pass the hew compiler path to the debug session via environment variable
     if (hewPath) {
@@ -131,10 +139,11 @@ function formatDocument(
     outputChannel: vscode.OutputChannel,
     extensionPath: string
 ): Thenable<vscode.TextEdit[]> {
-    const hewPath = findBinaryPath('formatterPath', 'hew', extensionPath);
+    const hewPathResult = findBinaryPath('formatterPath', 'hew', extensionPath, outputChannel);
+    const hewPath = hewPathResult.path;
     if (!hewPath) {
         vscode.window.showWarningMessage(
-            'hew binary not found. Build it with: cd <hew-project> && cargo build -p hew-cli'
+            getMissingBinaryMessage('hew', 'hew.formatterPath', hewPathResult)
         );
         return Promise.resolve([]);
     }
@@ -160,42 +169,81 @@ function formatDocument(
 }
 
 /**
- * Find a binary by checking: config setting → workspace target/ dirs → PATH → bundled extension server/.
- * Consistent search order for both hew-lsp and hew binaries.
+ * Find a binary by checking: config setting → trusted workspace target/ dirs
+ * (or explicit opt-in) → PATH → bundled extension server/.
  */
-function findBinaryPath(configKey: string, binaryName: string, extensionPath: string): string | undefined {
-    const ext = process.platform === 'win32' ? '.exe' : '';
-
-    // Check configuration
+function findBinaryPath(
+    configKey: string,
+    binaryName: string,
+    extensionPath: string,
+    outputChannel: vscode.OutputChannel
+): BinaryLookupResult {
     const config = vscode.workspace.getConfiguration('hew');
-    const configPath = config.get<string>(configKey);
-    if (configPath && fs.existsSync(configPath)) return configPath;
+    const result = discoverBinaryPath({
+        configPath: config.get<string>(configKey),
+        binaryName,
+        extensionPath,
+        workspaceFolders: vscode.workspace.workspaceFolders?.map(folder => folder.uri.fsPath),
+        isWorkspaceTrusted: vscode.workspace.isTrusted,
+        allowUntrustedWorkspaceBinaries: config.get<boolean>('allowUntrustedWorkspaceBinaries', false),
+        fileExists: candidatePath => fs.existsSync(candidatePath),
+        findOnPath: candidateName => {
+            const whichCmd = process.platform === 'win32' ? 'where' : 'which';
+            try {
+                execFileSync(whichCmd, [candidateName], { stdio: 'pipe' });
+                return candidateName;
+            } catch {
+                return undefined;
+            }
+        },
+    });
 
-    // Check workspace folders for target/release or target/debug builds
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-    if (workspaceFolders) {
-        for (const folder of workspaceFolders) {
-            const releasePath = path.join(folder.uri.fsPath, 'target', 'release', `${binaryName}${ext}`);
-            const debugPath = path.join(folder.uri.fsPath, 'target', 'debug', `${binaryName}${ext}`);
-            if (fs.existsSync(releasePath)) return releasePath;
-            if (fs.existsSync(debugPath)) return debugPath;
-        }
+    reportBlockedWorkspaceBinaries(binaryName, result, outputChannel);
+    return result;
+}
+
+function reportBlockedWorkspaceBinaries(
+    binaryName: string,
+    result: BinaryLookupResult,
+    outputChannel: vscode.OutputChannel
+): void {
+    if (result.blockedWorkspaceCandidates.length === 0) {
+        return;
     }
 
-    // Check if binary is on PATH
-    const whichCmd = process.platform === 'win32' ? 'where' : 'which';
-    try {
-        execFileSync(whichCmd, [binaryName], { stdio: 'pipe' });
-        return binaryName;
-    } catch {
-        // no-op: binary not on PATH
+    const warningKey = `${binaryName}:${result.blockedWorkspaceCandidates.join('|')}`;
+    if (blockedWorkspaceBinaryWarnings.has(warningKey)) {
+        return;
     }
 
-    // Check for bundled server binary in the extension
-    const bundledPath = path.join(extensionPath, 'server', `${binaryName}${ext}`);
-    if (fs.existsSync(bundledPath)) return bundledPath;
+    blockedWorkspaceBinaryWarnings.add(warningKey);
 
-    return undefined;
+    const message =
+        `Skipping workspace-built ${binaryName} binaries because the workspace is untrusted. ` +
+        `Trust the workspace or enable ${ALLOW_UNTRUSTED_WORKSPACE_BINARIES_SETTING} in user settings ` +
+        'to allow binaries from target/release or target/debug.';
+
+    outputChannel.appendLine(
+        `${message} Skipped candidates: ${result.blockedWorkspaceCandidates.join(', ')}`
+    );
+    if (result.path) {
+        vscode.window.showWarningMessage(message);
+    }
+}
+
+function getMissingBinaryMessage(
+    binaryName: string,
+    configSetting: string,
+    result: BinaryLookupResult
+): string {
+    if (result.blockedWorkspaceCandidates.length > 0) {
+        return `${binaryName} not found. Workspace-built ${binaryName} binaries were ignored because the ` +
+            `workspace is untrusted. Trust the workspace or enable ${ALLOW_UNTRUSTED_WORKSPACE_BINARIES_SETTING} ` +
+            `in user settings, or set ${configSetting} to a trusted binary.`;
+    }
+
+    const buildPackage = binaryName === 'hew-lsp' ? 'hew-lsp' : 'hew-cli';
+    return `${binaryName} not found. Build it with: cd <hew-project> && cargo build -p ${buildPackage}`;
 }
 
 // ---------------------------------------------------------------------------
