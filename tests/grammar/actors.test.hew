@@ -33,6 +33,9 @@ spawn Counter { count: 0 }
     init(name: string) {
 //  ^^^^ keyword.actor.hew
 
+    terminate {
+//  ^^^^^^^^^ keyword.actor.hew
+
     async move || {
 //  ^^^^^ keyword.declaration.hew
 //        ^^^^ keyword.actor.hew
