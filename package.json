@@ -34,6 +34,18 @@
   "extensionKind": [
     "workspace"
   ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Syntax highlighting works in Restricted Mode. Running Hew binaries from the opened workspace stays disabled until you trust the workspace or explicitly opt in from user settings.",
+      "restrictedConfigurations": [
+        "hew.lsp.serverPath",
+        "hew.formatterPath",
+        "hew.debugger.hewPath",
+        "hew.allowUntrustedWorkspaceBinaries"
+      ]
+    }
+  },
   "contributes": {
     "languages": [
       {
@@ -65,17 +77,22 @@
         "hew.lsp.serverPath": {
           "type": "string",
           "default": "",
-          "description": "Path to the hew-lsp binary. If empty, searches workspace target/ directories and PATH."
+          "description": "Path to the hew-lsp binary. If empty, searches trusted workspace target/ directories, PATH, and bundled binaries. In Restricted Mode, workspace values are ignored."
         },
         "hew.formatterPath": {
           "type": "string",
           "default": "",
-          "description": "Path to the hew binary used for formatting. If empty, searches workspace target/ directories and PATH."
+          "description": "Path to the hew binary used for formatting. If empty, searches trusted workspace target/ directories, PATH, and bundled binaries. In Restricted Mode, workspace values are ignored."
         },
         "hew.debugger.hewPath": {
           "type": "string",
           "default": "",
-          "description": "Path to the hew compiler binary for debug builds. If empty, uses the same search as hew.formatterPath."
+          "description": "Path to the hew compiler binary for debug builds. If empty, uses the same trusted search as hew.formatterPath. In Restricted Mode, workspace values are ignored."
+        },
+        "hew.allowUntrustedWorkspaceBinaries": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow auto-discovering hew and hew-lsp from workspace target/release and target/debug even when the workspace is untrusted. User setting only in Restricted Mode."
         }
       }
     },
