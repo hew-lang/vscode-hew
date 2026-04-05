@@ -1,0 +1,25 @@
+// Each section below contains an intentional error.
+// Used to verify diagnostic squiggles appear correctly.
+
+// Type mismatch
+fn type_error() {
+    let x: int = "hello";
+}
+
+// Undefined variable
+fn undefined_var() {
+    println(nonexistent_var);
+}
+
+// Unused variable
+fn unused() {
+    let y = 42;
+}
+
+// Non-exhaustive match
+fn bad_match(opt: Option<int>) -> int {
+    match opt {
+        Some(x) => x,
+        // missing None arm
+    }
+}

@@ -244,7 +244,7 @@
         {
           "comment": "Wire protocol keywords",
           "name": "keyword.wire.hew",
-          "match": "\\b(default|deprecated|optional|reserved|wire)\\b"
+          "match": "\\b(default|deprecated|list|optional|reserved|wire)\\b"
         },
         {
           "comment": "State machine keywords",
