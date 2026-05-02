@@ -62,6 +62,14 @@ x = 5
 result?
 //    ^ keyword.operator.question.hew
 
+// -- Logical operators --
+
+x && y
+//^^ keyword.operator.logical.hew
+
+x || y
+//^^ keyword.operator.logical.hew
+
 // -- Logical not --
 
 !valid

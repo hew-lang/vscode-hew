@@ -26,6 +26,19 @@
 "hex \x41 escape"
 //   ^^^^ constant.character.escape.hew
 
+// -- Char literals --
+
+'a'
+// <- string.quoted.single.char.hew
+
+'\n'
+// <- string.quoted.single.char.hew
+
+// -- Byte string literals --
+
+b"hello"
+// <- string.quoted.byte.hew
+
 // -- Raw strings --
 
 r"no escapes \n here"
