@@ -4,18 +4,18 @@ Syntax highlighting and language support for the [Hew programming language](http
 
 ## Features
 
-- **Full syntax highlighting** for Hew v0.6 constructs
+- **Full syntax highlighting** for Hew language constructs
 - **Language Server Protocol** — completion, hover, definition, document symbols, semantic tokens, diagnostics (requires `hew-lsp`)
 - **Document formatting** — format on save via `hew fmt` (requires `hew` CLI)
-- **Actor declarations** — `actor`, `receive fn`, `receive`, `init`
+- **Actor declarations** — `actor`, `receive fn`, `receive`, `init`, `terminate`
 - **Supervisor trees** — `supervisor`, `child`, `restart`, `budget`, `strategy`
-- **Structured concurrency** — `scope`, `launch`, `cancel`, `spawn`, `await`
+- **Structured concurrency** — `scope`, `spawn`, `await`, `select`, `join`
 - **Generators** — `gen fn`, `async gen fn`, `yield`, `cooperate`
 - **Wire types** — `wire type`, `wire enum`, field tags with `@`
 - **Traits and generics** — `trait`, `impl ... for`, type parameters `[T: Send]`
 - **Pattern matching** — `match`, `=>`, guards, destructuring
 - **All built-in types** — `i8`–`i64`, `u8`–`u64`, `f32`, `f64`, `bool`, `char`, `string`
-- **String variants** — regular `"..."`, raw `r"..."`, interpolated `f"...{expr}..."`
+- **String variants** — regular `"..."`, raw `r"..."`, byte `b"..."`, interpolated `f"...{expr}..."`, char `'x'`
 - **Duration literals** — `100ms`, `5s`, `1h`
 - **Comments** — `//`, `/* */`, `///` (doc comments)
 - **Auto-closing pairs** for brackets, braces, parentheses, strings
@@ -121,19 +121,19 @@ If preflight reports that a backend is unavailable, either install the required 
 | Hew Construct | TextMate Scope |
 |---|---|
 | `fn`, `let`, `var`, `struct`, `enum`, `trait`, `impl`, `gen` | `keyword.declaration` |
-| `if`, `else`, `match`, `loop`, `for`, `while`, `return`, `await`, `scope`, `launch`, `cancel` | `keyword.control` |
-| `actor`, `receive`, `spawn`, `init`, `async`, `mailbox`, `overflow` | `keyword.actor` |
+| `if`, `else`, `match`, `loop`, `for`, `while`, `return`, `await`, `scope` | `keyword.control` |
+| `actor`, `receive`, `spawn`, `init`, `terminate` | `keyword.actor` |
 | `supervisor`, `child`, `restart`, `budget`, `strategy` | `keyword.supervisor` |
-| `wire`, `reserved`, `optional`, `deprecated`, `default`, `list` | `keyword.wire` |
-| `and`, `or` | `keyword.operator.logical` |
+| `wire`, `reserved`, `optional`, `deprecated`, `default` | `keyword.wire` |
+| `&&`, `\|\|` | `keyword.operator.logical` |
 | `one_for_one`, `permanent`, `true`, `false`, `None` | `constant.language` |
 | `i32`, `u64`, `f64`, `bool`, `string` | `storage.type` |
-| `Result`, `Option`, `Send`, `Frozen`, `Actor`, `ActorRef` | `storage.type` |
+| `Result`, `Option`, `Send`, `Frozen`, `HashSet`, `ActorRef` | `storage.type` |
 | PascalCase identifiers | `entity.name.type` |
 | Function names in definitions | `entity.name.function` |
 | Function calls | `entity.name.function.call` |
 | `self` | `variable.language.self` |
-| `"string"`, `r"raw"`, `f"interpolated {x}"` | `string.quoted` |
+| `"string"`, `r"raw"`, `b"bytes"`, `f"interpolated {x}"`, `'c'` | `string.quoted` |
 | `42`, `0xFF`, `0b1010`, `3.14`, `100ms` | `constant.numeric` |
 | `//`, `/* */`, `///` | `comment` |
 
