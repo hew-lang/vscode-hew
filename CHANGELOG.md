@@ -1,5 +1,21 @@
 # Change Log
 
+## [1.3.0] - 2026-05-01
+
+### Added
+- `terminate` keyword in actor scope (`keyword.actor.hew`)
+- `HashSet` to generic collection types (`storage.type.generic.hew`)
+- Logical operators `&&` and `||` (`keyword.operator.logical.hew`)
+- Char literal pattern `'x'` (`string.quoted.single.char.hew`)
+- Byte string literal pattern `b"..."` (`string.quoted.byte.hew`)
+
+### Fixed
+- Generator (`tools/generate-tmgrammar.mjs`) now preserves `terminate` in actor keyword scope
+- Removed `list` from wire keywords (dropped from the wire annotation language)
+
+### Changed
+- README: removed stale `launch`, `cancel`, `and`, `or` references; updated feature list
+
 ## [1.2.0] - 2026-03-16
 
 ### Added
