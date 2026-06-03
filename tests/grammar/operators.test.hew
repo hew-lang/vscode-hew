@@ -8,11 +8,6 @@ x -> y
 x => y
 //^^ keyword.operator.arrow.hew
 
-// -- Send operator --
-
-actor <- msg
-//    ^^ keyword.operator.send.hew
-
 // -- Range operators --
 
     x..y

@@ -54,16 +54,16 @@ await task
 scope {
 // <- keyword.control.hew
 
-// -- Reserved keywords (not yet used in v0.9.0) --
+// -- Removed/rejected keywords (parser rejects these with migration diagnostics) --
 
 try {
-// <- keyword.reserved.hew
+// <- invalid.removed.hew
 
 } catch err {
-//^^^^^ keyword.reserved.hew
+//^^^^^ invalid.removed.hew
 
 race {
-// <- keyword.reserved.hew
+// <- invalid.removed.hew
 
 // -- Declarations --
 
@@ -100,8 +100,7 @@ extern fn c_call()
 record Point {
 // <- keyword.declaration.hew
 
-let mut x = 5
-//  ^^^ keyword.declaration.hew
+// mut is operator-context only (*mut T in extern/FFI/unsafe); bare `mut` in let bindings is invalid in v0.5
 
 // -- Contextual identifiers --
 
@@ -119,10 +118,10 @@ unsafe {
 x is MyType
 //^^ keyword.other.hew
 
-// -- Reserved identifiers --
+// -- Removed/rejected identifiers --
 
 foreign {
-// <- keyword.reserved.hew
+// <- invalid.removed.hew
 
 // -- Constants --
 

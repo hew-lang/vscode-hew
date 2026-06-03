@@ -240,7 +240,7 @@
         {
           "comment": "Declarations",
           "name": "keyword.declaration.hew",
-          "match": "\\b(as|async|const|enum|extern|fn|gen|impl|import|indirect|let|mut|package|pub|record|struct|super|trait|type|var|where)\\b"
+          "match": "\\b(as|async|const|enum|extern|fn|gen|impl|import|indirect|let|package|pub|record|struct|super|trait|type|var|where)\\b"
         },
         {
           "comment": "Actor and concurrency",
@@ -283,14 +283,27 @@
           "match": "\\bNone\\b"
         },
         {
-          "comment": "Reserved keywords (not yet used in the language)",
-          "name": "keyword.reserved.hew",
+          "comment": "Removed/rejected keywords — parser explicitly rejects these with migration diagnostics. Highlight as invalid so users know these are not valid v0.5 syntax.",
+          "name": "invalid.removed.hew",
           "match": "\\b(catch|foreign|race|try)\\b"
         }
       ]
     },
     "types": {
       "patterns": [
+        {
+          "comment": "Raw pointer type prefix *const/*mut — valid only in extern/FFI/unsafe context. *var T is LEGACY and rejected by the parser.",
+          "name": "meta.type.pointer.raw.hew",
+          "match": "(\\*)\\s*(const|mut)\\b",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.pointer.hew"
+            },
+            "2": {
+              "name": "storage.modifier.pointer-mutability.hew"
+            }
+          }
+        },
         {
           "comment": "Numeric types",
           "name": "storage.type.numeric.hew",
@@ -543,11 +556,6 @@
           "match": "->|=>"
         },
         {
-          "comment": "Send operator",
-          "name": "keyword.operator.send.hew",
-          "match": "<-"
-        },
-        {
           "comment": "Range operators",
           "name": "keyword.operator.range.hew",
           "match": "\\.\\.=|\\.\\.(?!\\.)"
@@ -679,7 +687,7 @@
         {
           "comment": "Contextual identifiers (special meaning in specific contexts)",
           "name": "variable.language.contextual.hew",
-          "match": "\\b(block|coalesce|drop_new|drop_old|emits|events|export|fail|fallback|infinity|intensity|json|mailbox|overflow|reenter|repeated|shutdown|wired_to|within|yaml)\\b"
+          "match": "\\b(block|coalesce|drop_new|drop_old|emits|events|export|fail|fallback|infinity|initial|intensity|json|mailbox|overflow|reenter|repeated|shutdown|wired_to|within|yaml)\\b"
         },
         {
           "comment": "Identifier (catch-all for variables, parameters, fields)",

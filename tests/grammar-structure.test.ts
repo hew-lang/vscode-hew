@@ -71,4 +71,63 @@ describe('Grammar structure', () => {
     expect(actorPattern.match).toMatch(/\bfork\b/)
     expect(actorPattern.match).not.toMatch(/\bterminate\b/)
   })
+
+  it('marks rejected keywords as invalid.removed.hew, not keyword.reserved.hew', () => {
+    const allPatterns = grammar.repository.keywords.patterns
+    // try/catch/race/foreign are rejected by the parser with migration diagnostics
+    const removedPattern = allPatterns.find(
+      (p: any) => p.name === 'invalid.removed.hew'
+    )
+    expect(removedPattern).toBeDefined()
+    expect(removedPattern.match).toMatch(/\btry\b/)
+    expect(removedPattern.match).toMatch(/\bcatch\b/)
+    expect(removedPattern.match).toMatch(/\brace\b/)
+    expect(removedPattern.match).toMatch(/\bforeign\b/)
+    // must NOT be labelled as merely reserved
+    const reservedPattern = allPatterns.find(
+      (p: any) => p.name === 'keyword.reserved.hew'
+    )
+    expect(reservedPattern).toBeUndefined()
+  })
+
+  it('does not include the legacy <- send operator', () => {
+    function hasPattern(patterns: any[], name: string): boolean {
+      for (const p of patterns) {
+        if (p.name === name) return true
+        if (p.patterns && hasPattern(p.patterns, name)) return true
+      }
+      return false
+    }
+    // <- was never a real Hew operator; actor sends are method-call style
+    expect(hasPattern(grammar.repository.operators.patterns, 'keyword.operator.send.hew')).toBe(false)
+  })
+
+  it('does not include mut in declaration keywords', () => {
+    const declPattern = grammar.repository.keywords.patterns.find(
+      (p: any) => p.name === 'keyword.declaration.hew'
+    )
+    expect(declPattern).toBeDefined()
+    // mut is operator-context only (*mut T in extern/FFI/unsafe); not a general declaration keyword
+    expect(declPattern.match).not.toMatch(/\bmut\b/)
+  })
+
+  it('includes raw pointer type rule scoped to extern/FFI/unsafe', () => {
+    const pointerRule = grammar.repository.types.patterns.find(
+      (p: any) => p.name === 'meta.type.pointer.raw.hew'
+    )
+    expect(pointerRule).toBeDefined()
+    // must match *const and *mut but NOT *var (legacy, rejected by parser)
+    expect(pointerRule.match).toMatch(/const/)
+    expect(pointerRule.match).toMatch(/mut/)
+    expect(pointerRule.match).not.toMatch(/var/)
+  })
+
+  it('includes initial in contextual identifiers', () => {
+    const contextualPattern = grammar.repository.variables.patterns.find(
+      (p: any) => p.name === 'variable.language.contextual.hew'
+    )
+    expect(contextualPattern).toBeDefined()
+    // initial is a real machine contextual keyword (eat_machine_kw, parser:979-998)
+    expect(contextualPattern.match).toMatch(/\binitial\b/)
+  })
 })
