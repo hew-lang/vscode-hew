@@ -63,7 +63,7 @@ const keywordGroups = {
   ],
 
   'keyword.actor.hew': [
-    'actor', 'init', 'move', 'receive', 'spawn', 'terminate', 'this',
+    'actor', 'fork', 'init', 'move', 'receive', 'spawn', 'this',
   ],
 
   'keyword.supervisor.hew': [
@@ -71,8 +71,8 @@ const keywordGroups = {
   ],
 
   'constant.language.strategy.hew': [
-    'permanent', 'transient', 'temporary',
-    'one_for_one', 'one_for_all', 'rest_for_one',
+    'brutal_kill', 'one_for_all', 'one_for_one', 'permanent', 'pool',
+    'rest_for_one', 'simple_one_for_one', 'temporary', 'transient',
   ],
 
   'keyword.wire.hew': [...kw.wire],
@@ -105,10 +105,11 @@ const typeGroups = {
     ...types.collections,
     // Option/Result types and constructors (None handled by constant.language.none.hew)
     'Option', 'Result', 'Ok', 'Err', 'Some',
-    // Smart pointers
+    // Smart pointers (from types.marker_traits)
     'Arc', 'Rc', 'Weak',
     // Other named types
     ...types.other,
+    // Note: ActorStream was removed in v0.5; concurrency types are in storage.type.concurrency.hew
   ],
 
   'storage.type.concurrency.hew': [

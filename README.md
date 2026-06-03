@@ -120,13 +120,16 @@ If preflight reports that a backend is unavailable, either install the required 
 
 | Hew Construct | TextMate Scope |
 |---|---|
-| `fn`, `let`, `var`, `struct`, `enum`, `trait`, `impl`, `gen` | `keyword.declaration` |
+| `fn`, `let`, `var`, `const`, `mut`, `record`, `struct`, `enum`, `trait`, `impl`, `gen` | `keyword.declaration` |
 | `if`, `else`, `match`, `loop`, `for`, `while`, `return`, `await`, `scope` | `keyword.control` |
-| `actor`, `receive`, `spawn`, `init`, `terminate` | `keyword.actor` |
+| `actor`, `receive`, `spawn`, `init`, `fork`, `this` | `keyword.actor` |
 | `supervisor`, `child`, `restart`, `budget`, `strategy` | `keyword.supervisor` |
+| `machine`, `state`, `event`, `on`, `when`, `entry`, `exit`, `emit` | `keyword.control.machine` |
 | `wire`, `reserved`, `optional`, `deprecated`, `default` | `keyword.wire` |
+| `dyn`, `is`, `unsafe` | `keyword.other` |
 | `&&`, `\|\|` | `keyword.operator.logical` |
-| `one_for_one`, `permanent`, `true`, `false`, `None` | `constant.language` |
+| `one_for_one`, `pool`, `brutal_kill`, `permanent`, `true`, `false`, `None` | `constant.language` |
+| `events`, `emits`, `reenter`, `intensity`, `within`, `shutdown`, `infinity`, `wired_to` | `variable.language.contextual` |
 | `i32`, `u64`, `f64`, `bool`, `string` | `storage.type` |
 | `Result`, `Option`, `Send`, `Frozen`, `HashSet`, `ActorRef` | `storage.type` |
 | PascalCase identifiers | `entity.name.type` |

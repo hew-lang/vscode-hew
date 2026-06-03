@@ -1,5 +1,31 @@
 # Change Log
 
+## [Unreleased] - v0.5 language refresh
+
+### Added
+- `machine` keyword family fully covered: `entry`, `exit`, `emit` added to `keyword.control.machine.hew` (previously only `event`, `machine`, `on`, `state`, `when`)
+- Machine contextual identifiers: `events`, `emits`, `reenter` added to `variable.language.contextual.hew`
+- Supervisor contextual identifiers: `intensity`, `within`, `shutdown`, `infinity`, `wired_to` added to `variable.language.contextual.hew`
+- `record` and `mut` added to `keyword.declaration.hew` (canonical v0.5 declaration keywords)
+- `is` added to `keyword.other.hew`
+- `fork` added to `keyword.actor.hew`
+- `brutal_kill`, `pool`, `simple_one_for_one` added to `constant.language.strategy.hew`
+- New grammar test file `tests/grammar/machine.test.hew` covering `machine`, `state`, `events {}`, `emits {}`, `on ... =>`, `entry`, `exit`, `emit`, `reenter`
+
+### Removed
+- `terminate` removed from `keyword.actor.hew` (not a v0.5 keyword)
+- `pure` removed from `keyword.other.hew` (not a v0.5 keyword); `pure fn` patterns removed from function-definition capture groups
+- `ActorStream` removed from `storage.type.generic.hew` (dropped in v0.5)
+- `max_restarts`, `window` removed from `variable.language.contextual.hew` (superseded by `intensity`/`within`)
+
+### Fixed
+- Grammar sync (`tools/generate-tmgrammar.mjs`) updated: `terminate` dropped from hardcoded actor map; `fork`, `brutal_kill`, `pool`, `simple_one_for_one` now assigned to scopes so the coverage checker passes cleanly
+- `test/fixtures/machines_duration.hew` rewritten to v0.5 syntax: `=>` routing arrow, `events {}` block header
+- README keyword table updated to reflect v0.5 surface
+
+### Changed
+- Grammar synced to `syntax-data.json v0.10.0-pre`
+
 ## [1.3.0] - 2026-05-01
 
 ### Added

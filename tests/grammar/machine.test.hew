@@ -1,0 +1,58 @@
+// SYNTAX TEST "source.hew"
+
+// -- Machine declaration --
+
+machine TcpState {
+// <- keyword.control.machine.hew
+
+    events {
+//  ^^^^^^ variable.language.contextual.hew
+
+        Connect;
+        Data { payload: string; }
+    }
+
+    emits {
+//  ^^^^^ variable.language.contextual.hew
+
+        Ack;
+    }
+
+    state Closed;
+//  ^^^^^ keyword.control.machine.hew
+
+    state Listen {
+//  ^^^^^ keyword.control.machine.hew
+
+        entry {
+//      ^^^^^ keyword.control.machine.hew
+        }
+
+        exit {
+//      ^^^^ keyword.control.machine.hew
+        }
+    }
+
+    on Connect: Closed => Listen {
+//  ^^ keyword.control.machine.hew
+
+        Listen { backlog: 128 }
+    }
+
+    on Data: Listen => Listen reenter {
+//                            ^^^^^^^ variable.language.contextual.hew
+
+        Listen { backlog: 64 }
+    }
+
+    when x > 0 {
+//  ^^^^ keyword.control.machine.hew
+
+    event Timer;
+//  ^^^^^ keyword.control.machine.hew
+
+    emit Ack;
+//  ^^^^ keyword.control.machine.hew
+
+    default { state }
+}

@@ -97,13 +97,16 @@ struct Point {
 extern fn c_call()
 // <- keyword.declaration.hew
 
+record Point {
+// <- keyword.declaration.hew
+
+let mut x = 5
+//  ^^^ keyword.declaration.hew
+
 // -- Contextual identifiers --
 
 export fn world() {
 // <- variable.language.contextual.hew
-
-let mut x = 5
-//  ^^^ variable.language.contextual.hew
 
 // -- Other keywords --
 
@@ -113,8 +116,8 @@ dyn Trait
 unsafe {
 // <- keyword.other.hew
 
-pure fn compute() {
-// <- keyword.declaration.hew
+x is MyType
+//^^ keyword.other.hew
 
 // -- Reserved identifiers --
 
@@ -139,6 +142,15 @@ one_for_all
 // <- constant.language.strategy.hew
 
 rest_for_one
+// <- constant.language.strategy.hew
+
+simple_one_for_one
+// <- constant.language.strategy.hew
+
+pool
+// <- constant.language.strategy.hew
+
+brutal_kill
 // <- constant.language.strategy.hew
 
 permanent

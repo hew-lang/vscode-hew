@@ -62,11 +62,13 @@ describe('Grammar structure', () => {
     expect(unresolvedRefs).toEqual([])
   })
 
-  it('includes terminate in actor keywords — actor lifecycle completeness', () => {
+  it('includes v0.5 actor keywords and excludes removed ones', () => {
     const actorPattern = grammar.repository.keywords.patterns.find(
       (p: any) => p.name === 'keyword.actor.hew'
     )
     expect(actorPattern).toBeDefined()
-    expect(actorPattern.match).toMatch(/\bterminate\b/)
+    // v0.5: fork added, terminate removed
+    expect(actorPattern.match).toMatch(/\bfork\b/)
+    expect(actorPattern.match).not.toMatch(/\bterminate\b/)
   })
 })
