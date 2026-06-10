@@ -93,6 +93,11 @@
           "type": "boolean",
           "default": false,
           "description": "Allow auto-discovering hew and hew-lsp from workspace target/release and target/debug even when the workspace is untrusted. User setting only in Restricted Mode."
+        },
+        "hew.pkgPath": {
+          "type": "string",
+          "default": "",
+          "description": "Package search directory passed to hew-lsp as --pkg-path. Mirrors `hew check --pkg-path <dir>` so that editor diagnostics and the CLI agree on which imports resolve. Leave empty to use the default package search roots."
         }
       }
     },

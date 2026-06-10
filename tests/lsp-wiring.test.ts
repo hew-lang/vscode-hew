@@ -19,4 +19,24 @@ describe('LSP wiring', () => {
     expect(clientOptions.documentSelector).toContainEqual({ language: 'hew' })
     expect(clientOptions.outputChannel).toBe(outputChannel)
   })
+
+  it('passes --pkg-path arg when pkgPath option is provided', () => {
+    const outputChannel = { appendLine: () => {} } as any
+    const { serverOptions } = createLspWiring('/tmp/hew-lsp', outputChannel, {
+      pkgPath: '/custom/packages',
+    })
+
+    expect(serverOptions).toEqual({
+      command: '/tmp/hew-lsp',
+      args: ['--pkg-path', '/custom/packages'],
+      transport: HEW_STDIO_TRANSPORT,
+    })
+  })
+
+  it('omits --pkg-path arg when pkgPath option is absent', () => {
+    const outputChannel = { appendLine: () => {} } as any
+    const { serverOptions } = createLspWiring('/tmp/hew-lsp', outputChannel, {})
+
+    expect((serverOptions as any).args).toEqual([])
+  })
 })

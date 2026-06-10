@@ -42,7 +42,9 @@ export function activate(context: vscode.ExtensionContext) {
     const serverPath = serverPathResult.path;
 
     if (serverPath) {
-        const { serverOptions, clientOptions } = createLspWiring(serverPath, outputChannel);
+        const config = vscode.workspace.getConfiguration('hew');
+        const pkgPath = config.get<string>('pkgPath', '').trim() || undefined;
+        const { serverOptions, clientOptions } = createLspWiring(serverPath, outputChannel, { pkgPath });
 
         client = new LanguageClient(
             'hewLanguageServer',
