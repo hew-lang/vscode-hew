@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased] - v0.5 language refresh
+## [1.4.0] - 2026-06-10
 
 ### Added
 - `machine` keyword family fully covered: `entry`, `exit`, `emit` added to `keyword.control.machine.hew` (previously only `event`, `machine`, `on`, `state`, `when`)

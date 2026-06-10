@@ -1,5 +1,6 @@
 .git/**
 .claude/**
+.tmp/**
 .github/**
 .vscode/**
 src/**
