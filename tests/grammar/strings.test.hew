@@ -55,3 +55,18 @@ f"count: {x + 1}"
 // <- string.interpolated.hew
 //       ^ punctuation.section.interpolation.begin.hew
 //             ^ punctuation.section.interpolation.end.hew
+
+// -- Escaped quotes before AND after an interpolation (grammar.ebnf:385-386) --
+
+f"x \"{a}\" y"
+//  ^^ constant.character.escape.hew
+//    ^ punctuation.section.interpolation.begin.hew
+//      ^ punctuation.section.interpolation.end.hew
+//       ^^ constant.character.escape.hew
+
+// -- Regex literal: re"pattern" (grammar.ebnf:390) --
+
+re"\d+abc"
+// <- string.regexp.hew
+//    ^ string.regexp.hew
+

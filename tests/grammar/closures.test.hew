@@ -1,0 +1,42 @@
+// SYNTAX TEST "source.hew"
+
+// -- Pipe closure with single param (grammar.ebnf:289) --
+
+let dbl = |x| x + 1;
+//        ^ punctuation.definition.parameters.begin.hew
+//         ^ variable.parameter.hew
+//          ^ punctuation.definition.parameters.end.hew
+
+// -- Pipe closure with multiple params (grammar.ebnf:294) --
+
+let sum = apply(|a, b| a + b, 1, 2);
+//              ^ punctuation.definition.parameters.begin.hew
+//               ^ variable.parameter.hew
+//                  ^ variable.parameter.hew
+//                   ^ punctuation.definition.parameters.end.hew
+
+// -- move closure with typed param (grammar.ebnf:289,295) --
+
+let typed = move |x: i64| x;
+//               ^ punctuation.definition.parameters.begin.hew
+//                ^ variable.parameter.hew
+//                   ^^^ storage.type.numeric.hew
+//                      ^ punctuation.definition.parameters.end.hew
+
+// -- actor move lambda with typed param (grammar.ebnf:251) --
+
+let act = actor move |msg: Msg| { 0 };
+//                   ^ punctuation.definition.parameters.begin.hew
+//                    ^^^ variable.parameter.hew
+//                         ^^^ entity.name.type.hew
+//                            ^ punctuation.definition.parameters.end.hew
+
+// -- Negative guard: logical-or must NOT be an empty closure (grammar.ebnf:232) --
+
+let lor = a || b;
+//          ^^ keyword.operator.logical.hew
+
+// -- Negative guard: bitwise-or pipe must NOT be a closure (grammar.ebnf:236) --
+
+let bor = a | b;
+//          ^ punctuation.separator.pipe.hew

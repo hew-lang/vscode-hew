@@ -37,6 +37,15 @@
       "include": "#types"
     },
     {
+      "include": "#turbofish"
+    },
+    {
+      "include": "#closures"
+    },
+    {
+      "include": "#glob-import"
+    },
+    {
       "include": "#operators"
     },
     {
@@ -543,6 +552,89 @@
             },
             "2": {
               "name": "entity.name.type.hew"
+            }
+          }
+        }
+      ]
+    },
+    "turbofish": {
+      "patterns": [
+        {
+          "comment": "Turbofish type arguments in expression position: Ident::<T>(...), Vec::<i64>::new() (grammar.ebnf:249). Scoped before #operators so the angle brackets are not mistaken for comparison operators.",
+          "begin": "(::)(<)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.operator.namespace.hew"
+            },
+            "2": {
+              "name": "punctuation.definition.typeparameters.begin.hew"
+            }
+          },
+          "end": "(>)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.typeparameters.end.hew"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#types"
+            },
+            {
+              "name": "punctuation.separator.comma.hew",
+              "match": ","
+            }
+          ]
+        }
+      ]
+    },
+    "closures": {
+      "patterns": [
+        {
+          "comment": "Closure parameters: |x|, |x, y|, |x: T|, move |x|, actor |x| (grammar.ebnf:289-295). Anchored to closure-introducing contexts (after = ( , [ => move actor) so bitwise-or `a | b | c`, or-patterns `A | B`, and logical-or `a || b` keep their operator scopes. Empty `||` closures intentionally stay logical-or to avoid mis-scoping `a || b`.",
+          "begin": "(?<=[=(,\\[]\\s*|=>\\s*|\\bmove\\s+|\\bactor\\s+)(\\|)(?!\\|)(?=[^|]*\\|)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.parameters.begin.hew"
+            }
+          },
+          "end": "(\\|)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.parameters.end.hew"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#types"
+            },
+            {
+              "name": "variable.parameter.hew",
+              "match": "\\b[a-z_][a-zA-Z0-9_]*\\b"
+            },
+            {
+              "name": "punctuation.separator.colon.hew",
+              "match": ":"
+            },
+            {
+              "name": "punctuation.separator.comma.hew",
+              "match": ","
+            }
+          ]
+        }
+      ]
+    },
+    "glob-import": {
+      "patterns": [
+        {
+          "comment": "Glob import wildcard: import a::b::* (grammar.ebnf:66). Matched before #operators so the trailing * is a wildcard, not arithmetic multiply. The `::*` sequence only occurs in glob imports — Hew dereference is prefix *expr, never path::*.",
+          "match": "(::)(\\*)",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.namespace.hew"
+            },
+            "2": {
+              "name": "keyword.operator.wildcard.hew"
             }
           }
         }

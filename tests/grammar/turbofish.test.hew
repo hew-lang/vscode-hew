@@ -1,0 +1,23 @@
+// SYNTAX TEST "source.hew"
+
+// -- Turbofish on method path: Vec::new::<i64>() (grammar.ebnf:249) --
+
+let v = Vec::new::<i64>();
+//              ^^ keyword.operator.namespace.hew
+//                ^ punctuation.definition.typeparameters.begin.hew
+//                 ^^^ storage.type.numeric.hew
+//                    ^ punctuation.definition.typeparameters.end.hew
+
+// -- Turbofish on type path: HashMap::<Key, i64>::new() (grammar.ebnf:249) --
+
+let m = HashMap::<Key, i64>::new();
+//             ^^ keyword.operator.namespace.hew
+//               ^ punctuation.definition.typeparameters.begin.hew
+//                ^^^ entity.name.type.hew
+//                     ^^^ storage.type.numeric.hew
+//                        ^ punctuation.definition.typeparameters.end.hew
+
+// -- Negative guard: a plain less-than is still a comparison (grammar.ebnf:235) --
+
+if a < b { 0 }
+//   ^ keyword.operator.comparison.hew
