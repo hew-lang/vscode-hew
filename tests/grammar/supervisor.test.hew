@@ -1,0 +1,17 @@
+// SYNTAX TEST "source.hew"
+
+supervisor AppSup {
+// <- keyword.supervisor.hew
+
+    strategy: one_for_one;
+//  ^^^^^^^^ keyword.supervisor.hew
+//            ^^^^^^^^^^^ constant.language.strategy.hew
+
+// -- intensity: N within DURATION (grammar.ebnf:143) --
+
+    intensity: 5 within 60s;
+//  ^^^^^^^^^ variable.language.contextual.hew
+//             ^ constant.numeric.integer.hew
+//               ^^^^^^ variable.language.contextual.hew
+//                      ^^^ constant.numeric.duration.hew
+}

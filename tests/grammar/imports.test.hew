@@ -1,0 +1,30 @@
+// SYNTAX TEST "source.hew"
+
+// -- N-segment path import (grammar.ebnf:64) --
+
+import std::time::datetime;
+// <- keyword.declaration.hew
+//        ^^ keyword.operator.namespace.hew
+
+// -- Grouped import with alias (grammar.ebnf:65,68) --
+
+import a::b::{X, Y as Z};
+// <- keyword.declaration.hew
+//      ^^ keyword.operator.namespace.hew
+//           ^ punctuation.brackets.curly.hew
+//            ^ entity.name.type.hew
+//                 ^^ keyword.declaration.hew
+//                    ^ entity.name.type.hew
+//                     ^ punctuation.brackets.curly.hew
+
+// -- Glob import star (grammar.ebnf:66) --
+
+import a::b::*;
+// <- keyword.declaration.hew
+//           ^ keyword.operator.wildcard.hew
+
+// -- String-path import (grammar.ebnf:63) --
+
+import "path.hew";
+// <- keyword.declaration.hew
+//     ^ string.quoted.double.hew
