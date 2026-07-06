@@ -13,6 +13,9 @@
 
 ### Fixed
 - `cooperate` moved from `keyword.control.hew` to `invalid.removed.hew`
+- Shift operators now match longest-first so `<<`, `>>`, `<<=`, and `>>=` keep their bitwise/compound-assignment scopes instead of splitting into comparison tokens
+- Bare `^` now scopes as `keyword.operator.bitwise.xor.hew`; wrapping arithmetic operators `&+`, `&-`, and `&*` now scope as single `keyword.operator.wrapping.hew` tokens
+- Removed regex-match operators `=~` and `!~` now scope as `invalid.removed.hew`
 - README and grammar tests updated for `#[wire]` declarations and the v0.6 surface
 
 ### Changed

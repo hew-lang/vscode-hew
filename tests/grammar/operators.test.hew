@@ -30,6 +30,12 @@ x <= y
 x >= y
 //^^ keyword.operator.comparison.hew
 
+a << b
+//^^ keyword.operator.bitwise.shift.hew
+
+a >> b
+//^^ keyword.operator.bitwise.shift.hew
+
 // -- Compound assignment --
 
 x += 1
@@ -46,6 +52,12 @@ x /= 2
 
 x %= 3
 //^^ keyword.operator.assignment.compound.hew
+
+x <<= 2
+//^^^ keyword.operator.assignment.compound.hew
+
+x >>= 2
+//^^^ keyword.operator.assignment.compound.hew
 
 // -- Assignment --
 
@@ -69,6 +81,28 @@ x || y
 
 !valid
 // <- keyword.operator.not.hew
+
+// -- Bitwise / wrapping operators --
+
+a ^ b
+//^ keyword.operator.bitwise.xor.hew
+
+a &+ b
+//^^ keyword.operator.wrapping.hew
+
+a &- b
+//^^ keyword.operator.wrapping.hew
+
+a &* b
+//^^ keyword.operator.wrapping.hew
+
+// -- Removed operators --
+
+a =~ b
+//^^ invalid.removed.hew
+
+a !~ b
+//^^ invalid.removed.hew
 
 // -- Namespace --
 
