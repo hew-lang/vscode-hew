@@ -1,5 +1,23 @@
 # Change Log
 
+## [1.5.0] - 2026-07-06
+
+### Added
+- `await_restart` added to `keyword.control.hew`
+- `LocalPid`, `RemotePid`, and `LambdaPid` added to `storage.type.concurrency.hew`
+
+### Removed
+- `wire` removed from `keyword.wire.hew`; legacy `wire type` / `wire enum` declaration pattern removed
+- `struct` removed from `keyword.declaration.hew`; legacy `struct` declaration pattern removed
+- `ActorRef` removed from `storage.type.concurrency.hew`
+
+### Fixed
+- `cooperate` moved from `keyword.control.hew` to `invalid.removed.hew`
+- README and grammar tests updated for `#[wire]` declarations and the v0.6 surface
+
+### Changed
+- Grammar synced to the Hew v0.6 surface
+
 ## [1.4.0] - 2026-06-10
 
 ### Added

@@ -77,8 +77,14 @@ let a: Arc = shared
 
 // -- Concurrency types --
 
-let actor: ActorRef = ref
+let local: LocalPid = pid
 //         ^^^^^^^^ storage.type.concurrency.hew
+
+let remote: RemotePid = pid
+//          ^^^^^^^^^ storage.type.concurrency.hew
+
+let lambda: LambdaPid = handler
+//          ^^^^^^^^^ storage.type.concurrency.hew
 
 let t: Task = work
 //     ^^^^ storage.type.concurrency.hew
@@ -106,9 +112,6 @@ fn method(self) -> Self {
 
 let p: MyCustomType = value
 //     ^^^^^^^^^^^^ entity.name.type.hew
-
-struct Point {
-//     ^^^^^ entity.name.type.struct.hew
 
 enum Color {
 //   ^^^^^ entity.name.type.enum.hew

@@ -7,11 +7,11 @@ Syntax highlighting and language support for the [Hew programming language](http
 - **Full syntax highlighting** for Hew language constructs
 - **Language Server Protocol** — completion, hover, definition, document symbols, semantic tokens, diagnostics (requires `hew-lsp`)
 - **Document formatting** — format on save via `hew fmt` (requires `hew` CLI)
-- **Actor declarations** — `actor`, `receive fn`, `receive`, `init`, `terminate`
+- **Actor declarations** — `actor`, `receive fn`, `receive`, `init`
 - **Supervisor trees** — `supervisor`, `child`, `restart`, `budget`, `strategy`
-- **Structured concurrency** — `scope`, `spawn`, `await`, `select`, `join`
-- **Generators** — `gen fn`, `async gen fn`, `yield`, `cooperate`
-- **Wire types** — `wire type`, `wire enum`, field tags with `@`
+- **Structured concurrency** — `scope`, `spawn`, `await`, `await_restart`, `select`, `join`
+- **Generators** — `gen fn`, `async gen fn`, `yield`
+- **Wire types** — `#[wire]` attribute on `type`/`enum` declarations, field tags with `@`
 - **Traits and generics** — `trait`, `impl ... for`, type parameters `[T: Send]`
 - **Pattern matching** — `match`, `=>`, guards, destructuring
 - **All built-in types** — `i8`–`i64`, `u8`–`u64`, `f32`, `f64`, `bool`, `char`, `string`
@@ -120,18 +120,18 @@ If preflight reports that a backend is unavailable, either install the required 
 
 | Hew Construct | TextMate Scope |
 |---|---|
-| `fn`, `let`, `var`, `const`, `mut`, `record`, `struct`, `enum`, `trait`, `impl`, `gen` | `keyword.declaration` |
-| `if`, `else`, `match`, `loop`, `for`, `while`, `return`, `await`, `scope` | `keyword.control` |
+| `fn`, `let`, `var`, `const`, `record`, `type`, `enum`, `trait`, `impl`, `gen` | `keyword.declaration` |
+| `if`, `else`, `match`, `loop`, `for`, `while`, `return`, `await`, `await_restart`, `scope` | `keyword.control` |
 | `actor`, `receive`, `spawn`, `init`, `fork`, `this` | `keyword.actor` |
 | `supervisor`, `child`, `restart`, `budget`, `strategy` | `keyword.supervisor` |
 | `machine`, `state`, `event`, `on`, `when`, `entry`, `exit`, `emit` | `keyword.control.machine` |
-| `wire`, `reserved`, `optional`, `deprecated`, `default` | `keyword.wire` |
+| `reserved`, `optional`, `deprecated`, `default` | `keyword.wire` |
 | `dyn`, `is`, `unsafe` | `keyword.other` |
 | `&&`, `\|\|` | `keyword.operator.logical` |
 | `one_for_one`, `pool`, `brutal_kill`, `permanent`, `true`, `false`, `None` | `constant.language` |
-| `events`, `emits`, `reenter`, `intensity`, `within`, `shutdown`, `infinity`, `wired_to` | `variable.language.contextual` |
+| `events`, `emits`, `reenter`, `initial`, `mailbox`, `overflow`, `intensity`, `within`, `shutdown`, `infinity`, `wired_to`, `export`, `resource`, `linear`, `opaque`, `wire`, `json`, `yaml`, `repeated`, `coalesce`, `fallback`, `drop_new`, `drop_old`, `block`, `fail` | `variable.language.contextual` |
 | `i32`, `u64`, `f64`, `bool`, `string` | `storage.type` |
-| `Result`, `Option`, `Send`, `Frozen`, `HashSet`, `ActorRef` | `storage.type` |
+| `Result`, `Option`, `Send`, `Frozen`, `HashSet`, `LocalPid`, `RemotePid`, `LambdaPid` | `storage.type` |
 | PascalCase identifiers | `entity.name.type` |
 | Function names in definitions | `entity.name.function` |
 | Function calls | `entity.name.function.call` |

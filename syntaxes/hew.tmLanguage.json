@@ -244,12 +244,12 @@
         {
           "comment": "Control flow",
           "name": "keyword.control.hew",
-          "match": "\\b(after|await|break|continue|cooperate|defer|else|for|from|if|in|join|loop|match|return|scope|select|while|yield)\\b"
+          "match": "\\b(after|await|await_restart|break|continue|defer|else|for|from|if|in|join|loop|match|return|scope|select|while|yield)\\b"
         },
         {
           "comment": "Declarations",
           "name": "keyword.declaration.hew",
-          "match": "\\b(as|async|const|enum|extern|fn|gen|impl|import|indirect|let|package|pub|record|struct|super|trait|type|var|where)\\b"
+          "match": "\\b(as|async|const|enum|extern|fn|gen|impl|import|indirect|let|package|pub|record|super|trait|type|var|where)\\b"
         },
         {
           "comment": "Actor and concurrency",
@@ -269,7 +269,7 @@
         {
           "comment": "Wire protocol keywords",
           "name": "keyword.wire.hew",
-          "match": "\\b(default|deprecated|optional|reserved|wire)\\b"
+          "match": "\\b(default|deprecated|optional|reserved)\\b"
         },
         {
           "comment": "State machine keywords",
@@ -294,7 +294,7 @@
         {
           "comment": "Removed/rejected keywords — parser explicitly rejects these with migration diagnostics. Highlight as invalid so users know these are not valid v0.5 syntax.",
           "name": "invalid.removed.hew",
-          "match": "\\b(catch|foreign|race|try)\\b"
+          "match": "\\b(catch|cooperate|foreign|race|try)\\b"
         }
       ]
     },
@@ -331,7 +331,7 @@
         {
           "comment": "Concurrency types",
           "name": "storage.type.concurrency.hew",
-          "match": "\\b(ActorRef|AsyncGenerator|Generator|Scope|Sink|Stream|Task)\\b"
+          "match": "\\b(AsyncGenerator|Generator|LambdaPid|LocalPid|RemotePid|Scope|Sink|Stream|Task)\\b"
         },
         {
           "comment": "Built-in trait names",
@@ -472,18 +472,6 @@
           }
         },
         {
-          "comment": "Struct declaration",
-          "match": "\\b(struct)\\s+([A-Z][a-zA-Z0-9_]*)",
-          "captures": {
-            "1": {
-              "name": "keyword.declaration.hew"
-            },
-            "2": {
-              "name": "entity.name.type.struct.hew"
-            }
-          }
-        },
-        {
           "comment": "Enum declaration",
           "match": "\\b(enum)\\s+([A-Z][a-zA-Z0-9_]*)",
           "captures": {
@@ -510,21 +498,6 @@
             },
             "4": {
               "name": "entity.name.type.hew"
-            }
-          }
-        },
-        {
-          "comment": "Wire type/enum declaration",
-          "match": "\\b(wire)\\s+(type|enum)\\s+([A-Z][a-zA-Z0-9_]*)",
-          "captures": {
-            "1": {
-              "name": "keyword.wire.hew"
-            },
-            "2": {
-              "name": "keyword.declaration.hew"
-            },
-            "3": {
-              "name": "entity.name.type.wire.hew"
             }
           }
         },
