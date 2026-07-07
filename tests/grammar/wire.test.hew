@@ -1,41 +1,32 @@
 // SYNTAX TEST "source.hew"
 
-// -- Wire declarations --
+// -- #[wire] declarations --
 
-wire type Message {
-// <- keyword.wire.hew
-//   ^^^^ keyword.declaration.hew
-//        ^^^^^^^ entity.name.type.wire.hew
-
-wire enum Command {
-// <- keyword.wire.hew
-//   ^^^^ keyword.declaration.hew
-//        ^^^^^^^ entity.name.type.wire.hew
-
-// -- Wire field tags --
-
-    name: string @1
+    #[wire]
+//  ^^ punctuation.definition.attribute.begin.hew
+//    ^^^^ entity.name.function.attribute.hew
+//        ^ punctuation.definition.attribute.end.hew
+type UserCreated {
+// <- keyword.declaration.hew
+//   ^^^^^^^^^^^ entity.name.type.hew
+    id: u64 @1,
+//          ^^ constant.numeric.wire-tag.hew
+    name: string @2,
 //               ^^ constant.numeric.wire-tag.hew
-
-    value: i32 @2
-//             ^^ constant.numeric.wire-tag.hew
+}
 
 // -- Wire keywords --
 
-reserved 5
-// <- keyword.wire.hew
-
-optional field: i32
-// <- keyword.wire.hew
-
-deprecated old_field: string
-// <- keyword.wire.hew
-
-default 0
-// <- keyword.wire.hew
-
-// -- Attributes on wire types --
-
-#[version(1)]
-// <- meta.attribute.hew
-//^^^^^^^ entity.name.function.attribute.hew
+type WireSchema {
+    reserved(5, 6);
+//  ^^^^^^^^ keyword.wire.hew
+    old_field: string @5 deprecated,
+//                    ^^ constant.numeric.wire-tag.hew
+//                       ^^^^^^^^^^ keyword.wire.hew
+    nickname: string @6 optional,
+//                   ^^ constant.numeric.wire-tag.hew
+//                      ^^^^^^^^ keyword.wire.hew
+    flags: i32 @7 default(0),
+//             ^^ constant.numeric.wire-tag.hew
+//                ^^^^^^^ keyword.wire.hew
+}
