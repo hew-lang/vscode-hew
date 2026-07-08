@@ -58,6 +58,9 @@ let data: bytes
 let d: duration
 //     ^^^^^^^^ storage.type.primitive.hew
 
+let t: instant = instant::now()
+//     ^^^^^^^ storage.type.primitive.hew
+
 // -- Generic / collection types --
 
 let r: Result = ok(1)
