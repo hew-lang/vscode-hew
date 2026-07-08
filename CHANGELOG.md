@@ -5,6 +5,7 @@
 ### Added
 - `await_restart` added to `keyword.control.hew`
 - `LocalPid`, `RemotePid`, and `LambdaPid` added to `storage.type.concurrency.hew`
+- `instant` added to `storage.type.primitive.hew`
 
 ### Removed
 - `wire` removed from `keyword.wire.hew`; legacy `wire type` / `wire enum` declaration pattern removed
