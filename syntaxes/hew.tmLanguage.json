@@ -297,7 +297,7 @@
           "match": "\\bNone\\b"
         },
         {
-          "comment": "Removed/rejected keywords — parser explicitly rejects these with migration diagnostics. Highlight as invalid so users know these are not valid v0.5 syntax.",
+          "comment": "Removed/rejected keywords — parser explicitly rejects these with migration diagnostics. Highlight as invalid so users know these are not valid v0.6 syntax.",
           "name": "invalid.removed.hew",
           "match": "\\b(catch|cooperate|foreign|race|try)\\b"
         }
