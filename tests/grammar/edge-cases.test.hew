@@ -103,7 +103,7 @@ fn process(self, msg: Message) -> Result {
 // <- punctuation.brackets.square.hew
 
     a.b
-//   ^ punctuation.separator.dot.hew
+//   ^ punctuation.accessor.path.hew
 
     x: i32
 //   ^ punctuation.separator.colon.hew

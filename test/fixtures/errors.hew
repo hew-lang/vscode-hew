@@ -19,7 +19,7 @@ fn unused() {
 // Non-exhaustive match
 fn bad_match(opt: Option<int>) -> int {
     match opt {
-        Some(x) => x,
+        .Some(x) => x,
         // missing None arm
     }
 }

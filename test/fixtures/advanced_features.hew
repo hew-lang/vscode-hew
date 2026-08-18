@@ -61,7 +61,7 @@ fn test_for_range() {
 
 // While-let
 fn test_while_let() {
-    while let Some(x) = iter.next() {
+    while let .Some(x) = iter.next() {
         process(x);
     }
 }

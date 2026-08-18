@@ -1,27 +1,52 @@
 // SYNTAX TEST "source.hew"
 
-// -- N-segment path import (grammar.ebnf:64) --
+// -- Dotted path import --
 
-import std::time::datetime;
+import std.time.datetime;
 // <- keyword.declaration.hew
-//        ^^ keyword.operator.namespace.hew
+//        ^ punctuation.accessor.path.hew
+//             ^ punctuation.accessor.path.hew
 
-// -- Grouped import with alias (grammar.ebnf:65,68) --
+// -- Dotted grouped selection with alias --
 
-import a::b::{X, Y as Z};
+import a.b.{X, Y as Z};
 // <- keyword.declaration.hew
-//      ^^ keyword.operator.namespace.hew
-//           ^ punctuation.brackets.curly.hew
-//            ^ entity.name.type.hew
-//                 ^^ keyword.declaration.hew
-//                    ^ entity.name.type.hew
-//                     ^ punctuation.brackets.curly.hew
+//      ^ punctuation.accessor.path.hew
+//        ^ punctuation.accessor.selection.hew
+//         ^ punctuation.section.selection.begin.hew
+//          ^ entity.name.type.hew
+//               ^^ keyword.declaration.hew
+//                  ^ entity.name.type.hew
+//                   ^ punctuation.section.selection.end.hew
 
-// -- Glob import star (grammar.ebnf:66) --
+// -- Selection scope is import-only; this invalid expression stays ordinary punctuation --
 
-import a::b::*;
+let invalid = value.{Name};
+//                 ^ punctuation.separator.dot.hew
+
+// -- Retired glob import is invalid (E_IMPORT_GLOB_REMOVED) --
+
+import a.b.*;
 // <- keyword.declaration.hew
-//           ^ keyword.operator.wildcard.hew
+//        ^^ invalid.removed.hew
+
+// -- Retired :: path is invalid (E_PATH_LEGACY_SEPARATOR) --
+
+import std::time;
+//        ^^ invalid.removed.hew
+
+// -- Contextual enum variant --
+
+match state {
+    .Ready => 1,
+//  ^ punctuation.accessor.variant.hew
+//   ^^^^^ entity.name.variant.hew
+}
+
+// -- A qualified variant uses an ordinary dotted path --
+
+let ready = State.Ready;
+//               ^ punctuation.accessor.path.hew
 
 // -- String-path import (grammar.ebnf:63) --
 

@@ -1,23 +1,16 @@
 // SYNTAX TEST "source.hew"
 
-// -- Turbofish on method path: Vec::new::<i64>() (grammar.ebnf:249) --
+// -- Retired turbofish is invalid (E_LEGACY_TURBOFISH) --
 
-let v = Vec::new::<i64>();
-//              ^^ keyword.operator.namespace.hew
-//                ^ punctuation.definition.typeparameters.begin.hew
-//                 ^^^ storage.type.numeric.hew
-//                    ^ punctuation.definition.typeparameters.end.hew
+let v = Vec::<i64>();
+//         ^^^^^^^ invalid.removed.hew
 
-// -- Turbofish on type path: HashMap::<Key, i64>::new() (grammar.ebnf:249) --
+// -- Dotted generic call remains valid --
 
-let m = HashMap::<Key, i64>::new();
-//             ^^ keyword.operator.namespace.hew
-//               ^ punctuation.definition.typeparameters.begin.hew
-//                ^^^ entity.name.type.hew
-//                     ^^^ storage.type.numeric.hew
-//                        ^ punctuation.definition.typeparameters.end.hew
+let m = HashMap.new();
+//             ^ punctuation.accessor.path.hew
 
-// -- Negative guard: a plain less-than is still a comparison (grammar.ebnf:235) --
+// -- A plain less-than remains a comparison --
 
 if a < b { 0 }
 //   ^ keyword.operator.comparison.hew

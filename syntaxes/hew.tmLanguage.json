@@ -22,6 +22,12 @@
       "include": "#wire-annotations"
     },
     {
+      "include": "#legacy-syntax"
+    },
+    {
+      "include": "#paths"
+    },
+    {
       "include": "#function-definitions"
     },
     {
@@ -37,13 +43,7 @@
       "include": "#types"
     },
     {
-      "include": "#turbofish"
-    },
-    {
       "include": "#closures"
-    },
-    {
-      "include": "#glob-import"
     },
     {
       "include": "#operators"
@@ -535,25 +535,13 @@
         }
       ]
     },
-    "turbofish": {
+    "legacy-syntax": {
       "patterns": [
         {
-          "comment": "Turbofish type arguments in expression position: Ident::<T>(...), Vec::<i64>::new() (grammar.ebnf:249). Scoped before #operators so the angle brackets are not mistaken for comparison operators.",
+          "comment": "Retired turbofish syntax: Vec::<T>(). The compiler reports E_LEGACY_TURBOFISH and suggests the migrated dotted form.",
+          "name": "invalid.removed.hew",
           "begin": "(::)(<)",
-          "beginCaptures": {
-            "1": {
-              "name": "keyword.operator.namespace.hew"
-            },
-            "2": {
-              "name": "punctuation.definition.typeparameters.begin.hew"
-            }
-          },
           "end": "(>)",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.typeparameters.end.hew"
-            }
-          },
           "patterns": [
             {
               "include": "#types"
@@ -563,6 +551,16 @@
               "match": ","
             }
           ]
+        },
+        {
+          "comment": "Retired dotted glob import syntax: import a.b.*. The compiler reports E_IMPORT_GLOB_REMOVED.",
+          "name": "invalid.removed.hew",
+          "match": "\\.\\*"
+        },
+        {
+          "comment": "Retired :: path separator. The compiler reports E_PATH_LEGACY_SEPARATOR and suggests a dotted path.",
+          "name": "invalid.removed.hew",
+          "match": "::"
         }
       ]
     },
@@ -602,19 +600,70 @@
         }
       ]
     },
-    "glob-import": {
+    "paths": {
       "patterns": [
         {
-          "comment": "Glob import wildcard: import a::b::* (grammar.ebnf:66). Matched before #operators so the trailing * is a wildcard, not arithmetic multiply. The `::*` sequence only occurs in glob imports — Hew dereference is prefix *expr, never path::*.",
-          "match": "(::)(\\*)",
+          "comment": "Explicit import selection syntax: import module.{Name, Other}. The import prefix prevents invalid value.{Name} expressions from receiving this scope.",
+          "name": "meta.import.selection.hew",
+          "begin": "\\b(import)(?=\\s+[A-Za-z_][A-Za-z0-9_]*(?:\\.[A-Za-z_][A-Za-z0-9_]*)*\\.\\{)",
+          "end": "(\\})",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.hew"
+            }
+          },
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.section.selection.end.hew"
+            }
+          },
+          "patterns": [
+            {
+              "match": "(\\.)(\\{)",
+              "captures": {
+                "1": {
+                  "name": "punctuation.accessor.selection.hew"
+                },
+                "2": {
+                  "name": "punctuation.section.selection.begin.hew"
+                }
+              }
+            },
+            {
+              "include": "#keywords"
+            },
+            {
+              "name": "punctuation.accessor.path.hew",
+              "match": "\\.(?!\\{)"
+            },
+            {
+              "include": "#types"
+            },
+            {
+              "include": "#variables"
+            },
+            {
+              "name": "punctuation.separator.comma.hew",
+              "match": ","
+            }
+          ]
+        },
+        {
+          "comment": "Contextual enum variant: .Variant.",
+          "match": "(?<![A-Za-z0-9_])(\\.)([A-Z][a-zA-Z0-9_]*)\\b",
           "captures": {
             "1": {
-              "name": "keyword.operator.namespace.hew"
+              "name": "punctuation.accessor.variant.hew"
             },
             "2": {
-              "name": "keyword.operator.wildcard.hew"
+              "name": "entity.name.variant.hew"
             }
           }
+        },
+        {
+          "comment": "Dotted path segment: std.time, value.method.",
+          "name": "punctuation.accessor.path.hew",
+          "match": "(?<!\\.)\\.(?![.\\{])"
         }
       ]
     },
@@ -699,11 +748,6 @@
           "comment": "Logical not",
           "name": "keyword.operator.not.hew",
           "match": "!"
-        },
-        {
-          "comment": "Namespace separator",
-          "name": "keyword.operator.namespace.hew",
-          "match": "::"
         },
         {
           "comment": "Attribute / wire tag marker",

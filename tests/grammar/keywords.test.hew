@@ -85,7 +85,7 @@ const Z = 42
 type Alias = i32
 // <- keyword.declaration.hew
 
-import std::io
+import std.io
 // <- keyword.declaration.hew
 
 pub fn hello() {

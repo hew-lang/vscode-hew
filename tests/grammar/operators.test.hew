@@ -104,10 +104,10 @@ a =~ b
 a !~ b
 //^^ invalid.removed.hew
 
-// -- Namespace --
+// -- Dotted path --
 
-std::io
-// ^^ keyword.operator.namespace.hew
+std.io
+// ^ punctuation.accessor.path.hew
 
 // -- At (label / wire marker) --
 
