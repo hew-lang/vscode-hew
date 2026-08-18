@@ -85,6 +85,13 @@ turbofish syntax reports `E_LEGACY_TURBOFISH`.
 2. Run `npm install && npm run build:dev`
 3. Open this folder in VS Code and press `F5` to launch the Extension Development Host
 
+Validate the controlled Hew fixtures with a compiler explicitly selected for the
+check:
+
+```bash
+HEW_COMPILER=/path/to/hew npm run test:fixtures
+```
+
 ## Configuration
 
 | Setting | Default | Description |
