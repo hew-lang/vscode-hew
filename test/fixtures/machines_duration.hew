@@ -1,7 +1,7 @@
 // Machine declarations and duration literals
 
 machine TrafficLight {
-    // Input-event vocabulary (v0.5 events {} block)
+    // Input-event vocabulary
     events {
         Timer;
         Emergency { reason: string; }
@@ -11,7 +11,7 @@ machine TrafficLight {
     state Green;
     state Yellow;
 
-    // v0.5 routing arrow is =>  (not ->)
+    // State routing uses =>.
     on Timer: Red => Green {
         Green
     }
@@ -42,14 +42,19 @@ fn duration_demo() {
 }
 
 // Supervisor with child specs
+actor Counter {
+    let value: i64;
+}
+
+actor Logger {
+    let level: i64;
+}
+
 supervisor ServiceTree {
     strategy: one_for_one;
-    budget {
-        intensity: 5;
-        within: 60s;
-    }
+    intensity: 5 within 60s;
 
-    child counter: Counter(100);
-    child debug_log: Logger(1);
-    child error_log: Logger(3);
+    child counter: Counter(value: 100);
+    child debug_log: Logger(level: 1);
+    child error_log: Logger(level: 3);
 }

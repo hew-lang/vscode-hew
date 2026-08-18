@@ -23,6 +23,8 @@ import a.b.{X, Y as Z};
 
 let invalid = value.{Name};
 //                 ^ punctuation.separator.dot.hew
+//                  ^ - meta.import.selection.hew
+//                   ^^^^ - meta.import.selection.hew
 
 // -- Retired glob import is invalid (E_IMPORT_GLOB_REMOVED) --
 

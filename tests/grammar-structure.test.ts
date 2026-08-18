@@ -123,6 +123,11 @@ describe('Grammar structure', () => {
     expect(grammar.repository.turbofish).toBeUndefined()
     expect(grammar.repository['glob-import']).toBeUndefined()
 
+    const importSelection = grammar.repository.paths.patterns.find(
+      (pattern: any) => pattern.name === 'meta.import.selection.hew'
+    )
+    expect(importSelection.begin).toContain('(import)')
+
     const operatorScopes = grammar.repository.operators.patterns.map((p: any) => p.name)
     expect(operatorScopes).not.toContain('keyword.operator.namespace.hew')
   })

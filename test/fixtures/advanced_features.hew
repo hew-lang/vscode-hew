@@ -1,19 +1,19 @@
-// Advanced features: gen functions, for-await, while-let, scope, lambda actors,
-// type aliases, indirect enums, trait bounds, where clauses
+// Advanced features: while-let, structured scopes, lambda actors, type aliases,
+// indirect enums, trait bounds, and where clauses
 
 // Type alias
 type IntPair = (i32, i32);
 
 // Indirect enum (recursive)
 indirect enum Expr {
-    Lit(i32),
-    Add(Expr, Expr),
-    Neg(Expr),
+    Lit(i32);
+    Add(Expr, Expr);
+    Neg(Expr);
 }
 
 // Trait with bounds and associated type
 trait Serializable {
-    fn serialize(self: Serializable) -> bytes;
+    fn serialize(self) -> bytes;
     type Output;
 }
 
@@ -34,19 +34,23 @@ actor BufferedWorker {
     }
 }
 
-// Scope expression with binding
-fn test_scope() {
-    let result = scope |s| {
-        let a = 10;
-        let b = 20;
-        a + b
-    };
-    println(result);
+fn scoped_sum() -> i64 {
+    30
+}
+
+// Structured scope with a named child task in an actor handler
+actor ScopedWorker {
+    receive fn run() {
+        scope {
+            fork result = scoped_sum();
+            await result;
+        }
+    }
 }
 
 // Lambda actors
 fn test_lambda_actors() {
-    let doubler = spawn (x: int) => {
+    let doubler = actor |x: i64| {
         println(x * 2);
     };
     doubler.send(21);
@@ -61,37 +65,40 @@ fn test_for_range() {
 
 // While-let
 fn test_while_let() {
-    while let .Some(x) = iter.next() {
-        process(x);
+    let value: Option<i64> = Option.Some(42);
+    while let .Some(x) = value {
+        println(x);
+        break;
     }
 }
 
 // Unsafe block
 fn test_unsafe() {
     unsafe {
-        let ptr = raw_alloc(64);
+        let _ptr = malloc(64);
     }
 }
 
 // Wire enum
-wire enum Command {
+#[wire]
+enum Command {
     Start;
     Stop;
     Pause;
 }
 
-// Wire struct with all features
-wire struct Packet {
-    header: u32 @1;
-    payload: bytes @2 optional;
-    version: u16 @3 deprecated;
-    reserved(10, 11, 12);
+// Wire type with all features
+#[wire]
+type Packet {
+    header: u32 @1,
+    payload: bytes @2 optional,
+    version: u16 @3 deprecated,
 }
 
 // Extern block
 extern "C" {
-    fn malloc(size: usize) -> *void;
-    fn free(ptr: *void);
+    fn malloc(size: usize) -> *mut u8;
+    fn free(ptr: *mut u8);
 }
 
 // Const declarations
@@ -113,9 +120,10 @@ fn test_string_types() {
 }
 
 // Cast and try expressions
-fn test_cast_try() {
-    let x = 42 as u64;
-    let result = some_fallible_fn()?;
+fn test_cast_try() -> Option<i64> {
+    let _x = 42 as u64;
+    let result = Option.Some(42)?;
+    Option.Some(result)
 }
 
 // Array and tuple expressions
@@ -138,13 +146,6 @@ fn test_labeled_loops() {
     }
 }
 
-// Defer statement
-fn test_defer() {
-    let handle = open_file("test.txt");
-    defer close(handle);
-    process(handle);
-}
-
 // Compound assignment operators
 fn test_compound_assign() {
     var x = 10;
@@ -163,26 +164,16 @@ fn test_compound_assign() {
 // Visibility modifiers
 pub fn public_fn() {}
 
-// Pure functions
-pure fn add(a: i32, b: i32) -> i32 {
+fn add(a: i32, b: i32) -> i32 {
     a + b
 }
 
-// Cooperate and this expressions
-fn test_keywords() {
-    cooperate;
-    this;
-}
-
 fn main() {
-    test_scope();
     test_lambda_actors();
     test_for_range();
     test_interpolation();
     test_string_types();
     test_collections();
     test_labeled_loops();
-    test_defer();
     test_compound_assign();
-    test_keywords();
 }

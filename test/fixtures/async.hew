@@ -1,20 +1,11 @@
-// Comprehensive async/await demo for Hew language
-async fn simple_calculation(n: i32) -> i32 {
-    let result = n * 2 + 1;
-    result
-}
-
-async fn print_async_message(msg: i32) {
-    println(msg);
+// Comprehensive async generator demo for Hew language
+async gen fn simple_calculation(n: i32) -> i32 {
+    yield n * 2 + 1;
 }
 
 fn main() {
-    // Test async function with return value
-    let future = simple_calculation(21);
-    let result = await future;
-    println(result);
-
-    // Test async function without return value (direct await)
-    await print_async_message(123);
-    println(999);
+    // Test async generator output
+    for result in simple_calculation(21) {
+        println(result);
+    }
 }
