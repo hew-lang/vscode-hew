@@ -14,6 +14,7 @@ Syntax highlighting and language support for the [Hew programming language](http
 - **Wire types** — `#[wire]` attribute on `type`/`enum` declarations, field tags with `@`
 - **Traits and generics** — `trait`, `impl ... for`, type parameters `[T: Send]`
 - **Pattern matching** — `match`, `=>`, guards, destructuring
+- **Post-cutover paths** — dotted paths (`std.time`), import selections (`std.time.{Instant}`), and contextual variants (`.Ready`)
 - **All built-in types** — `i8`–`i64`, `u8`–`u64`, `f32`, `f64`, `bool`, `char`, `string`
 - **String variants** — regular `"..."`, raw `r"..."`, byte `b"..."`, interpolated `f"...{expr}..."`, char `'x'`
 - **Duration literals** — `100ms`, `5s`, `1h`
@@ -58,6 +59,14 @@ fn main() -> i32 {
 }
 ```
 
+## Path syntax
+
+Hew paths use dots: `import std.time` and `clock.now()`. Select several names
+from a module with `import std.time.{Instant, Duration}`, and use `.Variant`
+for a contextual enum variant in a match. The retired `::` separator reports
+`E_PATH_LEGACY_SEPARATOR`, glob imports report `E_IMPORT_GLOB_REMOVED`, and
+turbofish syntax reports `E_LEGACY_TURBOFISH`.
+
 ## Installation
 
 ### From VSIX (local install)
@@ -75,6 +84,13 @@ fn main() -> i32 {
 1. Clone this repository
 2. Run `npm install && npm run build:dev`
 3. Open this folder in VS Code and press `F5` to launch the Extension Development Host
+
+Validate the controlled Hew fixtures with a compiler explicitly selected for the
+check:
+
+```bash
+HEW_COMPILER=/path/to/hew npm run test:fixtures
+```
 
 ## Configuration
 
@@ -128,6 +144,7 @@ If preflight reports that a backend is unavailable, either install the required 
 | `reserved`, `optional`, `deprecated`, `default` | `keyword.wire` |
 | `dyn`, `is`, `unsafe` | `keyword.other` |
 | `&&`, `\|\|` | `keyword.operator.logical` |
+| dotted paths, `.{...}` import selections, `.Variant` | `punctuation.accessor`, `meta.import.selection`, `entity.name.variant` |
 | `one_for_one`, `pool`, `brutal_kill`, `permanent`, `true`, `false`, `None` | `constant.language` |
 | `events`, `emits`, `reenter`, `initial`, `mailbox`, `overflow`, `intensity`, `within`, `shutdown`, `infinity`, `wired_to`, `export`, `resource`, `linear`, `opaque`, `wire`, `json`, `yaml`, `repeated`, `coalesce`, `fallback`, `drop_new`, `drop_old`, `block`, `fail` | `variable.language.contextual` |
 | `i32`, `u64`, `f64`, `bool`, `string` | `storage.type` |

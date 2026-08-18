@@ -3,6 +3,7 @@ out/
 *.vsix
 .vscode-test/
 *.log
+.tmp/
 .DS_Store
 
 # AI assistant config

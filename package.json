@@ -209,7 +209,9 @@
     "vscode:prepublish": "npm run build",
     "package": "npm run build && vsce package",
     "test": "npm run test:grammar && vitest run",
-    "test:grammar": "vscode-tmgrammar-test -g syntaxes/hew.tmLanguage.json tests/grammar/*.test.hew"
+    "test:grammar": "vscode-tmgrammar-test -g syntaxes/hew.tmLanguage.json tests/grammar/*.test.hew",
+    "test:fixtures": "node scripts/check-fixtures.mjs",
+    "check:fixtures": "npm run test:fixtures"
   },
   "devDependencies": {
     "@types/node": "^25.2.3",

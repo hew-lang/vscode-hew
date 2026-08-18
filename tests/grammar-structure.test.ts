@@ -102,6 +102,36 @@ describe('Grammar structure', () => {
     expect(hasPattern(grammar.repository.operators.patterns, 'keyword.operator.send.hew')).toBe(false)
   })
 
+  it('highlights the post-cutover path forms and rejects retired ones', () => {
+    expect(grammar.repository.paths).toBeDefined()
+    expect(grammar.repository.paths.patterns).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'meta.import.selection.hew' }),
+        expect.objectContaining({ comment: expect.stringContaining('.Variant') }),
+        expect.objectContaining({ comment: expect.stringContaining('Dotted path') }),
+      ])
+    )
+
+    expect(grammar.repository['legacy-syntax']).toBeDefined()
+    expect(grammar.repository['legacy-syntax'].patterns).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ comment: expect.stringContaining('E_PATH_LEGACY_SEPARATOR') }),
+        expect.objectContaining({ comment: expect.stringContaining('E_IMPORT_GLOB_REMOVED') }),
+        expect.objectContaining({ comment: expect.stringContaining('E_LEGACY_TURBOFISH') }),
+      ])
+    )
+    expect(grammar.repository.turbofish).toBeUndefined()
+    expect(grammar.repository['glob-import']).toBeUndefined()
+
+    const importSelection = grammar.repository.paths.patterns.find(
+      (pattern: any) => pattern.name === 'meta.import.selection.hew'
+    )
+    expect(importSelection.begin).toContain('(import)')
+
+    const operatorScopes = grammar.repository.operators.patterns.map((p: any) => p.name)
+    expect(operatorScopes).not.toContain('keyword.operator.namespace.hew')
+  })
+
   it('does not include mut in declaration keywords', () => {
     const declPattern = grammar.repository.keywords.patterns.find(
       (p: any) => p.name === 'keyword.declaration.hew'

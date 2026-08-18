@@ -1,6 +1,6 @@
 // Demonstrates wire types, supervisors, and actors
 actor Counter {
-    let count: i32;
+    var count: i32;
     receive fn increment(amount: i32) {
         count = count + amount;
     }
@@ -9,16 +9,16 @@ actor Counter {
     }
 }
 
-wire type StatusUpdate {
-    actor_id: u32 @1;
-    count: i32 @2;
-    message: String @3;
+#[wire]
+type StatusUpdate {
+    actor_id: u32 @1,
+    count: i32 @2,
+    message: string @3,
 }
 
 supervisor CounterPool {
     strategy: one_for_one;
-    max_restarts: 5;
-    window: 60;
+    intensity: 5 within 60s;
 }
 
 fn fibonacci(n: i32) -> i32 {

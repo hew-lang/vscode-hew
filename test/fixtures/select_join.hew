@@ -1,11 +1,11 @@
 actor FastWorker {
-    receive fn compute(x: i32) -> i32 {
+    receive fn compute(x: i64) -> i64 {
         x * 2
     }
 }
 
 actor SlowWorker {
-    receive fn compute(x: i32) -> i32 {
+    receive fn compute(x: i64) -> i64 {
         x * 3
     }
 }
