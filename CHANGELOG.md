@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.5.1] - 2026-08-27
+
+### Changed
+- Bundled `hew-lsp` updated to Hew v0.6.0-rc2 for Linux x64/arm64, macOS arm64, and Windows x64.
+- Release packaging now uses the rc2 binaries produced by the Hew release workflow.
+
 ## [1.5.0] - 2026-07-06
 
 ### Added
