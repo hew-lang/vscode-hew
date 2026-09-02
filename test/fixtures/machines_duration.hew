@@ -13,19 +13,19 @@ machine TrafficLight {
 
     // State routing uses =>.
     on Timer: Red => Green {
-        Green
+        .Green
     }
 
     on Timer: Green => Yellow {
-        Yellow
+        .Yellow
     }
 
     on Timer: Yellow => Red {
-        Red
+        .Red
     }
 
     on Emergency: Red => Red reenter {
-        Red
+        .Red
     }
 
     default { state }

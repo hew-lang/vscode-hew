@@ -55,11 +55,19 @@ const keywordGroups = {
   'keyword.control.hew': [
     ...kw.control_flow,
     // Actor keywords that serve as control flow
-    'select', 'join', 'after', 'from', 'await', 'scope', 'cooperate',
+    'select', 'join', 'after', 'from', 'await', 'await_restart', 'scope',
   ],
 
   'keyword.declaration.hew': [
-    ...kw.declarations,
+    // `mut` is deliberately excluded even though syntax-data.json's
+    // declarations category lists it: `mut` only ever appears validly as
+    // `*mut T` (see hew-parser/src/parser/types.rs), which the dedicated
+    // `meta.type.pointer.raw.hew` pattern already highlights; a bare `mut`
+    // anywhere else is a parse error. Highlighting it as a general
+    // declaration keyword here would be misleading. See
+    // grammar-structure.test.ts "does not include mut in declaration
+    // keywords".
+    ...kw.declarations.filter(k => k !== 'mut'),
   ],
 
   'keyword.actor.hew': [
@@ -85,8 +93,13 @@ const keywordGroups = {
 
   'constant.language.boolean.hew': ['true', 'false'],
 
-  // Reserved keywords not yet used in the language
-  'keyword.reserved.hew': [...kw.reserved_unused],
+  // Reserved/removed keywords (try, catch, race, foreign, cooperate) are
+  // intentionally not generated here — they already have a hand-authored
+  // `invalid.removed.hew` pattern in repository.keywords, and that scope
+  // name is reused by the unrelated legacy-syntax patterns, so a name-based
+  // generated group here would either duplicate or clobber them. Giving
+  // reserved keywords their own generatable scope is a colour change —
+  // a design decision — not made here.
 };
 
 // ── Type group mapping ─────────────────────────────────────────────
@@ -127,8 +140,17 @@ const typeGroups = {
 const contextualNames = Object.keys(syntaxData.contextual_identifiers)
   .filter(name => name !== 'self' && name !== 'description'); // skip metadata and self (has its own pattern)
 
+// WHY: `consume` is a real contextual keyword (a by-move parameter modifier,
+// see hew-parser/src/parser/core.rs peek_is_consume_param_modifier) but is
+// missing from syntax-data.json's contextual_identifiers — the canonical
+// list has not been updated to include it. WHEN this becomes obsolete: once
+// syntax-data.json lists `consume`, drop this constant and the concat below.
+// WHAT the real fix looks like: add `consume` to contextual_identifiers in
+// hew/docs/syntax-data.json (a hew/ repo change, out of scope here).
+const MISSING_FROM_SYNTAX_DATA = ['consume'];
+
 const contextualGroup = {
-  'variable.language.contextual.hew': contextualNames,
+  'variable.language.contextual.hew': [...contextualNames, ...MISSING_FROM_SYNTAX_DATA],
 };
 
 // ── Merge all groups ───────────────────────────────────────────────
@@ -261,7 +283,14 @@ for (const keywords of Object.values(keywordGroups)) {
   for (const k of keywords) coveredKeywords.add(k);
 }
 
-const missing = syntaxData.all_keywords.filter(k => !coveredKeywords.has(k));
+// Deliberately unscoped: `mut` (see the comment on keyword.declaration.hew
+// above) and the reserved/removed keywords (handled by the hand-authored
+// `invalid.removed.hew` pattern, see the comment above keywordGroups).
+const DELIBERATELY_UNSCOPED = new Set(['mut', ...kw.reserved_unused]);
+
+const missing = syntaxData.all_keywords
+  .filter(k => !coveredKeywords.has(k))
+  .filter(k => !DELIBERATELY_UNSCOPED.has(k));
 if (missing.length > 0) {
   console.log(`⚠  Keywords in all_keywords not assigned to any grammar scope:`);
   console.log(`   ${missing.join(', ')}\n`);

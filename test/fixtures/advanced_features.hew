@@ -91,7 +91,7 @@ enum Command {
 #[wire]
 type Packet {
     header: u32 @1,
-    payload: bytes @2 optional,
+    payload: Option<bytes> @2 optional,
     version: u16 @3 deprecated,
 }
 

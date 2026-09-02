@@ -100,8 +100,11 @@ x as i32
 extern fn c_call()
 // <- keyword.declaration.hew
 
+// `record` is not a keyword — it was retired in favour of `type` and the
+// parser rejects `record Name { ... }` with a migration hint, but `record`
+// itself stays an ordinary identifier everywhere else (HEW-SPEC-2026 §3.1).
 record Point {
-// <- keyword.declaration.hew
+// <- variable.other.hew
 
 // mut is operator-context only (*mut T in extern/FFI/unsafe); bare `mut` in let bindings is invalid in v0.5
 

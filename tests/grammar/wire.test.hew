@@ -23,9 +23,9 @@ type WireSchema {
     old_field: string @5 deprecated,
 //                    ^^ constant.numeric.wire-tag.hew
 //                       ^^^^^^^^^^ keyword.wire.hew
-    nickname: string @6 optional,
-//                   ^^ constant.numeric.wire-tag.hew
-//                      ^^^^^^^^ keyword.wire.hew
+    nickname: Option<string> @6 optional,
+//                           ^^ constant.numeric.wire-tag.hew
+//                              ^^^^^^^^ keyword.wire.hew
     flags: i32 @7 default(0),
 //             ^^ constant.numeric.wire-tag.hew
 //                ^^^^^^^ keyword.wire.hew

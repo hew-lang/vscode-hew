@@ -254,7 +254,7 @@
         {
           "comment": "Declarations",
           "name": "keyword.declaration.hew",
-          "match": "\\b(as|async|const|enum|extern|fn|gen|impl|import|indirect|let|package|pub|record|super|trait|type|var|where)\\b"
+          "match": "\\b(as|async|const|enum|extern|fn|gen|impl|import|indirect|let|package|pub|super|trait|type|var|where)\\b"
         },
         {
           "comment": "Actor and concurrency",
@@ -811,7 +811,7 @@
         {
           "comment": "Contextual identifiers (special meaning in specific contexts)",
           "name": "variable.language.contextual.hew",
-          "match": "\\b(block|coalesce|consume|drop_new|drop_old|emits|events|export|fail|fallback|infinity|initial|intensity|json|mailbox|overflow|reenter|repeated|shutdown|wired_to|within|yaml)\\b"
+          "match": "\\b(block|coalesce|consume|drop_new|drop_old|emits|events|export|fail|fallback|infinity|initial|intensity|json|linear|mailbox|opaque|overflow|reenter|repeated|resource|shutdown|wire|wired_to|within|yaml)\\b"
         },
         {
           "comment": "Identifier (catch-all for variables, parameters, fields)",

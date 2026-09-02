@@ -136,7 +136,7 @@ If preflight reports that a backend is unavailable, either install the required 
 
 | Hew Construct | TextMate Scope |
 |---|---|
-| `fn`, `let`, `var`, `const`, `record`, `type`, `enum`, `trait`, `impl`, `gen` | `keyword.declaration` |
+| `fn`, `let`, `var`, `const`, `type`, `enum`, `trait`, `impl`, `gen` | `keyword.declaration` |
 | `if`, `else`, `match`, `loop`, `for`, `while`, `return`, `await`, `await_restart`, `scope` | `keyword.control` |
 | `actor`, `receive`, `spawn`, `init`, `fork`, `this` | `keyword.actor` |
 | `supervisor`, `child`, `restart`, `budget`, `strategy` | `keyword.supervisor` |
