@@ -50,7 +50,7 @@ let c: char = 'a'
 //     ^^^^ storage.type.primitive.hew
 
 let v: void
-//     ^^^^ storage.type.primitive.hew
+//     ^^^^ variable.other.hew
 
 let data: bytes
 //        ^^^^^ storage.type.primitive.hew
