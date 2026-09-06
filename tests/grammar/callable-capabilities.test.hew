@@ -1,0 +1,19 @@
+// SYNTAX TEST "source.hew"
+
+let next: fn[var, clone]() -> i64;
+//           ^^^ keyword.callable-capability.hew
+//                ^^^^^ keyword.callable-capability.hew
+let finish: fn[once]() -> i64;
+//             ^^^^ keyword.callable-capability.hew
+let read: fn[clone]() -> i64;
+//           ^^^^^ keyword.callable-capability.hew
+let next = capture(var count) |step: i64| { count = count + step; count };
+//         ^^^^^^^ keyword.closure.capture.hew
+//                            ^ punctuation.definition.parameters.begin.hew
+//                             ^^^^ variable.parameter.hew
+fn capture(once: i64) -> i64 { once }
+// ^^^^^^^ entity.name.function.hew
+//         ^^^^ -keyword.callable-capability.hew
+let once = capture(1);
+//  ^^^^ -variable.language.contextual.hew
+//         ^^^^^^^ -keyword.closure.capture.hew

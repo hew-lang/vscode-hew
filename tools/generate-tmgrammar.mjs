@@ -137,20 +137,17 @@ const typeGroups = {
 // ── Contextual identifiers ─────────────────────────────────────────
 // NOT keywords — have special meaning only in specific parser contexts.
 
+// Attribute-only names and callable qualifiers have structural patterns;
+// treating them as ordinary words would colour unrelated bindings.
+const structuralContextual = new Set([
+  'resource', 'linear', 'opaque', 'wire',
+  'count', 'capture', 'once',
+]);
 const contextualNames = Object.keys(syntaxData.contextual_identifiers)
-  .filter(name => name !== 'self' && name !== 'description'); // skip metadata and self (has its own pattern)
-
-// WHY: `consume` is a real contextual keyword (a by-move parameter modifier,
-// see hew-parser/src/parser/core.rs peek_is_consume_param_modifier) but is
-// missing from syntax-data.json's contextual_identifiers — the canonical
-// list has not been updated to include it. WHEN this becomes obsolete: once
-// syntax-data.json lists `consume`, drop this constant and the concat below.
-// WHAT the real fix looks like: add `consume` to contextual_identifiers in
-// hew/docs/syntax-data.json (a hew/ repo change, out of scope here).
-const MISSING_FROM_SYNTAX_DATA = ['consume'];
+  .filter(name => name !== 'self' && name !== 'description' && !structuralContextual.has(name));
 
 const contextualGroup = {
-  'variable.language.contextual.hew': [...contextualNames, ...MISSING_FROM_SYNTAX_DATA],
+  'variable.language.contextual.hew': contextualNames,
 };
 
 // ── Merge all groups ───────────────────────────────────────────────

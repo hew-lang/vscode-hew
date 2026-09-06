@@ -34,6 +34,9 @@
       "include": "#actors"
     },
     {
+      "include": "#callable-syntax"
+    },
+    {
       "include": "#keywords"
     },
     {
@@ -567,8 +570,8 @@
     "closures": {
       "patterns": [
         {
-          "comment": "Closure parameters: |x|, |x, y|, |x: T|, move |x|, actor |x| (grammar.ebnf:289-295). Anchored to closure-introducing contexts (after = ( , [ => move actor) so bitwise-or `a | b | c`, or-patterns `A | B`, and logical-or `a || b` keep their operator scopes. Empty `||` closures intentionally stay logical-or to avoid mis-scoping `a || b`.",
-          "begin": "(?<=[=(,\\[]\\s*|=>\\s*|\\bmove\\s+|\\bactor\\s+)(\\|)(?!\\|)(?=[^|]*\\|)",
+          "comment": "Pipe closure parameters following an expression introducer, move, actor or a private capture list. Logical and bitwise operators keep their ordinary scopes.",
+          "begin": "(?<=[=(,\\[]\\s*|=>\\s*|\\bmove\\s+|\\bactor\\s+|\\bcapture\\s*\\([^)]*\\)\\s*)(\\|)(?!\\|)(?=[^|]*\\|)",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.parameters.begin.hew"
@@ -811,12 +814,79 @@
         {
           "comment": "Contextual identifiers (special meaning in specific contexts)",
           "name": "variable.language.contextual.hew",
-          "match": "\\b(block|clone|coalesce|consume|drop_new|drop_old|emits|events|export|fail|fallback|infinity|initial|intensity|json|mailbox|overflow|reenter|repeated|shutdown|wired_to|within|yaml)\\b"
+          "match": "\\b(block|clone|coalesce|consume|drop_new|drop_old|emits|error|events|export|fail|fails|fallback|handle|infinity|initial|intensity|json|mailbox|overflow|reenter|repeated|shutdown|wired_to|within|yaml)\\b"
         },
         {
           "comment": "Identifier (catch-all for variables, parameters, fields)",
           "name": "variable.other.hew",
           "match": "\\b[a-z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    },
+    "callable-syntax": {
+      "patterns": [
+        {
+          "name": "meta.type.callable-capabilities.hew",
+          "begin": "\\b(fn)\\s*(\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.hew"
+            },
+            "2": {
+              "name": "punctuation.section.brackets.begin.hew"
+            }
+          },
+          "end": "(\\])",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.section.brackets.end.hew"
+            }
+          },
+          "patterns": [
+            {
+              "name": "keyword.callable-capability.hew",
+              "match": "\\b(var|once|clone)\\b"
+            },
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#punctuation"
+            }
+          ]
+        },
+        {
+          "name": "meta.closure.capture.hew",
+          "begin": "(?<![.\\w])(capture)\\s*(\\()(?=\\s*var\\b)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.closure.capture.hew"
+            },
+            "2": {
+              "name": "punctuation.section.parens.begin.hew"
+            }
+          },
+          "end": "(\\))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.section.parens.end.hew"
+            }
+          },
+          "patterns": [
+            {
+              "name": "keyword.closure.capture-mutability.hew",
+              "match": "\\bvar\\b"
+            },
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#variables"
+            },
+            {
+              "include": "#punctuation"
+            }
+          ]
         }
       ]
     }

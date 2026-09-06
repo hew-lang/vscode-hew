@@ -32,3 +32,8 @@ fn main() {
     let r4 = test_no_capture();
     println(r4);
 }
+
+fn make_counter() -> fn[var, clone]() -> i64 {
+    let count: i64 = 0;
+    capture(var count) || { count = count + 1; count }
+}
