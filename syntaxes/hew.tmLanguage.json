@@ -249,7 +249,7 @@
         {
           "comment": "Control flow",
           "name": "keyword.control.hew",
-          "match": "\\b(after|await|await_restart|break|continue|defer|else|for|from|if|in|join|loop|match|return|scope|select|while|yield)\\b"
+          "match": "\\b(after|await|await_restart|break|continue|defer|else|for|from|if|in|join|loop|match|race|return|scope|select|while|yield)\\b"
         },
         {
           "comment": "Declarations",
@@ -259,7 +259,7 @@
         {
           "comment": "Actor and concurrency",
           "name": "keyword.actor.hew",
-          "match": "\\b(actor|fork|init|move|receive|spawn|this)\\b"
+          "match": "\\b(actor|fork|init|move|receive|spawn)\\b"
         },
         {
           "comment": "Supervisor",
@@ -299,7 +299,7 @@
         {
           "comment": "Removed/rejected keywords — parser explicitly rejects these with migration diagnostics. Highlight as invalid so users know these are not valid v0.6 syntax.",
           "name": "invalid.removed.hew",
-          "match": "\\b(catch|cooperate|foreign|race|try)\\b"
+          "match": "\\b(catch|cooperate|foreign|try)\\b"
         }
       ]
     },
@@ -811,7 +811,7 @@
         {
           "comment": "Contextual identifiers (special meaning in specific contexts)",
           "name": "variable.language.contextual.hew",
-          "match": "\\b(block|clone|coalesce|consume|drop_new|drop_old|emits|events|export|fail|fallback|infinity|initial|intensity|json|mailbox|overflow|reenter|repeated|shutdown|wired_to|within|yaml)\\b"
+          "match": "\\b(block|capture|clone|coalesce|consume|count|drop_new|drop_old|emits|error|events|export|fail|fails|fallback|handle|infinity|initial|intensity|json|linear|mailbox|once|opaque|overflow|reenter|repeated|resource|shutdown|suspends|wire|wired_to|within|yaml)\\b"
         },
         {
           "comment": "Identifier (catch-all for variables, parameters, fields)",

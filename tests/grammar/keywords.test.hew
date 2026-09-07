@@ -63,7 +63,7 @@ try {
 //^^^^^ invalid.removed.hew
 
 race {
-// <- invalid.removed.hew
+// <- keyword.control.hew
 
 foreign {
 // <- invalid.removed.hew

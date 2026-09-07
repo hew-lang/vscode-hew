@@ -74,14 +74,13 @@ describe('Grammar structure', () => {
 
   it('marks rejected keywords as invalid.removed.hew, not keyword.reserved.hew', () => {
     const allPatterns = grammar.repository.keywords.patterns
-    // try/catch/race/foreign are rejected by the parser with migration diagnostics
+    // try/catch/foreign are rejected by the parser with migration diagnostics
     const removedPattern = allPatterns.find(
       (p: any) => p.name === 'invalid.removed.hew'
     )
     expect(removedPattern).toBeDefined()
     expect(removedPattern.match).toMatch(/\btry\b/)
     expect(removedPattern.match).toMatch(/\bcatch\b/)
-    expect(removedPattern.match).toMatch(/\brace\b/)
     expect(removedPattern.match).toMatch(/\bforeign\b/)
     // must NOT be labelled as merely reserved
     const reservedPattern = allPatterns.find(

@@ -55,7 +55,7 @@ const keywordGroups = {
   'keyword.control.hew': [
     ...kw.control_flow,
     // Actor keywords that serve as control flow
-    'select', 'join', 'after', 'from', 'await', 'await_restart', 'scope',
+    'select', 'join', 'race', 'after', 'from', 'await', 'await_restart', 'scope',
   ],
 
   'keyword.declaration.hew': [
@@ -71,7 +71,7 @@ const keywordGroups = {
   ],
 
   'keyword.actor.hew': [
-    'actor', 'fork', 'init', 'move', 'receive', 'spawn', 'this',
+    'actor', 'fork', 'init', 'move', 'receive', 'spawn',
   ],
 
   'keyword.supervisor.hew': [
@@ -140,17 +140,8 @@ const typeGroups = {
 const contextualNames = Object.keys(syntaxData.contextual_identifiers)
   .filter(name => name !== 'self' && name !== 'description'); // skip metadata and self (has its own pattern)
 
-// WHY: `consume` is a real contextual keyword (a by-move parameter modifier,
-// see hew-parser/src/parser/core.rs peek_is_consume_param_modifier) but is
-// missing from syntax-data.json's contextual_identifiers — the canonical
-// list has not been updated to include it. WHEN this becomes obsolete: once
-// syntax-data.json lists `consume`, drop this constant and the concat below.
-// WHAT the real fix looks like: add `consume` to contextual_identifiers in
-// hew/docs/syntax-data.json (a hew/ repo change, out of scope here).
-const MISSING_FROM_SYNTAX_DATA = ['consume'];
-
 const contextualGroup = {
-  'variable.language.contextual.hew': [...contextualNames, ...MISSING_FROM_SYNTAX_DATA],
+  'variable.language.contextual.hew': contextualNames,
 };
 
 // ── Merge all groups ───────────────────────────────────────────────
