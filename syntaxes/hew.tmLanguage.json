@@ -22,6 +22,9 @@
       "include": "#wire-annotations"
     },
     {
+      "include": "#retired-syntax"
+    },
+    {
       "include": "#function-definitions"
     },
     {
@@ -219,17 +222,17 @@
         {
           "comment": "Control flow",
           "name": "keyword.control.hew",
-          "match": "\\b(after|await|break|continue|cooperate|defer|else|for|from|if|in|join|loop|match|return|scope|select|while|yield)\\b"
+          "match": "\\b(after|await|await_restart|break|continue|defer|else|for|from|if|in|loop|match|race|return|scope|select|while|yield)\\b"
         },
         {
           "comment": "Declarations",
           "name": "keyword.declaration.hew",
-          "match": "\\b(async|const|enum|extern|fn|gen|impl|import|let|package|pub|super|trait|type|var|where)\\b"
+          "match": "\\b(as|const|enum|extern|fn|gen|impl|import|indirect|let|package|pub|trait|type|var|where)\\b"
         },
         {
           "comment": "Actor and concurrency",
           "name": "keyword.actor.hew",
-          "match": "\\b(actor|init|move|receive|spawn)\\b"
+          "match": "\\b(actor|fork|init|move|receive|spawn)\\b"
         },
         {
           "comment": "Supervisor",
@@ -239,17 +242,17 @@
         {
           "comment": "Supervisor strategy and overflow policy values",
           "name": "constant.language.strategy.hew",
-          "match": "\\b(one_for_all|one_for_one|permanent|rest_for_one|temporary|transient)\\b"
+          "match": "\\b(brutal_kill|one_for_all|one_for_one|permanent|pool|rest_for_one|simple_one_for_one|temporary|transient)\\b"
         },
         {
           "comment": "Wire protocol keywords",
           "name": "keyword.wire.hew",
-          "match": "\\b(default|deprecated|optional|reserved|wire)\\b"
+          "match": "\\b(default|deprecated|optional|reserved)\\b"
         },
         {
           "comment": "Other keywords",
           "name": "keyword.other.hew",
-          "match": "\\b(dyn|isolated|unsafe)\\b"
+          "match": "\\b(dyn|is|unsafe)\\b"
         },
         {
           "comment": "Logical operators as keywords",
@@ -269,7 +272,36 @@
         {
           "comment": "Reserved keywords (not yet used in the language)",
           "name": "keyword.reserved.hew",
-          "match": "\\b(catch|foreign|race|struct|try)\\b"
+          "match": "\\b(budget|catch|cooperate|foreign|super|try)\\b"
+        },
+        {
+          "comment": "Generated from syntax-data.json",
+          "name": "keyword.control.machine.hew",
+          "match": "\\b(emit|entry|event|exit|machine|on|state|when)\\b"
+        }
+      ]
+    },
+    "retired-syntax": {
+      "patterns": [
+        {
+          "comment": "The async modifier is an ordinary identifier; async gen fn is rejected by the compiler.",
+          "name": "invalid.illegal.hew",
+          "match": "\\basync\\s+gen\\s+fn\\b"
+        },
+        {
+          "comment": "for-await iteration is no longer a source construct.",
+          "name": "invalid.illegal.hew",
+          "match": "\\bfor\\s+await\\b"
+        },
+        {
+          "comment": "The infix | after timeout spelling is no longer a source construct.",
+          "name": "invalid.illegal.hew",
+          "match": "\\|\\s*after\\b"
+        },
+        {
+          "comment": "consume self is the receiver spelling.",
+          "name": "keyword.declaration.hew",
+          "match": "\\bconsume\\s+self\\b"
         }
       ]
     },
@@ -283,17 +315,17 @@
         {
           "comment": "Primitive types",
           "name": "storage.type.primitive.hew",
-          "match": "\\b(bool|char|never|string|void)\\b"
+          "match": "\\b(bool|bytes|char|duration|instant|string)\\b"
         },
         {
           "comment": "Generic / collection types",
           "name": "storage.type.generic.hew",
-          "match": "\\b(ActorStream|Arc|Err|HashMap|Ok|Option|Range|Rc|Result|Some|Vec|Weak)\\b"
+          "match": "\\b(Arc|Err|HashMap|HashSet|Ok|Option|Range|Rc|Result|Some|Vec|Weak)\\b"
         },
         {
           "comment": "Concurrency types",
           "name": "storage.type.concurrency.hew",
-          "match": "\\b(ActorRef|AsyncGenerator|Generator|Scope|Sink|Stream|Task)\\b"
+          "match": "\\b(Generator|LambdaPid|LocalPid|RemotePid|Scope|Sink|Stream|Task)\\b"
         },
         {
           "comment": "Built-in trait names",
@@ -315,8 +347,8 @@
     "function-definitions": {
       "patterns": [
         {
-          "comment": "Generator function definition (gen fn, async gen fn, receive gen fn)",
-          "match": "\\b((?:receive\\s+)?(?:async\\s+)?gen)\\s+(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "comment": "Generator function definition (gen fn, receive gen fn)",
+          "match": "\\b((?:receive\\s+)?gen)\\s+(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
           "captures": {
             "1": {
               "name": "keyword.declaration.hew"
@@ -409,7 +441,6 @@
             }
           }
         },
-        
         {
           "comment": "Enum declaration",
           "match": "\\b(enum)\\s+([A-Z][a-zA-Z0-9_]*)",
@@ -490,11 +521,6 @@
           "comment": "Arrow operators",
           "name": "keyword.operator.arrow.hew",
           "match": "->|=>"
-        },
-        {
-          "comment": "Send operator",
-          "name": "keyword.operator.send.hew",
-          "match": "<-"
         },
         {
           "comment": "Range operators",
@@ -623,7 +649,7 @@
         {
           "comment": "Contextual identifiers (special meaning in specific contexts)",
           "name": "variable.language.contextual.hew",
-          "match": "\\b(block|coalesce|drop_new|drop_old|export|fail|fallback|json|mailbox|max_restarts|mut|overflow|repeated|window|yaml)\\b"
+          "match": "\\b(block|clone|coalesce|consume|drop_new|drop_old|emits|error|events|export|fail|fails|fallback|handle|infinity|initial|intensity|json|mailbox|overflow|reenter|repeated|shutdown|suspends|wired_to|within|yaml)\\b"
         },
         {
           "comment": "Identifier (catch-all for variables, parameters, fields)",

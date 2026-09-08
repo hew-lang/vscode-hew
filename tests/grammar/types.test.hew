@@ -49,8 +49,8 @@ let b: bool = true
 let c: char = 'a'
 //     ^^^^ storage.type.primitive.hew
 
-let v: void
-//     ^^^^ storage.type.primitive.hew
+let v: duration
+//     ^^^^^^^^ storage.type.primitive.hew
 
 let data: bytes
 //        ^^^^^ storage.type.primitive.hew
@@ -72,16 +72,16 @@ let m: HashMap = entries
 let s: HashSet = uniq
 //     ^^^^^^^ storage.type.generic.hew
 
-let b: Box = value
-//     ^^^ storage.type.generic.hew
+let b: HashSet = value
+//     ^^^^^^^ storage.type.generic.hew
 
 let a: Arc = shared
 //     ^^^ storage.type.generic.hew
 
 // -- Concurrency types --
 
-let actor: ActorRef = ref
-//         ^^^^^^^^ storage.type.concurrency.hew
+let actor: LocalPid = ref
+//         ^^^^^^^ storage.type.concurrency.hew
 
 let t: Task = work
 //     ^^^^ storage.type.concurrency.hew
@@ -89,8 +89,8 @@ let t: Task = work
 let g: Generator = gen
 //     ^^^^^^^^^ storage.type.concurrency.hew
 
-let a: AsyncGenerator = stream
-//     ^^^^^^^^^^^^^^ storage.type.concurrency.hew
+let a: Generator = stream
+//     ^^^^^^^^^ storage.type.concurrency.hew
 
 // -- Trait names (standalone, not in declarations) --
 
@@ -100,8 +100,8 @@ let x: Send = value
 let y: Copy = value
 //     ^^^^ storage.type.trait.hew
 
-let z: Display = value
-//     ^^^^^^^ storage.type.trait.hew
+let z: Copy = value
+//     ^^^^ storage.type.trait.hew
 
 // -- Self type --
 
@@ -112,9 +112,6 @@ fn method(self) -> Self {
 
 let p: MyCustomType = value
 //     ^^^^^^^^^^^^ entity.name.type.hew
-
-struct Point {
-//     ^^^^^ entity.name.type.struct.hew
 
 enum Color {
 //   ^^^^^ entity.name.type.enum.hew

@@ -18,10 +18,6 @@ gen fn items() {
 //     ^^^^^ entity.name.function.hew
 
 async gen fn stream() {
-// <- keyword.declaration.hew
-//    ^^^ keyword.declaration.hew
-//        ^^ keyword.declaration.hew
-//           ^^^^^^ entity.name.function.hew
 
 // -- Receive functions --
 
@@ -36,9 +32,10 @@ async gen fn stream() {
 //              ^^ keyword.declaration.hew
 //                 ^^^^^^ entity.name.function.hew
 
-    receive Ping() {
+    receive fn ping() {
 //  ^^^^^^^ keyword.actor.hew
-//          ^^^^ entity.name.function.hew
+//          ^^ keyword.declaration.hew
+//             ^^^^ entity.name.function.hew
 
 // -- Function calls --
 

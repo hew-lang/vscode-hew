@@ -71,12 +71,12 @@ impl Display for Counter {
 // -- Overflow policies --
 
     overflow drop_new
-//  ^^^^^^^^ keyword.actor.hew
-//           ^^^^^^^^ constant.language.strategy.hew
+//  ^^^^^^^^ variable.language.contextual.hew
+//           ^^^^^^^^ variable.language.contextual.hew
 
     overflow block
-//  ^^^^^^^^ keyword.actor.hew
-//           ^^^^^ constant.language.strategy.hew
+//  ^^^^^^^^ variable.language.contextual.hew
+//           ^^^^^ variable.language.contextual.hew
 
 // -- Complex patterns --
 

@@ -31,22 +31,19 @@ loop {
 //  ^^^^^^ keyword.control.hew
 
 try {
-// <- keyword.control.hew
+// <- keyword.reserved.hew
 
 } catch err {
-//^^^^^ keyword.control.hew
+//^^^^^ keyword.reserved.hew
 
 select {
-// <- keyword.control.hew
-
-join {
 // <- keyword.control.hew
 
     yield value
 //  ^^^^^ keyword.control.hew
 
     cooperate
-//  ^^^^^^^^^ keyword.control.hew
+//  ^^^^^^^^^ keyword.reserved.hew
 
 after 100ms {
 // <- keyword.control.hew
@@ -61,10 +58,8 @@ scope {
 // <- keyword.control.hew
 
 launch task
-// <- keyword.control.hew
 
 cancel task
-// <- keyword.control.hew
 
 race {
 // <- keyword.control.hew
@@ -90,7 +85,7 @@ pub fn hello() {
 // <- keyword.declaration.hew
 
 export fn world() {
-// <- keyword.declaration.hew
+// <- variable.language.contextual.hew
 
     where T: Display
 //  ^^^^^ keyword.declaration.hew
@@ -99,7 +94,7 @@ x as i32
 //^^ keyword.declaration.hew
 
 let mut x = 5
-//  ^^^ keyword.declaration.hew
+//  ^^^ variable.other.hew
 
 // -- Other keywords --
 
@@ -110,12 +105,12 @@ unsafe {
 // <- keyword.other.hew
 
 extern fn c_call()
-// <- keyword.other.hew
+// <- keyword.declaration.hew
 
 foreign {
-// <- keyword.other.hew
+// <- keyword.reserved.hew
 
-isolated fn pure_fn() {
+is value
 // <- keyword.other.hew
 
 // -- Logical operators --

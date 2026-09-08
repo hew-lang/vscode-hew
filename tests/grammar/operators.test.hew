@@ -8,11 +8,6 @@ x -> y
 x => y
 //^^ keyword.operator.arrow.hew
 
-// -- Send operator --
-
-actor <- msg
-//    ^^ keyword.operator.send.hew
-
 // -- Range operators --
 
     x..y
@@ -75,4 +70,4 @@ std::io
 // -- At (attribute/wire marker) --
 
 @field
-// <- keyword.operator.at.hew
+// <- entity.name.label.hew

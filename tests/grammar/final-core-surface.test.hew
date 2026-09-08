@@ -1,0 +1,29 @@
+// SYNTAX TEST "source.hew"
+
+// `async` is an ordinary identifier; the invalid modifier sequence is marked.
+fn ordinary(async: i64) -> i64 {
+    async
+}
+
+async gen fn stream() {
+// <- invalid.illegal.hew
+
+for await item in stream {
+// <- invalid.illegal.hew
+
+let result = task | after 1s
+//                ^^^^^^^ invalid.illegal.hew
+
+await_restart supervised.child
+// <- keyword.control.hew
+
+consume self
+// <- keyword.declaration.hew
+
+select {
+// <- keyword.control.hew
+    value from source => value,
+//        ^^^^ keyword.control.hew
+    after 1s => 0,
+//  ^^^^^ keyword.control.hew
+}

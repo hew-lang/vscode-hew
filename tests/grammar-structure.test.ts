@@ -61,4 +61,20 @@ describe('Grammar structure', () => {
 
     expect(unresolvedRefs).toEqual([])
   })
+
+  it('does not advertise retired surface forms', () => {
+    const keywordPatterns = (grammar.repository.keywords as any).patterns
+    const control = keywordPatterns.find((pattern: any) => pattern.name === 'keyword.control.hew')
+    const declarations = keywordPatterns.find((pattern: any) => pattern.name === 'keyword.declaration.hew')
+    const generator = (grammar.repository['function-definitions'] as any).patterns
+      .find((pattern: any) => pattern.comment?.startsWith('Generator function definition'))
+
+    expect(control.match).not.toMatch(/(?:^|\|)join(?:\||\))/)
+    expect(declarations.match).not.toMatch(/async/)
+    expect(generator.match).not.toMatch(/async/)
+
+    const operators = JSON.stringify(grammar.repository.operators)
+    expect(operators).not.toContain('keyword.operator.send.hew')
+    expect(operators).not.toContain('"<-"')
+  })
 })
