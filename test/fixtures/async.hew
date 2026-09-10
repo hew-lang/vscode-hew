@@ -1,10 +1,10 @@
-// Comprehensive async generator demo for Hew language
-async gen fn simple_calculation(n: i32) -> i32 {
+// Comprehensive generator demo for Hew language
+gen fn simple_calculation(n: i32) -> i32 {
     yield n * 2 + 1;
 }
 
 fn main() {
-    // Test async generator output
+    // Test generator output
     for result in simple_calculation(21) {
         println(result);
     }

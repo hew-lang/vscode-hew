@@ -15,19 +15,30 @@ fn main() {
     let slow = spawn SlowWorker;
     // Test select - fast should win
     let result = select {
-        r from fast.compute(5) => r,
-        r from slow.compute(5) => r,
+        r from fast.compute(5) => match r {
+            .Ok(value) => value,
+            .Err(_) => -1,
+        },
+        r from slow.compute(5) => match r {
+            .Ok(value) => value,
+            .Err(_) => -1,
+        },
         after 2s => -1,
     };
     println("select result:");
     println(result);
 
-    // Test join - both results
-    let results = join {
-        fast.compute(10),
-        slow.compute(10),
+    // Test fork/await - both results
+    let (fast_result, slow_result) = await fork (fast.compute(10), slow.compute(10));
+    let a = match fast_result {
+        .Ok(value) => value,
+        .Err(_) => -1,
     };
-    println("join results:");
-    println(results.0);
-    println(results.1);
+    let b = match slow_result {
+        .Ok(value) => value,
+        .Err(_) => -1,
+    };
+    println("fork results:");
+    println(a);
+    println(b);
 }

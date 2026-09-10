@@ -33,9 +33,6 @@ loop {
 select {
 // <- keyword.control.hew
 
-join {
-// <- keyword.control.hew
-
     yield value
 //  ^^^^^ keyword.control.hew
 
@@ -113,6 +110,11 @@ record Point {
 export fn world() {
 // <- variable.language.contextual.hew
 
+// `pool` marks a supervisor child-pool declaration but is contextual, not a
+// reserved strategy constant — an ordinary identifier everywhere else.
+pool
+// <- variable.language.contextual.hew
+
 // -- Other keywords --
 
 dyn Trait
@@ -145,9 +147,6 @@ rest_for_one
 // <- constant.language.strategy.hew
 
 simple_one_for_one
-// <- constant.language.strategy.hew
-
-pool
 // <- constant.language.strategy.hew
 
 brutal_kill

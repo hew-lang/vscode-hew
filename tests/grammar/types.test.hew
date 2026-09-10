@@ -95,9 +95,6 @@ let t: Task = work
 let g: Generator = gen
 //     ^^^^^^^^^ storage.type.concurrency.hew
 
-let a: AsyncGenerator = stream
-//     ^^^^^^^^^^^^^^ storage.type.concurrency.hew
-
 // -- Trait names --
 
 let x: Send = value

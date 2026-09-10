@@ -18,15 +18,12 @@ type UserCreated {
 // -- Wire keywords --
 
 type WireSchema {
-    reserved(5, 6);
+    reserved @5, @6;
 //  ^^^^^^^^ keyword.wire.hew
-    old_field: string @5 deprecated,
+    old_field: string @1 deprecated,
 //                    ^^ constant.numeric.wire-tag.hew
 //                       ^^^^^^^^^^ keyword.wire.hew
-    nickname: Option<string> @6 optional,
+    nickname: Option<string> @2 optional,
 //                           ^^ constant.numeric.wire-tag.hew
 //                              ^^^^^^^^ keyword.wire.hew
-    flags: i32 @7 default(0),
-//             ^^ constant.numeric.wire-tag.hew
-//                ^^^^^^^ keyword.wire.hew
 }

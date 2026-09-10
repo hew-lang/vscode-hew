@@ -52,7 +52,8 @@ machine TcpState {
 //  ^^^^^ keyword.control.machine.hew
 
     emit Ack;
-//  ^^^^ keyword.control.machine.hew
+//  ^^^^ variable.language.contextual.hew
 
     default { state }
+//  ^^^^^^^ variable.language.contextual.hew
 }

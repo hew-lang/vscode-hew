@@ -17,9 +17,11 @@ supervisor AppSupervisor {
 //  ^^^^^^^^ keyword.supervisor.hew
 //           ^^^^^^^^^^^ constant.language.strategy.hew
 
-    restart budget(5, 30s)
-//  ^^^^^^^ keyword.supervisor.hew
-//          ^^^^^^ keyword.supervisor.hew
+    intensity: 3 within 60s
+//  ^^^^^^^^^ variable.language.contextual.hew
+//             ^ constant.numeric.integer.hew
+//               ^^^^^^ variable.language.contextual.hew
+//                      ^^^ constant.numeric.duration.hew
 
 spawn Counter { count: 0 }
 // <- keyword.actor.hew
@@ -36,6 +38,5 @@ spawn Counter { count: 0 }
     fork {
 //  ^^^^ keyword.actor.hew
 
-    async move || {
-//  ^^^^^ keyword.declaration.hew
-//        ^^^^ keyword.actor.hew
+    move || {
+//  ^^^^ keyword.actor.hew
