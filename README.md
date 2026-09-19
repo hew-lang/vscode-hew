@@ -160,3 +160,19 @@ If preflight reports that a backend is unavailable, either install the required 
 ## License
 
 Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
+
+## Updating syntax highlighting
+
+Edit structural TextMate rules in `syntaxes/hew.tmLanguage.json`. Keyword and
+built-in type lists come from the compiler's `docs/syntax-data.json`; regenerate
+them with the shared compiler tool from this repository's root:
+
+```sh
+HEW_VSCODE_HEW="$PWD" node ../hew/tools/downstream/generate-tmgrammar.mjs
+cp ../hew/dist/hew.tmLanguage.json syntaxes/hew.tmLanguage.json
+npm test
+```
+
+Consuming receivers use `consume self`. Generators use `gen fn`, and stream
+iteration uses plain `for`. The retired `async gen fn`, `for await` and infix
+`| after` forms are highlighted as errors.

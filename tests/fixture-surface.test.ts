@@ -43,7 +43,6 @@ describe('controlled fixture language surface', () => {
     expect(source).not.toMatch(/\bscope\s*\|/)
     expect(source).not.toMatch(/\bspawn\s+(?:move\s+)?\(/)
     expect(source).not.toMatch(/(?:->|:|,)\s*\*\s*(?!const\b|mut\b)[A-Za-z_]/)
-    expect(source).not.toMatch(/^\s*[A-Z][A-Za-z0-9_]*(?:\([^)]*\))?\s*,\s*$/m)
     expect(source).not.toMatch(/(?<![.A-Za-z0-9_])(?:Some|None)\s*\(/)
   })
 })

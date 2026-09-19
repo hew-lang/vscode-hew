@@ -6,9 +6,9 @@ type IntPair = (i32, i32);
 
 // Indirect enum (recursive)
 indirect enum Expr {
-    Lit(i32);
-    Add(Expr, Expr);
-    Neg(Expr);
+    Lit(i32),
+    Add(Expr, Expr),
+    Neg(Expr),
 }
 
 // Trait with bounds and associated type
@@ -19,13 +19,13 @@ trait Serializable {
 
 // Actor with init block and mailbox
 actor BufferedWorker {
-    let id: i32;
-    var buffer: i32;
+    let id: i32,
+    var buffer: i32,
 
-    mailbox 16;
+    mailbox 16,
 
-    init(id: i32) {
-        println(f"Worker {id} started");
+    init(worker_id: i32) {
+        println(f"Worker {worker_id} started");
     }
 
     receive fn process(value: i32) -> i32 {
@@ -42,7 +42,7 @@ fn scoped_sum() -> i64 {
 actor ScopedWorker {
     receive fn run() {
         scope {
-            fork result = scoped_sum();
+            let result = fork scoped_sum();
             await result;
         }
     }
@@ -53,7 +53,7 @@ fn test_lambda_actors() {
     let doubler = actor |x: i64| {
         println(x * 2);
     };
-    doubler.send(21);
+    doubler.send(21).expect("delivery");
 }
 
 // For loop with range
@@ -82,9 +82,9 @@ fn test_unsafe() {
 // Wire enum
 #[wire]
 enum Command {
-    Start;
-    Stop;
-    Pause;
+    Start,
+    Stop,
+    Pause,
 }
 
 // Wire type with all features

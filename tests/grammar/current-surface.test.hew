@@ -1,0 +1,23 @@
+// SYNTAX TEST "source.hew"
+
+fn close(consume self) {}
+//       ^^^^^^^ storage.modifier.receiver.hew
+//               ^^^^ variable.language.self.hew
+
+fn consume(value: i64) -> i64 { value }
+// ^^^^^^^ entity.name.function.hew
+
+let async = 1;
+//  ^^^^^ - invalid.removed.hew
+
+async gen fn values() -> i64 { yield 1; }
+// <- invalid.removed.hew
+
+for item in stream { println(item); }
+// <- keyword.control.hew
+
+for await item in stream { println(item); }
+// <- invalid.removed.hew
+
+let expired = work() | after 1s;
+//                   ^^^^^^^ invalid.removed.hew

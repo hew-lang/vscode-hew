@@ -17,12 +17,6 @@ gen fn items() {
 //  ^^ keyword.declaration.hew
 //     ^^^^^ entity.name.function.hew
 
-async gen fn stream() {
-// <- keyword.declaration.hew
-//    ^^^ keyword.declaration.hew
-//        ^^ keyword.declaration.hew
-//           ^^^^^^ entity.name.function.hew
-
 // -- Receive functions --
 
     receive fn handle(msg: Message) {
