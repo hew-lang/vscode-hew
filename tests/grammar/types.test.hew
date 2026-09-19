@@ -78,16 +78,16 @@ let m: HashMap = entries
 let a: Arc = shared
 //     ^^^ storage.type.generic.hew
 
-// -- Concurrency types --
+// -- Former built-in names remain ordinary user type names --
 
 let local: LocalPid = pid
-//         ^^^^^^^^ storage.type.concurrency.hew
+//         ^^^^^^^^ entity.name.type.hew
 
 let remote: RemotePid = pid
 //          ^^^^^^^^^ storage.type.concurrency.hew
 
 let lambda: LambdaPid = handler
-//          ^^^^^^^^^ storage.type.concurrency.hew
+//          ^^^^^^^^^ entity.name.type.hew
 
 let t: Task = work
 //     ^^^^ storage.type.concurrency.hew
