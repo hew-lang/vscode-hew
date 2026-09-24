@@ -21,3 +21,17 @@ for await item in stream { println(item); }
 
 let expired = work() | after 1s;
 //                   ^^^^^^^ invalid.removed.hew
+
+// -- A block-like statement ends at its `}`; the dotted tail is a variant --
+
+fn ok_after_unsafe() -> Result<i64, string> {
+    unsafe { work(); }
+    .Ok(2)
+//   ^^ entity.name.variant.hew
+}
+
+fn ok_after_scope() -> Result<i64, string> {
+    scope { work(); }
+    .Ok(3)
+//   ^^ entity.name.variant.hew
+}
