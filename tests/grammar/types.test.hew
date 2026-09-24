@@ -66,8 +66,9 @@ let t: instant = instant.now()
 let r: Result = ok(1)
 //     ^^^^^^ storage.type.generic.hew
 
-let o: Option = None
+let o: Option = .None
 //     ^^^^^^ storage.type.generic.hew
+//               ^^^^ entity.name.variant.hew
 
 let v: Vec = items
 //     ^^^ storage.type.generic.hew
