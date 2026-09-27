@@ -10,6 +10,7 @@ import { createLspWiring } from './lsp-wiring';
 import { HewDebugSession } from './debug/hew-debug-session';
 import { checkBackendAvailability, DebuggerBackendPreference } from './debug/mi-backend';
 import { HewActorsProvider, ActorTreeItem } from './debug/actors-tree-view';
+import { registerHewTests } from './testing';
 
 let client: LanguageClient | undefined;
 const ALLOW_UNTRUSTED_WORKSPACE_BINARIES_SETTING = 'hew.allowUntrustedWorkspaceBinaries';
@@ -89,6 +90,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Pass the hew compiler path to the debug session via environment variable
     if (hewPath) {
         process.env['HEW_COMPILER_PATH'] = hewPath;
+        if (client) registerHewTests(context, client, hewPath, outputChannel);
     }
 
     context.subscriptions.push(
