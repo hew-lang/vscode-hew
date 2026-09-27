@@ -17,6 +17,7 @@ const ALLOW_UNTRUSTED_WORKSPACE_BINARIES_SETTING = 'hew.allowUntrustedWorkspaceB
 const blockedWorkspaceBinaryWarnings = new Set<string>();
 
 export function activate(context: vscode.ExtensionContext) {
+    let clientStart: Promise<void> | undefined;
     const outputChannel = vscode.window.createOutputChannel('Hew Language Server');
     context.subscriptions.push(outputChannel);
 
@@ -64,7 +65,8 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }));
 
-        client.start().catch(err => {
+        clientStart = client.start();
+        clientStart.catch(err => {
             statusBar.text = '$(error) Hew';
             statusBar.tooltip = `Hew LSP failed: ${err.message}`;
             outputChannel.appendLine(`Failed to start hew-lsp: ${err.message}`);
@@ -90,7 +92,11 @@ export function activate(context: vscode.ExtensionContext) {
     // Pass the hew compiler path to the debug session via environment variable
     if (hewPath) {
         process.env['HEW_COMPILER_PATH'] = hewPath;
-        if (client) registerHewTests(context, client, hewPath, outputChannel);
+        if (client && clientStart) {
+            const testClient = client;
+            void clientStart.then(() => registerHewTests(context, testClient, hewPath, outputChannel))
+                .catch(() => undefined);
+        }
     }
 
     context.subscriptions.push(

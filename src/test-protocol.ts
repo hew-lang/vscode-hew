@@ -2,17 +2,21 @@
 export type TestEvent =
     | { event: 'run_started'; tests: number }
     | { event: 'file_compiled'; file: string; ok: boolean; diagnostics: string | null }
-    | { event: 'test_started'; identity: string }
+    | { event: 'test_started'; identity: string; selector: string }
     | {
         event: 'test_finished';
         identity: string;
+        selector: string;
         outcome: 'passed' | 'failed' | 'ignored';
         kind: string | null;
         message: string | null;
         reason: string | null;
         duration_ms: number;
         output: string;
-        report: { seed?: string | null } | null;
+        report: {
+            seed?: string | null;
+            assertion?: { operator: string; left: string; right: string } | null;
+        } | null;
     }
     | { event: 'run_finished'; passed: number; failed: number; ignored: number };
 

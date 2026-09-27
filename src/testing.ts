@@ -7,6 +7,7 @@ import { parseTestEvent } from './test-protocol';
 
 interface DiscoveredTest {
     identity: string;
+    selector: string;
     uri: string;
     range: { start: { line: number; character: number }; end: { line: number; character: number } };
     ignored: boolean;
@@ -35,7 +36,7 @@ export function registerHewTests(
                     controller.items.add(file);
                     files.set(test.uri, file);
                 }
-                const item = controller.createTestItem(`test:${test.uri}::${test.identity}`, test.identity.split('::').pop()!, uri);
+                const item = controller.createTestItem(`test:${test.selector}`, test.identity.split('::').pop()!, uri);
                 item.range = new vscode.Range(test.range.start.line, test.range.start.character,
                     test.range.end.line, test.range.end.character);
                 item.description = test.ignored ? 'ignored' : test.real_time ? 'real time' : undefined;
@@ -104,12 +105,12 @@ async function runOne(
     token: vscode.CancellationToken
 ): Promise<void> {
     const uri = item.uri!;
-    const name = item.label;
+    const selector = item.id.slice('test:'.length);
     const folder = vscode.workspace.getWorkspaceFolder(uri);
     const cwd = folder?.uri.fsPath ?? path.dirname(uri.fsPath);
     run.started(item);
     await new Promise<void>(resolve => {
-        const child = spawn(hewPath, ['test', `${uri.fsPath}::${name}`, '--format', 'json', '--color', 'never'], { cwd });
+        const child = spawn(hewPath, ['test', selector, '--format', 'json', '--color', 'never'], { cwd });
         let finished = false;
         let compileError = '';
         let stderr = '';
@@ -132,7 +133,12 @@ async function runOne(
                     run.skipped(item);
                 } else {
                     const seed = event.report?.seed ? `\nSeed: ${event.report.seed}` : '';
-                    run.failed(item, new vscode.TestMessage(`${event.message ?? event.kind ?? 'Test failed'}${seed}`), event.duration_ms);
+                    const message = `${event.message ?? event.kind ?? 'Test failed'}${seed}`;
+                    const assertion = event.report?.assertion;
+                    const testMessage = assertion
+                        ? vscode.TestMessage.diff(message, assertion.right, assertion.left)
+                        : new vscode.TestMessage(message);
+                    run.failed(item, testMessage, event.duration_ms);
                 }
             }
         });
