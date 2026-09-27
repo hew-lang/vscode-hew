@@ -15,10 +15,37 @@ export type TestEvent =
         output: string;
         report: {
             seed?: string | null;
+            site_offset?: number | null;
             assertion?: { operator: string; left: string; right: string } | null;
         } | null;
     }
     | { event: 'run_finished'; passed: number; failed: number; ignored: number };
+
+export type FinishedTestEvent = Extract<TestEvent, { event: 'test_finished' }>;
+
+/** Convert the runner's UTF-8 byte site to VS Code's UTF-16 document offset. */
+export function utf16OffsetAtUtf8Byte(source: string, offset: number): number {
+    const bytes = Buffer.from(source, 'utf8');
+    return bytes.subarray(0, Math.max(0, offset)).toString('utf8').length;
+}
+
+/** Project one failed runner event onto the editor's source and message. */
+export function renderTestFailure(event: FinishedTestEvent, source: string): {
+    offset: number | null;
+    message: string;
+    seed?: string;
+} | undefined {
+    if (event.outcome !== 'failed') return undefined;
+    const byteOffset = event.report?.site_offset;
+    const offset = typeof byteOffset === 'number' && Number.isInteger(byteOffset) && byteOffset >= 0
+        ? utf16OffsetAtUtf8Byte(source, byteOffset) : null;
+    let message = event.message ?? event.kind ?? 'Test failed';
+    const assertion = event.report?.assertion;
+    if (assertion && !message.includes('left:') && !message.includes('right:')) {
+        message += `\nleft: ${assertion.left}\nright: ${assertion.right}`;
+    }
+    return { offset, message, seed: event.report?.seed ?? undefined };
+}
 
 export function parseTestEvent(line: string): TestEvent | undefined {
     let value: unknown;
