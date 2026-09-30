@@ -1,5 +1,18 @@
 # Change Log
 
+## [1.6.0] - 2026-09-30
+
+### Added
+- Test explorer: discovers `#[test]` functions through `hew-lsp`, runs them with `hew test`, shows assertion diffs and failure diagnostics, and reruns a failure with its seed.
+- Callable guarantee words (including `suspends`) and the `??` operator are highlighted.
+
+### Changed
+- Bundled `hew-lsp` updated to Hew v0.6.0-rc4, with the rc4 standard library.
+- Grammar and fixtures synced to the v0.6.0-rc4 surface: dotted variant expressions and `;` separators.
+
+### Removed
+- `await_restart` and `brutal_kill` now scope as `invalid.removed.hew`; rc4 retired both.
+
 ## [1.5.1] - 2026-08-27
 
 ### Changed
