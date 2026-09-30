@@ -113,3 +113,11 @@ std.io
 
 @outer
 // <- entity.name.label.hew
+
+// -- Optional default --
+
+x ?? y
+//^^ keyword.operator.coalesce.hew
+
+value?
+//   ^ keyword.operator.question.hew

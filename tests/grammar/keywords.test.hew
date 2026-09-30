@@ -45,13 +45,16 @@ from source {
 await task
 // <- keyword.control.hew
 
-await_restart sup.child
-// <- keyword.control.hew
-
 scope {
 // <- keyword.control.hew
 
 // -- Removed/rejected keywords (parser rejects these with migration diagnostics) --
+
+await_restart sup.child
+// <- invalid.removed.hew
+
+brutal_kill
+// <- invalid.removed.hew
 
 try {
 // <- invalid.removed.hew
@@ -147,9 +150,6 @@ rest_for_one
 // <- constant.language.strategy.hew
 
 simple_one_for_one
-// <- constant.language.strategy.hew
-
-brutal_kill
 // <- constant.language.strategy.hew
 
 permanent
