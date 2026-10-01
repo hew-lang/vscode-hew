@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="brand/hew-bluejay-dark.svg">
+    <img src="brand/hew-bluejay.svg" width="160" alt="Hew's front-facing blue jay, with swept wings">
+  </picture>
+</p>
+
 # Hew Language Support for VS Code
 
 Syntax highlighting and language support for the [Hew programming language](https://github.com/hew-lang/hew) — a high-performance, network-native, actor-based language.
