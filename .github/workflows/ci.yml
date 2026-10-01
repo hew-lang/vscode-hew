@@ -26,3 +26,6 @@ jobs:
 
       - name: Build extension
         run: npm run build
+
+      - name: Package extension
+        run: npx vsce package --out /tmp/hew-lang.vsix
