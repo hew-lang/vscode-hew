@@ -1,8 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="brand/hew-bluejay-dark.svg">
-    <img src="brand/hew-bluejay.svg" width="160" alt="Hew's front-facing blue jay, with swept wings">
-  </picture>
+  <img src="icons/hew-extension.png" width="128" alt="Hew's front-facing blue jay, with swept wings">
 </p>
 
 # Hew Language Support for VS Code
