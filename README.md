@@ -71,9 +71,11 @@ turbofish syntax reports `E_LEGACY_TURBOFISH`.
 
 ### From VSIX (local install)
 
-1. In the extension directory, run:
+1. In the extension directory, stage the language server for your platform
+   and package it:
    ```bash
-   npm run package
+   scripts/stage-hew-lsp.sh linux-x64   # or linux-arm64, darwin-x64, darwin-arm64, win32-x64
+   npx vsce package --target linux-x64
    ```
 2. In VS Code, open the command palette (`Ctrl+Shift+P`) and run:
    **Extensions: Install from VSIX...**
@@ -91,6 +93,13 @@ check:
 ```bash
 HEW_COMPILER=/path/to/hew npm run test:fixtures
 ```
+
+## Releasing
+
+Push a `vX.Y.Z` tag matching `package.json`; `.github/workflows/release.yml`
+packages every platform with the hew language server pinned in
+`hew-release.sha256` and publishes after approval. See
+[docs/publishing.md](docs/publishing.md).
 
 ## Configuration
 

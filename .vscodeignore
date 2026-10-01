@@ -15,7 +15,6 @@ package-lock.json
 tests/**
 vitest.config.ts
 CLAUDE.md
-tools/**
-build-linux-vsix.sh
-dist-staging/**
+hew-release.sha256
+scripts/stage-hew-lsp.sh
 !server/**

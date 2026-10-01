@@ -1,0 +1,189 @@
+# Packages the extension for every platform and publishes it to the Visual
+# Studio Marketplace when a v* tag is pushed.
+#
+# Each .vsix bundles hew-lsp and std/ from the hew release archives pinned in
+# hew-release.sha256. Publishing authenticates with Microsoft Entra ID
+# through GitHub OIDC (`vsce publish --azure-credential`): a user-assigned
+# managed identity trusts this repo's `vs-marketplace` environment, and that
+# identity is a Contributor on the `hew-lang` publisher. No personal access
+# token exists. The environment holds the identity's IDs as variables and
+# requires approval before the publish job runs.
+#
+# Manual runs never publish:
+#   mode=package  packages all five targets (the dry run)
+#   mode=identity prints the managed identity's Marketplace ID, which is
+#                 what gets added as a member of the publisher
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: What to run
+        type: choice
+        options: [package, identity]
+        default: package
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    if: github.event_name == 'push' || inputs.mode == 'package'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "22"
+          package-manager-cache: false
+
+      - name: Check the tag matches package.json
+        if: github.ref_type == 'tag'
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          version=$(node -p 'require("./package.json").version')
+          if [ "$REF_NAME" != "v$version" ]; then
+            echo "::error::tag $REF_NAME does not match package.json version v$version"
+            exit 1
+          fi
+
+      - run: npm ci
+      - run: npm run test:grammar
+      - run: npx vitest run
+
+  package:
+    needs: test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: true
+      matrix:
+        target: [linux-x64, linux-arm64, darwin-x64, darwin-arm64, win32-x64]
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "22"
+          package-manager-cache: false
+
+      - run: npm ci
+
+      - name: Stage hew-lsp from the pinned hew release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET: ${{ matrix.target }}
+        run: scripts/stage-hew-lsp.sh "$TARGET"
+
+      - name: Package
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          npx vsce package --target "$TARGET"
+          sha256sum ./*.vsix
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: vsix-${{ matrix.target }}
+          path: ./*.vsix
+          if-no-files-found: error
+
+  publish:
+    needs: package
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: vs-marketplace
+    permissions:
+      contents: read
+      id-token: write # Entra ID federated credential
+    steps:
+      - name: Require the managed identity configuration
+        env:
+          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+        run: |
+          missing=0
+          for name in AZURE_CLIENT_ID AZURE_TENANT_ID AZURE_SUBSCRIPTION_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::environment variable $name is not set on the vs-marketplace environment"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "22"
+          package-manager-cache: false
+
+      - run: npm ci
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: vsix-*
+          path: vsix
+          merge-multiple: true
+
+      - uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Check the identity can publish as hew-lang
+        run: npx vsce verify-pat --azure-credential hew-lang
+
+      - name: Publish
+        run: |
+          shopt -s nullglob
+          packages=(vsix/*.vsix)
+          if [ "${#packages[@]}" -ne 5 ]; then
+            echo "::error::expected 5 platform packages, found ${#packages[@]}"
+            exit 1
+          fi
+          npx vsce publish --azure-credential --packagePath "${packages[@]}"
+
+  identity:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'identity'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment: vs-marketplace
+    permissions:
+      contents: read
+      id-token: write # Entra ID federated credential
+    steps:
+      - uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      # 499b84ac-1321-427f-aa17-267ca6975798 is the Azure DevOps resource that
+      # the Marketplace accepts tokens for.
+      - name: Print the Marketplace member ID
+        run: |
+          id=$(az rest -u https://app.vssps.visualstudio.com/_apis/profile/profiles/me \
+            --resource 499b84ac-1321-427f-aa17-267ca6975798 --query id -o tsv)
+          echo "Add this ID as a Contributor on the hew-lang publisher: $id"
+          echo "Marketplace member ID: \`$id\`" >> "$GITHUB_STEP_SUMMARY"
