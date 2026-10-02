@@ -1,0 +1,58 @@
+// SYNTAX TEST "source.hew"
+
+fn read(path: string) -> i64 fails string {
+//                           ^^^^^ keyword.control.failure.hew
+    return error "bad";
+//  ^^^^^^ keyword.control.hew
+//         ^^^^^ keyword.control.failure.hew
+    return error .Invalid;
+//         ^^^^^ keyword.control.failure.hew
+//                ^^^^^^^ entity.name.variant.hew
+    return error { .Invalid };
+//         ^^^^^ keyword.control.failure.hew
+    return error;
+//         ^^^^^ -keyword.control.failure.hew
+    return error + 1;
+//         ^^^^^ -keyword.control.failure.hew
+}
+
+let error = 1;
+//  ^^^^^ -keyword.control.failure.hew
+let n = error + 1;
+//      ^^^^^ -keyword.control.failure.hew
+
+let step: fn[once, suspends](i64) -> i64;
+//           ^^^^ keyword.callable-capability.hew
+//                 ^^^^^^^^ keyword.callable-capability.hew
+
+extern "C" {
+    #[offload]
+//  ^^ punctuation.definition.attribute.begin.hew
+//    ^^^^^^^ entity.name.function.attribute.hew
+    fn sqlite_exec_text(path: string, sql: string) -> string;
+}
+
+#[wire]
+#[serial(case = "camelCase")]
+//^^^^^^ entity.name.function.attribute.hew
+type User {
+    id: u64 @1;
+//          ^^ constant.numeric.wire-tag.hew
+    #[serial(key = "id")]
+    internal_id: string @2;
+//                      ^^ constant.numeric.wire-tag.hew
+}
+
+#[wire]
+enum Command {
+    Start @0;
+//        ^^ constant.numeric.wire-tag.hew
+    Push(i64) @1;
+//            ^^ constant.numeric.wire-tag.hew
+    Move { x: i32; y: i32; } @2;
+//                           ^^ constant.numeric.wire-tag.hew
+}
+
+let s = .Active;
+//      ^ punctuation.accessor.variant.hew
+//       ^^^^^^ entity.name.variant.hew

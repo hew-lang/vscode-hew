@@ -245,6 +245,23 @@
     "keywords": {
       "patterns": [
         {
+          "comment": "Failure return `return error <expr>`. After `return`, `error` begins a failure return unless an operator, call, index, `?`, `as`, `else`, `handle` or terminator follows, in which case it stays an ordinary binding.",
+          "match": "\\b(return)\\s+(error)(?=\\s+(?!(?:as|else|handle)\\b)[A-Za-z0-9_\"'{.])",
+          "captures": {
+            "1": {
+              "name": "keyword.control.hew"
+            },
+            "2": {
+              "name": "keyword.control.failure.hew"
+            }
+          }
+        },
+        {
+          "comment": "Failure clause `-> T fails E`: `fails` after a return type, before the error type.",
+          "name": "keyword.control.failure.hew",
+          "match": "(?<=[\\w>\\])]\\s)\\s*\\bfails\\b(?=\\s+[A-Za-z_(\\[])"
+        },
+        {
           "comment": "`clone <operand>` — the eager copy-on-write cost operation. A contextual prefix operator, highlighted only in prefix position: preceded by a non-member, non-word char and followed by whitespace then an operand start. This deliberately skips `x.clone()`, `fn clone(`, `clone(args)`, and `clone = ...` where `clone` stays an ordinary identifier.",
           "name": "keyword.operator.clone.hew",
           "match": "(?<![.\\w])clone(?=\\s+[A-Za-z0-9_\"'\\[{])"
