@@ -56,3 +56,7 @@ enum Command {
 let s = .Active;
 //      ^ punctuation.accessor.variant.hew
 //       ^^^^^^ entity.name.variant.hew
+
+fn deposit(account: Account) fails ActorError {
+//                           ^^^^^ keyword.control.failure.hew
+}
