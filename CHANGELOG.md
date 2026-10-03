@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.7.0] - 2026-10-02
+
+### Added
+- Highlighting for `fails` clauses and `return error`.
+
+### Changed
+- Grammar and fixtures synced to the v0.6.0-rc5 surface.
+
 ## [1.6.0] - 2026-09-30
 
 ### Added
