@@ -7,6 +7,7 @@
 
 ### Changed
 - Grammar and fixtures synced to the v0.6.0-rc5 surface.
+- Bundles Hew v0.6.0-rc7 (`hew-lsp` and the standard library).
 
 ## [1.6.0] - 2026-09-30
 
