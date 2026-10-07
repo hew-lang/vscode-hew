@@ -7,6 +7,7 @@ import {
 } from 'vscode-languageclient/node';
 import { discoverBinaryPath, BinaryLookupResult } from './binary-discovery';
 import { createLspWiring } from './lsp-wiring';
+import { HewLanguageClient } from './hew-language-client';
 import { HewDebugSession } from './debug/hew-debug-session';
 import { checkBackendAvailability, DebuggerBackendPreference } from './debug/mi-backend';
 import { HewActorsProvider, ActorTreeItem } from './debug/actors-tree-view';
@@ -48,7 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
         const pkgPath = config.get<string>('pkgPath', '').trim() || undefined;
         const { serverOptions, clientOptions } = createLspWiring(serverPath, outputChannel, { pkgPath });
 
-        client = new LanguageClient(
+        client = new HewLanguageClient(
             'hewLanguageServer',
             'Hew Language Server',
             serverOptions,
@@ -160,7 +161,7 @@ function formatDocument(
     }
 
     return new Promise((resolve) => {
-        const child = execFile(hewPath, ['fmt', '-'], { timeout: 10000 }, (error, stdout, stderr) => {
+        const child = execFile(hewPath, ['fmt', '--stdin'], { timeout: 10000 }, (error, stdout, stderr) => {
             if (error) {
                 outputChannel.appendLine(`hew fmt error: ${stderr || error.message}`);
                 vscode.window.showErrorMessage(`hew fmt failed: ${stderr || error.message}`);
