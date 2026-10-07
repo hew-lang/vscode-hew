@@ -4,17 +4,17 @@
 
 # Hew Language Support for VS Code
 
-Syntax highlighting and language support for the [Hew programming language](https://github.com/hew-lang/hew) — a high-performance, network-native, actor-based language.
+Syntax highlighting and language support for the [Hew programming language](https://hew.sh).
 
 ## Features
 
 - **Full syntax highlighting** for Hew language constructs
-- **Language Server Protocol** — completion, hover, definition, document symbols, semantic tokens, diagnostics (requires `hew-lsp`)
+- **Language Server Protocol** — completion, hover, definition, document symbols, semantic tokens, diagnostics (language server included in the published extension)
 - **Document formatting** — format on save via `hew fmt` (requires `hew` CLI)
 - **Actor declarations** — `actor`, `receive fn`, `receive`, `init`
 - **Supervisor trees** — `supervisor`, `child`, `restart`, `budget`, `strategy`
 - **Structured concurrency** — `scope`, `spawn`, `await`, `await_restart`, `select`, `join`
-- **Generators** — `gen fn`, `async gen fn`, `yield`
+- **Generators** — `gen fn`, `yield`
 - **Wire types** — `#[wire]` attribute on `type`/`enum` declarations, field tags with `@`
 - **Traits and generics** — `trait`, `impl ... for`, type parameters `[T: Send]`
 - **Pattern matching** — `match`, `=>`, guards, destructuring
@@ -42,10 +42,9 @@ actor Counter {
 }
 
 supervisor CounterSupervisor {
-    child counter: Counter
-        restart(permanent)
-        budget(5, 30s)
-        strategy(one_for_one);
+    strategy: one_for_one;
+    intensity: 5 within 30s;
+    child counter: Counter;
 }
 
 fn fibonacci(n: i32) -> i32 {
@@ -72,6 +71,14 @@ for a contextual enum variant in a match. The retired `::` separator reports
 turbofish syntax reports `E_LEGACY_TURBOFISH`.
 
 ## Installation
+
+### From the Marketplace
+
+Install [Hew Language](https://marketplace.visualstudio.com/items?itemName=hew-lang.hew-lang)
+in VS Code, then open a `.hew` file. The published extension includes the
+language server for supported platforms. Install the [Hew compiler](https://hew.sh/docs/getting-started/)
+for formatting, building, and running programs; restart VS Code after changing
+your shell's `PATH` so the extension can find it.
 
 ### From VSIX (local install)
 
