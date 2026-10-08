@@ -1,0 +1,20 @@
+// SYNTAX TEST "source.hew"
+
+let staging = Endpoint { ..site, host, port: 8443 };
+//            ^^^^^^^^ entity.name.type.hew
+//                         ^^^^ variable.other.hew
+//                               ^^^^ variable.other.hew
+//                                     ^^^^ variable.other.hew
+
+let circle = Shape.Circle { radius };
+//                          ^^^^^^ variable.other.hew
+
+let counter = spawn Counter(count, label);
+//            ^^^^^ keyword.actor.hew
+//                          ^^^^^ variable.other.hew
+//                                 ^^^^^ variable.other.hew
+
+emit Alarm { value, peak };
+// <- variable.language.contextual.hew
+//           ^^^^^ variable.other.hew
+//                  ^^^^ variable.other.hew
