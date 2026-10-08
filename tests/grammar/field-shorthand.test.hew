@@ -18,3 +18,14 @@ emit Alarm { value, peak };
 // <- variable.language.contextual.hew
 //           ^^^^^ variable.other.hew
 //                  ^^^^ variable.other.hew
+
+let k = K { state: 1, from: 2 };
+//          ^^^^^ variable.other.hew
+//                    ^^^^ variable.other.hew
+
+let j = K { state, from };
+//          ^^^^^ variable.other.hew
+//                 ^^^^ variable.other.hew
+
+default { state }
+//        ^^^^^ keyword.control.machine.hew

@@ -267,6 +267,11 @@
           "match": "(?<![.\\w])clone(?=\\s+[A-Za-z0-9_\"'\\[{])"
         },
         {
+          "comment": "The contextual keywords `state` and `from` as field labels in a field list (`{ state: s }`, `{ from, to }`, `{ to, from }`) are ordinary names. A lone `{ state }` stays the keyword: it is the block yielding the source state.",
+          "name": "variable.other.hew",
+          "match": "(?:(?<=[{,])|(?<=[{,]\\s))\\b(?:state|from)\\b(?=\\s*(?::(?!:)|,))|(?:(?<=,)|(?<=,\\s))\\b(?:state|from)\\b(?=\\s*})"
+        },
+        {
           "comment": "Control flow",
           "name": "keyword.control.hew",
           "match": "\\b(after|await|break|continue|defer|else|for|from|if|in|loop|match|race|return|scope|select|while|yield)\\b"
