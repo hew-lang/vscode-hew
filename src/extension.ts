@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
-import { execFile, execFileSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import {
     LanguageClient,
     State,
@@ -8,6 +8,7 @@ import {
 import { discoverBinaryPath, BinaryLookupResult } from './binary-discovery';
 import { createLspWiring } from './lsp-wiring';
 import { HewLanguageClient } from './hew-language-client';
+import { formatWithCompiler } from './compiler-formatter';
 import { HewDebugSession } from './debug/hew-debug-session';
 import { checkBackendAvailability, DebuggerBackendPreference } from './debug/mi-backend';
 import { HewActorsProvider, ActorTreeItem } from './debug/actors-tree-view';
@@ -160,23 +161,16 @@ function formatDocument(
         return Promise.resolve([]);
     }
 
-    return new Promise((resolve) => {
-        const child = execFile(hewPath, ['fmt', '--stdin'], { timeout: 10000 }, (error, stdout, stderr) => {
-            if (error) {
-                outputChannel.appendLine(`hew fmt error: ${stderr || error.message}`);
-                vscode.window.showErrorMessage(`hew fmt failed: ${stderr || error.message}`);
-                resolve([]);
-                return;
-            }
-
-            const fullRange = new vscode.Range(
-                document.positionAt(0),
-                document.positionAt(document.getText().length)
-            );
-            resolve([vscode.TextEdit.replace(fullRange, stdout)]);
-        });
-        child.stdin?.write(document.getText());
-        child.stdin?.end();
+    return formatWithCompiler(hewPath, document.getText()).then(stdout => {
+        const fullRange = new vscode.Range(
+            document.positionAt(0),
+            document.positionAt(document.getText().length)
+        );
+        return [vscode.TextEdit.replace(fullRange, stdout)];
+    }, error => {
+        outputChannel.appendLine(`hew fmt error: ${error.message}`);
+        vscode.window.showErrorMessage(`hew fmt failed: ${error.message}`);
+        return [];
     });
 }
 
