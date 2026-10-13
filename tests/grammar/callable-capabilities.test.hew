@@ -19,3 +19,23 @@ let once = capture(1);
 //         ^^^^^^^ -keyword.closure.capture.hew
 let step: fn[suspends]() -> i64;
 //           ^^^^^^^^ keyword.callable-capability.hew
+
+let identity = |<T: Eq, U: Clone> value: T, other: U| -> T { value };
+//              ^ punctuation.definition.type-parameters.begin.hew
+//               ^ entity.name.type.hew
+//                  ^^ entity.name.type.hew
+//                              ^ punctuation.definition.type-parameters.end.hew
+//                                ^^^^^ variable.parameter.hew
+let apply: fn[clone]<T: Eq>(T) -> T;
+//                  ^ punctuation.definition.type-parameters.begin.hew
+//                   ^ entity.name.type.hew
+//                        ^ punctuation.definition.type-parameters.end.hew
+let plain: fn<T>(T) -> T;
+//           ^ punctuation.definition.type-parameters.begin.hew
+//             ^ punctuation.definition.type-parameters.end.hew
+let nested: fn<T: Iterator<Item = Vec<i64>>>(T) -> T;
+//            ^ punctuation.definition.type-parameters.begin.hew
+let text = "|<T> value: T|";
+//          ^^^ -meta.type.parameters.hew
+// |<T> value: T|
+// ^^^^^^^^^^^^^ -meta.type.parameters.hew
