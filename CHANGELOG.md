@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.7.1] - Unreleased
+
+### Changed
+- Bundles Hew v0.6.0 (`hew-lsp` and the matching standard library) on all five supported platforms.
+
 ## [1.7.0] - 2026-10-02
 
 ### Added
