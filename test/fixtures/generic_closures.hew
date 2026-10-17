@@ -1,0 +1,7 @@
+fn main() {
+    let equal: fn<T: Eq>(T, T) -> bool = |<T: Eq> left: T, right: T| -> bool {
+        left == right
+    };
+    assert(equal(42, 42));
+    assert(equal("Hew", "Hew"));
+}

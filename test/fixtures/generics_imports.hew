@@ -1,34 +1,36 @@
-//! Tests for the std.option helper functions.
+//! Tests for generic Option methods and a std.testing import.
 
 import std.option;
+
 import std.testing;
 
 #[test]
-fn test_is_some_int_with_value() {
+fn test_is_some_with_value() {
+    let _seed = testing.seed();
     let x = Option.Some(42);
-    testing.assert_true(option.is_some_int(x));
+    assert(x.is_some());
 }
 
 #[test]
-fn test_is_some_int_with_none() {
+fn test_is_some_with_none() {
     let x: Option<i64> = Option.None;
-    testing.assert_false(option.is_some_int(x));
+    assert(x.is_none());
 }
 
 #[test]
-fn test_unwrap_int_some() {
+fn test_unwrap_some() {
     let x = Option.Some(42);
-    testing.assert_eq(option.unwrap_int(x), 42);
+    assert(x.expect("present") == 42);
 }
 
 #[test]
-fn test_unwrap_or_int_some() {
+fn test_unwrap_or_some() {
     let x = Option.Some(42);
-    testing.assert_eq(option.unwrap_or_int(x, 0), 42);
+    assert((x ?? 0) == 42);
 }
 
 #[test]
-fn test_unwrap_or_int_none() {
+fn test_unwrap_or_none() {
     let x: Option<i64> = Option.None;
-    testing.assert_eq(option.unwrap_or_int(x, -1), -1);
+    assert((x ?? -1) == -1);
 }

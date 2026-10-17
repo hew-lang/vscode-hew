@@ -6,9 +6,9 @@ type IntPair = (i32, i32);
 
 // Indirect enum (recursive)
 indirect enum Expr {
-    Lit(i32),
-    Add(Expr, Expr),
-    Neg(Expr),
+    Lit(i32);
+    Add(Expr, Expr);
+    Neg(Expr);
 }
 
 // Trait with bounds and associated type
@@ -19,10 +19,10 @@ trait Serializable {
 
 // Actor with init block and mailbox
 actor BufferedWorker {
-    let id: i32,
-    var buffer: i32,
+    let id: i32;
+    var buffer: i32;
 
-    mailbox 16,
+    mailbox 16;
 
     init(worker_id: i32) {
         println(f"Worker {worker_id} started");
@@ -82,17 +82,17 @@ fn test_unsafe() {
 // Wire enum
 #[wire]
 enum Command {
-    Start,
-    Stop,
-    Pause,
+    Start @0;
+    Stop @1;
+    Pause @2;
 }
 
 // Wire type with all features
 #[wire]
 type Packet {
-    header: u32 @1,
-    payload: Option<bytes> @2 optional,
-    version: u16 @3 deprecated,
+    header: u32 @1;
+    payload: Option<bytes> @2 optional;
+    version: u16 @3 deprecated;
 }
 
 // Extern block
@@ -103,6 +103,7 @@ extern "C" {
 
 // Const declarations
 pub const MAX_BUFFER: u32 = 1024;
+
 const PI: f64 = 3.14159;
 
 // String interpolation with complex expressions

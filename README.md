@@ -12,11 +12,11 @@ Syntax highlighting and language support for the [Hew programming language](http
 - **Language Server Protocol** — completion, hover, definition, document symbols, semantic tokens, diagnostics (language server included in the published extension)
 - **Document formatting** — format on save via `hew fmt` (requires `hew` CLI)
 - **Actor declarations** — `actor`, `receive fn`, `receive`, `init`
-- **Supervisor trees** — `supervisor`, `child`, `restart`, `budget`, `strategy`
-- **Structured concurrency** — `scope`, `spawn`, `await`, `await_restart`, `select`, `join`
+- **Supervisor trees** — `supervisor`, `child`, `strategy`, `intensity`, `within`
+- **Structured concurrency** — `scope`, `fork`, `await`, `select`
 - **Generators** — `gen fn`, `yield`
 - **Wire types** — `#[wire]` attribute on `type`/`enum` declarations, field tags with `@`
-- **Traits and generics** — `trait`, `impl ... for`, type parameters `[T: Send]`
+- **Traits and generics** — `trait`, `impl ... for`, type parameters `<T: Send>`, generic closures `|<T: Eq> left: T, right: T| -> bool { left == right }`
 - **Pattern matching** — `match`, `=>`, guards, destructuring
 - **Post-cutover paths** — dotted paths (`std.time`), import selections (`std.time.{Instant}`), and contextual variants (`.Ready`)
 - **All built-in types** — `i8`–`i64`, `u8`–`u64`, `f32`, `f64`, `bool`, `char`, `string`
@@ -79,6 +79,11 @@ in VS Code, then open a `.hew` file. The published extension includes the
 language server for supported platforms. Install the [Hew compiler](https://hew.sh/docs/getting-started/)
 for formatting, building, and running programs; restart VS Code after changing
 your shell's `PATH` so the extension can find it.
+
+Extension 1.7.2 bundles `hew-lsp` and `std/` from Hew v0.6.1. Use the
+[matching SDK](https://github.com/hew-lang/hew/releases/tag/v0.6.1) for
+formatting, builds and command-line checks. Before that extension update is
+installed, set `hew.lsp.serverPath` to the SDK's `hew-lsp` explicitly.
 
 ### From VSIX (local install)
 
@@ -157,7 +162,7 @@ If preflight reports that a backend is unavailable, either install the required 
 | Hew Construct | TextMate Scope |
 |---|---|
 | `fn`, `let`, `var`, `const`, `type`, `enum`, `trait`, `impl`, `gen` | `keyword.declaration` |
-| `if`, `else`, `match`, `loop`, `for`, `while`, `return`, `await`, `await_restart`, `scope` | `keyword.control` |
+| `if`, `else`, `match`, `loop`, `for`, `while`, `return`, `await`, `scope` | `keyword.control` |
 | `actor`, `receive`, `spawn`, `init`, `fork`, `this` | `keyword.actor` |
 | `supervisor`, `child`, `restart`, `budget`, `strategy` | `keyword.supervisor` |
 | `machine`, `state`, `event`, `on`, `when`, `entry`, `exit`, `emit` | `keyword.control.machine` |
@@ -165,7 +170,7 @@ If preflight reports that a backend is unavailable, either install the required 
 | `dyn`, `is`, `unsafe` | `keyword.other` |
 | `&&`, `\|\|` | `keyword.operator.logical` |
 | dotted paths, `.{...}` import selections, `.Variant` | `punctuation.accessor`, `meta.import.selection`, `entity.name.variant` |
-| `one_for_one`, `pool`, `brutal_kill`, `permanent`, `true`, `false`, `None` | `constant.language` |
+| `one_for_one`, `pool`, `brutal_kill`, `permanent`, `true`, `false` | `constant.language` |
 | `events`, `emits`, `reenter`, `initial`, `mailbox`, `overflow`, `intensity`, `within`, `shutdown`, `infinity`, `wired_to`, `export`, `resource`, `linear`, `opaque`, `wire`, `json`, `yaml`, `repeated`, `coalesce`, `fallback`, `drop_new`, `drop_old`, `block`, `fail` | `variable.language.contextual` |
 | `i32`, `u64`, `f64`, `bool`, `string` | `storage.type` |
 | `Result`, `Option`, `Send`, `Frozen`, `HashSet`, `LocalPid`, `RemotePid`, `LambdaPid` | `storage.type` |
