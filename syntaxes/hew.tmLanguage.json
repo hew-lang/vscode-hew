@@ -25,6 +25,9 @@
       "include": "#legacy-syntax"
     },
     {
+      "include": "#macros"
+    },
+    {
       "include": "#paths"
     },
     {
@@ -279,7 +282,7 @@
         {
           "comment": "Declarations",
           "name": "keyword.declaration.hew",
-          "match": "\\b(as|const|enum|extern|fn|gen|impl|import|indirect|let|package|pub|trait|type|var|where)\\b"
+          "match": "\\b(as|const|enum|extern|fn|gen|impl|import|indirect|let|macro|package|pub|trait|type|var|where)\\b"
         },
         {
           "comment": "Actor and concurrency",
@@ -635,6 +638,26 @@
           },
           "patterns": [
             {
+              "name": "meta.type.parameters.hew",
+              "begin": "\\G\\s*(<)",
+              "beginCaptures": {
+                "1": {
+                  "name": "punctuation.definition.type-parameters.begin.hew"
+                }
+              },
+              "end": "(>)",
+              "endCaptures": {
+                "1": {
+                  "name": "punctuation.definition.type-parameters.end.hew"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "#type-parameter-content"
+                }
+              ]
+            },
+            {
               "include": "#types"
             },
             {
@@ -881,6 +904,26 @@
     "callable-syntax": {
       "patterns": [
         {
+          "name": "meta.type.parameters.hew",
+          "begin": "(?<=\\bfn\\s*|\\bfn\\s*\\[[^\\]]*\\]\\s*)(<)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.type-parameters.begin.hew"
+            }
+          },
+          "end": "(>)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.type-parameters.end.hew"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#type-parameter-content"
+            }
+          ]
+        },
+        {
           "name": "meta.type.callable-capabilities.hew",
           "begin": "\\b(fn)\\s*(\\[)",
           "beginCaptures": {
@@ -942,6 +985,70 @@
               "include": "#punctuation"
             }
           ]
+        }
+      ]
+    },
+    "type-parameter-list": {
+      "name": "meta.type.parameters.hew",
+      "begin": "(<)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.type-parameters.begin.hew"
+        }
+      },
+      "end": "(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.type-parameters.end.hew"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#type-parameter-content"
+        }
+      ]
+    },
+    "type-parameter-content": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#type-parameter-list"
+        },
+        {
+          "include": "#types"
+        },
+        {
+          "include": "#punctuation"
+        }
+      ]
+    },
+    "macros": {
+      "patterns": [
+        {
+          "name": "meta.definition.macro.hew",
+          "match": "\\b(macro)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.hew"
+            },
+            "2": {
+              "name": "entity.name.function.macro.hew"
+            }
+          }
+        },
+        {
+          "name": "variable.parameter.macro.hew",
+          "match": "\\$[a-zA-Z_][a-zA-Z0-9_]*"
+        },
+        {
+          "name": "support.function.macro.hew",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=!\\s*\\()"
+        },
+        {
+          "name": "keyword.operator.macro.hew",
+          "match": "\\$(?=\\()"
         }
       ]
     }

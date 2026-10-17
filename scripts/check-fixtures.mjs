@@ -28,6 +28,7 @@ export const fixtureExpectations = {
     ],
   },
   'generics_imports.hew': { kind: 'accept' },
+  'generic_closures.hew': { kind: 'accept' },
   'if_let.hew': { kind: 'accept' },
   'machines_duration.hew': { kind: 'accept' },
   'select_join.hew': { kind: 'accept' },

@@ -1,6 +1,12 @@
 # Change Log
 
-## [1.7.1] - Unreleased
+## [1.7.2] - Unreleased
+
+### Changed
+- Bundles Hew v0.6.1 (`hew-lsp` and its matching standard library) on all five supported platforms.
+- Highlights generic closures and quantified callable types, including bounds and callable qualifiers.
+
+## [1.7.1] - 2026-10-14
 
 ### Changed
 - Bundles Hew v0.6.0 (`hew-lsp` and the matching standard library) on all five supported platforms.

@@ -9,6 +9,7 @@ const fixtureExpectations = [
   'closures.hew',
   'enums_match.hew',
   'errors.hew',
+  'generic_closures.hew',
   'generics_imports.hew',
   'if_let.hew',
   'machines_duration.hew',
