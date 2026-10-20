@@ -85,7 +85,7 @@ let local: LocalPid = pid
 //         ^^^^^^^^ entity.name.type.hew
 
 let remote: RemotePid = pid
-//          ^^^^^^^^^ storage.type.concurrency.hew
+//          ^^^^^^^^^ entity.name.type.hew
 
 let lambda: LambdaPid = handler
 //          ^^^^^^^^^ entity.name.type.hew
