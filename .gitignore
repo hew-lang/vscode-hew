@@ -11,6 +11,5 @@ CLAUDE.md
 .claude/
 .github/copilot-instructions.md
 
-# Bundled language server and std, staged by scripts/stage-hew-lsp.sh
-/server/
-/std/
+# Bundled SDK, staged by scripts/stage-hew-sdk.sh
+/sdk/

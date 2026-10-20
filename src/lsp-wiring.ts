@@ -17,7 +17,7 @@ export function createLspWiring(
     outputChannel: LanguageClientOptions['outputChannel'],
     options: LspWiringOptions = {}
 ): { serverOptions: ServerOptions; clientOptions: LanguageClientOptions } {
-    const args: string[] = [];
+    const args: string[] = ['lsp'];
     if (options.pkgPath) {
         args.push('--pkg-path', options.pkgPath);
     }

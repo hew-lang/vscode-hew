@@ -16,5 +16,5 @@ tests/**
 vitest.config.ts
 CLAUDE.md
 hew-release.sha256
-scripts/stage-hew-lsp.sh
-!server/**
+scripts/stage-hew-sdk.sh
+!sdk/**

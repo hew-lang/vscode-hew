@@ -54,6 +54,6 @@ Bump `version` in `package.json`, update `CHANGELOG.md`, push the commit and a
 publish step first runs `vsce verify-pat --azure-credential hew-lang`, so a
 missing publisher membership fails before anything is uploaded.
 
-To bundle a newer hew language server, replace `hew-release.sha256` with that
+To bundle a newer Hew SDK, replace `hew-release.sha256` with that
 release's lines from its `checksums.txt` (the five archives other than
 FreeBSD).

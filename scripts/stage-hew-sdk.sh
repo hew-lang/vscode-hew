@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Stage the bundled language server for one VS Code target.
+# Stage the bundled SDK for one VS Code target.
 #
-# Usage: scripts/stage-hew-lsp.sh <vscode-target> [archive-dir]
+# Usage: scripts/stage-hew-sdk.sh <vscode-target> [archive-dir]
 #
 # hew-release.sha256 pins the hew release archives the extension bundles.
 # The archive for the target is downloaded from the hew-lang/hew GitHub
 # release (unless already present in archive-dir), checked against that pin,
-# and its bin/hew-lsp[.exe] and std/ are copied to server/ and std/, where
-# `vsce package` picks them up (hew-lsp finds std at <exe_dir>/../std).
+# and the complete SDK tree is copied to sdk/, preserving its executable-relative
+# libraries, standard library, headers and debugger helpers for `vsce package`.
 # To bundle a different hew release, replace hew-release.sha256 with the
 # matching lines from that release's checksums file.
 set -euo pipefail
@@ -48,12 +48,19 @@ case "$archive" in
     *) tar -xzf "$archive_dir/$archive" -C "$work" ;;
 esac
 top="$work/hew-$tag-$arch"
-exe=hew-lsp
-[ "$arch" = windows-x86_64 ] && exe=hew-lsp.exe
+exe=hew
+[ "$arch" = windows-x86_64 ] && exe=hew.exe
 
-rm -rf "$root/server" "$root/std"
-mkdir -p "$root/server"
-cp "$top/bin/$exe" "$root/server/$exe"
-chmod +x "$root/server/$exe"
-cp -R "$top/std" "$root/std"
-echo "staged $exe and std/ from $archive"
+# Keep the release layout intact: the compiler, language server and debugger
+# resolve their matching libraries and resources relative to bin/hew.
+for entry in "bin/$exe" lib std include share; do
+    if [ ! -e "$top/$entry" ]; then
+        echo "error: SDK archive is missing $entry" >&2
+        exit 1
+    fi
+done
+cp -R "$top" "$work/sdk"
+chmod +x "$work/sdk/bin/$exe"
+rm -rf "$root/sdk"
+mv "$work/sdk" "$root/sdk"
+echo "staged Hew SDK from $archive"
