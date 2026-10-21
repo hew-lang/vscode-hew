@@ -75,22 +75,18 @@ turbofish syntax reports `E_LEGACY_TURBOFISH`.
 ### From the Marketplace
 
 Install [Hew Language](https://marketplace.visualstudio.com/items?itemName=hew-lang.hew-lang)
-in VS Code, then open a `.hew` file. The published extension includes the
-language server for supported platforms. Install the [Hew compiler](https://hew.sh/docs/getting-started/)
-for formatting, building, and running programs; restart VS Code after changing
-your shell's `PATH` so the extension can find it.
-
-Extension 1.7.2 bundles `hew-lsp` and `std/` from Hew v0.6.1. Use the
-[matching SDK](https://github.com/hew-lang/hew/releases/tag/v0.6.1) for
-formatting, builds and command-line checks. Before that extension update is
-installed, set `hew.lsp.serverPath` to the SDK's `hew-lsp` explicitly.
+in VS Code, then open a `.hew` file. Platform packages include a matched Hew
+SDK for language features, formatting and debug builds. The extension starts
+its language server with `hew lsp` and uses the same SDK for its other tools.
+You can select an installed SDK with `hew.lsp.serverPath`; point it at `bin/hew`
+(or `bin/hew.exe` on Windows).
 
 ### From VSIX (local install)
 
-1. In the extension directory, stage the language server for your platform
+1. In the extension directory, stage the SDK for your platform
    and package it:
    ```bash
-   scripts/stage-hew-lsp.sh linux-x64   # or linux-arm64, darwin-x64, darwin-arm64, win32-x64
+   scripts/stage-hew-sdk.sh linux-x64   # or linux-arm64, darwin-arm64, win32-x64
    npx vsce package --target linux-x64
    ```
 2. In VS Code, open the command palette (`Ctrl+Shift+P`) and run:
@@ -113,7 +109,7 @@ HEW_COMPILER=/path/to/hew npm run test:fixtures
 ## Releasing
 
 Push a `vX.Y.Z` tag matching `package.json`; `.github/workflows/release.yml`
-packages every platform with the hew language server pinned in
+packages every platform with the Hew SDK pinned in
 `hew-release.sha256` and publishes after approval. See
 [docs/publishing.md](docs/publishing.md).
 
@@ -121,12 +117,12 @@ packages every platform with the hew language server pinned in
 
 | Setting | Default | Description |
 |---|---|---|
-| `hew.lsp.serverPath` | `""` | Path to `hew-lsp` binary. If empty, searches trusted workspace `target/`, `PATH`, and bundled binaries. |
-| `hew.formatterPath` | `""` | Path to `hew` binary for formatting. If empty, searches trusted workspace `target/`, `PATH`, and bundled binaries. |
-| `hew.debugger.hewPath` | `""` | Path to the `hew` compiler used for debug builds. If empty, uses the same trusted search as `hew.formatterPath`. |
+| `hew.lsp.serverPath` | `""` | Path to `hew` for `hew lsp`. If empty, searches trusted workspace `target/`, `PATH`, and the bundled SDK. |
+| `hew.formatterPath` | `""` | Path to `hew` for formatting. If empty, uses `hew.lsp.serverPath` or the same trusted SDK search. |
+| `hew.debugger.hewPath` | `""` | Path to the `hew` compiler used for debug builds. If empty, uses `hew.lsp.serverPath` or the same trusted SDK search. |
 | `hew.allowUntrustedWorkspaceBinaries` | `false` | Allows auto-detecting workspace `target/release` and `target/debug` binaries even in Restricted Mode. Set this in user settings only when you explicitly trust those workspace binaries. |
 
-Workspace-built `hew` and `hew-lsp` binaries are only auto-selected in trusted workspaces by default. In Restricted Mode, trust the workspace or set `hew.allowUntrustedWorkspaceBinaries` in user settings to opt in.
+Workspace-built `hew` binaries are only auto-selected in trusted workspaces by default. In Restricted Mode, trust the workspace or set `hew.allowUntrustedWorkspaceBinaries` in user settings to opt in.
 
 ## Debugging
 

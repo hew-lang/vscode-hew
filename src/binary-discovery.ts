@@ -54,7 +54,7 @@ export function discoverBinaryPath(options: BinaryLookupOptions): BinaryLookupRe
         return { path: pathBinary, blockedWorkspaceCandidates };
     }
 
-    const bundledPath = path.join(options.extensionPath, 'server', `${options.binaryName}${ext}`);
+    const bundledPath = path.join(options.extensionPath, 'sdk', 'bin', `${options.binaryName}${ext}`);
     if (options.fileExists(bundledPath)) {
         return { path: bundledPath, blockedWorkspaceCandidates };
     }

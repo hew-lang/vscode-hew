@@ -77,27 +77,27 @@
         "hew.lsp.serverPath": {
           "type": "string",
           "default": "",
-          "description": "Path to the hew-lsp binary. If empty, searches trusted workspace target/ directories, PATH, and bundled binaries. In Restricted Mode, workspace values are ignored."
+          "description": "Path to the hew executable used for `hew lsp`. If empty, searches trusted workspace target/ directories, PATH, and the bundled SDK. In Restricted Mode, workspace values are ignored."
         },
         "hew.formatterPath": {
           "type": "string",
           "default": "",
-          "description": "Path to the hew binary used for formatting. If empty, searches trusted workspace target/ directories, PATH, and bundled binaries. In Restricted Mode, workspace values are ignored."
+          "description": "Path to the hew binary used for formatting. If empty, uses hew.lsp.serverPath or the same trusted SDK search. In Restricted Mode, workspace values are ignored."
         },
         "hew.debugger.hewPath": {
           "type": "string",
           "default": "",
-          "description": "Path to the hew compiler binary for debug builds. If empty, uses the same trusted search as hew.formatterPath. In Restricted Mode, workspace values are ignored."
+          "description": "Path to the hew compiler binary for debug builds. If empty, uses hew.lsp.serverPath or the same trusted SDK search. In Restricted Mode, workspace values are ignored."
         },
         "hew.allowUntrustedWorkspaceBinaries": {
           "type": "boolean",
           "default": false,
-          "description": "Allow auto-discovering hew and hew-lsp from workspace target/release and target/debug even when the workspace is untrusted. User setting only in Restricted Mode."
+          "description": "Allow auto-discovering hew from workspace target/release and target/debug even when the workspace is untrusted. User setting only in Restricted Mode."
         },
         "hew.pkgPath": {
           "type": "string",
           "default": "",
-          "description": "Package search directory passed to hew-lsp as --pkg-path. Mirrors `hew check --pkg-path <dir>` so that editor diagnostics and the CLI agree on which imports resolve. Leave empty to use the default package search roots."
+          "description": "Package search directory passed to hew lsp as --pkg-path. Mirrors `hew check --pkg-path <dir>` so that editor diagnostics and the CLI agree on which imports resolve. Leave empty to use the default package search roots."
         }
       }
     },

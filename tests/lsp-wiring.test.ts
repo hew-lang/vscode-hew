@@ -8,11 +8,11 @@ import {
 describe('LSP wiring', () => {
   it('builds server/client options for Hew language features', () => {
     const outputChannel = { appendLine: () => {} } as any
-    const { serverOptions, clientOptions } = createLspWiring('/tmp/hew-lsp', outputChannel)
+    const { serverOptions, clientOptions } = createLspWiring('/tmp/hew', outputChannel)
 
     expect(serverOptions).toEqual({
-      command: '/tmp/hew-lsp',
-      args: [],
+      command: '/tmp/hew',
+      args: ['lsp'],
       transport: HEW_STDIO_TRANSPORT,
     })
     expect(clientOptions.documentSelector).toEqual(HEW_DOCUMENT_SELECTOR)
@@ -22,21 +22,21 @@ describe('LSP wiring', () => {
 
   it('passes --pkg-path arg when pkgPath option is provided', () => {
     const outputChannel = { appendLine: () => {} } as any
-    const { serverOptions } = createLspWiring('/tmp/hew-lsp', outputChannel, {
+    const { serverOptions } = createLspWiring('/tmp/hew', outputChannel, {
       pkgPath: '/custom/packages',
     })
 
     expect(serverOptions).toEqual({
-      command: '/tmp/hew-lsp',
-      args: ['--pkg-path', '/custom/packages'],
+      command: '/tmp/hew',
+      args: ['lsp', '--pkg-path', '/custom/packages'],
       transport: HEW_STDIO_TRANSPORT,
     })
   })
 
   it('omits --pkg-path arg when pkgPath option is absent', () => {
     const outputChannel = { appendLine: () => {} } as any
-    const { serverOptions } = createLspWiring('/tmp/hew-lsp', outputChannel, {})
+    const { serverOptions } = createLspWiring('/tmp/hew', outputChannel, {})
 
-    expect((serverOptions as any).args).toEqual([])
+    expect((serverOptions as any).args).toEqual(['lsp'])
   })
 })

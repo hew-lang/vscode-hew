@@ -38,11 +38,11 @@ function runDiscovery({
 
 describe('binary discovery', () => {
     it('prefers an explicit configured path even in an untrusted workspace', () => {
-        const configPath = '/trusted/bin/hew-lsp';
-        const workspaceBinary = path.join('/workspace', 'target', 'release', 'hew-lsp');
+        const configPath = '/trusted/bin/hew';
+        const workspaceBinary = path.join('/workspace', 'target', 'release', 'hew');
 
         const result = runDiscovery({
-            binaryName: 'hew-lsp',
+            binaryName: 'hew',
             configPath,
             isWorkspaceTrusted: false,
             existingPaths: [configPath, workspaceBinary],
@@ -55,12 +55,12 @@ describe('binary discovery', () => {
     });
 
     it('prefers workspace release binaries when the workspace is trusted', () => {
-        const workspaceBinary = path.join('/workspace', 'target', 'release', 'hew-lsp');
+        const workspaceBinary = path.join('/workspace', 'target', 'release', 'hew');
 
         const result = runDiscovery({
-            binaryName: 'hew-lsp',
+            binaryName: 'hew',
             existingPaths: [workspaceBinary],
-            pathBinary: 'hew-lsp',
+            pathBinary: 'hew',
         });
 
         expect(result).toEqual({
@@ -100,11 +100,11 @@ describe('binary discovery', () => {
     });
 
     it('falls back to bundled binaries after blocking workspace candidates', () => {
-        const workspaceBinary = path.join('/workspace', 'target', 'release', 'hew-lsp');
-        const bundledBinary = path.join('/extension', 'server', 'hew-lsp');
+        const workspaceBinary = path.join('/workspace', 'target', 'release', 'hew');
+        const bundledBinary = path.join('/extension', 'sdk', 'bin', 'hew');
 
         const result = runDiscovery({
-            binaryName: 'hew-lsp',
+            binaryName: 'hew',
             isWorkspaceTrusted: false,
             existingPaths: [workspaceBinary, bundledBinary],
         });
@@ -114,4 +114,14 @@ describe('binary discovery', () => {
             blockedWorkspaceCandidates: [workspaceBinary],
         });
     });
+    it('finds the bundled Windows SDK executable', () => {
+        const bundledBinary = path.join('/extension', 'sdk', 'bin', 'hew.exe');
+        expect(discoverBinaryPath({
+            binaryName: 'hew', extensionPath: '/extension', isWorkspaceTrusted: false,
+            allowUntrustedWorkspaceBinaries: false,
+            fileExists: candidate => candidate === bundledBinary,
+            findOnPath: () => undefined, platform: 'win32',
+        }).path).toBe(bundledBinary);
+    });
+
 });

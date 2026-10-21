@@ -1,7 +1,7 @@
 # Packages the extension for every platform and publishes it to the Visual
 # Studio Marketplace when a v* tag is pushed.
 #
-# Each .vsix bundles hew-lsp and std/ from the hew release archives pinned in
+# Each .vsix bundles the Hew SDK from the hew release archives pinned in
 # hew-release.sha256. Publishing authenticates with Microsoft Entra ID
 # through GitHub OIDC (`vsce publish --azure-credential`): a user-assigned
 # managed identity trusts this repo's `vs-marketplace` environment, and that
@@ -71,7 +71,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        target: [linux-x64, linux-arm64, darwin-x64, darwin-arm64, win32-x64]
+        target: [linux-x64, linux-arm64, darwin-arm64, win32-x64]
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -84,11 +84,11 @@ jobs:
 
       - run: npm ci
 
-      - name: Stage hew-lsp from the pinned hew release
+      - name: Stage the Hew SDK from the pinned hew release
         env:
           GH_TOKEN: ${{ github.token }}
           TARGET: ${{ matrix.target }}
-        run: scripts/stage-hew-lsp.sh "$TARGET"
+        run: scripts/stage-hew-sdk.sh "$TARGET"
 
       - name: Package
         env:
@@ -158,8 +158,8 @@ jobs:
         run: |
           shopt -s nullglob
           packages=(vsix/*.vsix)
-          if [ "${#packages[@]}" -ne 5 ]; then
-            echo "::error::expected 5 platform packages, found ${#packages[@]}"
+          if [ "${#packages[@]}" -ne 4 ]; then
+            echo "::error::expected 4 platform packages, found ${#packages[@]}"
             exit 1
           fi
           npx vsce publish --azure-credential --packagePath "${packages[@]}"

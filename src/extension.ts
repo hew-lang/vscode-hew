@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     const serverPathResult = findBinaryPath(
         'lsp.serverPath',
-        'hew-lsp',
+        'hew',
         context.extensionPath,
         outputChannel
     );
@@ -71,17 +71,17 @@ export function activate(context: vscode.ExtensionContext) {
         clientStart.catch(err => {
             statusBar.text = '$(error) Hew';
             statusBar.tooltip = `Hew LSP failed: ${err.message}`;
-            outputChannel.appendLine(`Failed to start hew-lsp: ${err.message}`);
+            outputChannel.appendLine(`Failed to start hew lsp: ${err.message}`);
             vscode.window.showErrorMessage(`Hew LSP failed to start: ${err.message}`);
         });
 
         context.subscriptions.push(client);
     } else {
         statusBar.text = '$(warning) Hew';
-        statusBar.tooltip = 'hew-lsp not found (formatter still available)';
-        outputChannel.appendLine('hew-lsp not found. LSP features are disabled until it is installed.');
+        statusBar.tooltip = 'hew not found (formatter still available)';
+        outputChannel.appendLine('hew not found. LSP features are disabled until it is installed.');
         vscode.window.showWarningMessage(
-            getMissingBinaryMessage('hew-lsp', 'hew.lsp.serverPath', serverPathResult)
+            getMissingBinaryMessage('hew', 'hew.lsp.serverPath', serverPathResult)
         );
     }
 
@@ -176,7 +176,7 @@ function formatDocument(
 
 /**
  * Find a binary by checking: config setting → trusted workspace target/ dirs
- * (or explicit opt-in) → PATH → bundled extension server/.
+ * (or explicit opt-in) → PATH → bundled extension sdk/bin/.
  */
 function findBinaryPath(
     configKey: string,
@@ -186,7 +186,7 @@ function findBinaryPath(
 ): BinaryLookupResult {
     const config = vscode.workspace.getConfiguration('hew');
     const result = discoverBinaryPath({
-        configPath: config.get<string>(configKey),
+        configPath: config.get<string>(configKey)?.trim() || config.get<string>('lsp.serverPath'),
         binaryName,
         extensionPath,
         workspaceFolders: vscode.workspace.workspaceFolders?.map(folder => folder.uri.fsPath),
@@ -248,8 +248,7 @@ function getMissingBinaryMessage(
             `in user settings, or set ${configSetting} to a trusted binary.`;
     }
 
-    const buildPackage = binaryName === 'hew-lsp' ? 'hew-lsp' : 'hew-cli';
-    return `${binaryName} not found. Build it with: cd <hew-project> && cargo build -p ${buildPackage}`;
+    return `${binaryName} not found. Install the Hew SDK or set ${configSetting} to its bin/hew executable.`;
 }
 
 // ---------------------------------------------------------------------------
