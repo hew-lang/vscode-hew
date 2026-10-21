@@ -86,7 +86,7 @@ You can select an installed SDK with `hew.lsp.serverPath`; point it at `bin/hew`
 1. In the extension directory, stage the SDK for your platform
    and package it:
    ```bash
-   scripts/stage-hew-sdk.sh linux-x64   # or linux-arm64, darwin-x64, darwin-arm64, win32-x64
+   scripts/stage-hew-sdk.sh linux-x64   # or linux-arm64, darwin-arm64, win32-x64
    npx vsce package --target linux-x64
    ```
 2. In VS Code, open the command palette (`Ctrl+Shift+P`) and run:

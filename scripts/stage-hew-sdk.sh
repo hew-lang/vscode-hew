@@ -20,7 +20,6 @@ pin="$root/hew-release.sha256"
 case "$target" in
     linux-x64) arch=linux-x86_64 ;;
     linux-arm64) arch=linux-aarch64 ;;
-    darwin-x64) arch=darwin-x86_64 ;;
     darwin-arm64) arch=darwin-aarch64 ;;
     win32-x64) arch=windows-x86_64 ;;
     *) echo "error: unsupported target '$target'" >&2; exit 1 ;;
