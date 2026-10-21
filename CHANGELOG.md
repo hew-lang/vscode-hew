@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.7.4] - 2026-10-21
+
+### Changed
+- Highlights hierarchical and parallel machines, history targets, final states, completion and eventless transitions.
+
 ## [1.7.3] - 2026-10-20
 
 ### Changed
