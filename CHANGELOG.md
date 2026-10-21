@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.7.5] - 2026-10-21
+
+### Changed
+- Updates the bundled Hew SDK to v0.6.4 on Linux x64/arm64, macOS arm64, and Windows x64.
+
 ## [1.7.4] - 2026-10-21
 
 ### Changed
