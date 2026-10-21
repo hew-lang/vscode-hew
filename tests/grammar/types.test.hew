@@ -58,6 +58,9 @@ let data: bytes
 let d: duration
 //     ^^^^^^^^ storage.type.primitive.hew
 
+let wall: timestamp
+//        ^^^^^^^^^ storage.type.primitive.hew
+
 let t: instant = instant.now()
 //     ^^^^^^^ storage.type.primitive.hew
 
@@ -119,3 +122,19 @@ enum Color {
 
 trait Drawable {
 //    ^^^^^^^^ entity.name.type.trait.hew
+
+// timestamp stays in a comment
+// ^^^^^^^^^ comment.line.double-slash.hew
+
+let label = "timestamp";
+//           ^^^^^^^^^ string.quoted.double.hew
+
+type Schedule { wall: timestamp; }
+//                    ^^^^^^^^^ storage.type.primitive.hew
+
+impl Schedule {
+// <- keyword.declaration.hew
+    fn observed_at(self) -> timestamp { self.wall }
+//     ^^^^^^^^^^^ entity.name.function.hew
+//                          ^^^^^^^^^ storage.type.primitive.hew
+}
