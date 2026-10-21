@@ -354,7 +354,7 @@
         {
           "comment": "Primitive types",
           "name": "storage.type.primitive.hew",
-          "match": "\\b(bool|bytes|char|duration|instant|string)\\b"
+          "match": "\\b(bool|bytes|char|duration|instant|string|timestamp)\\b"
         },
         {
           "comment": "Generic / collection types",
