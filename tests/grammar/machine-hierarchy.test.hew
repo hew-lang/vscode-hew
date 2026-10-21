@@ -1,0 +1,34 @@
+// SYNTAX TEST "source.hew"
+
+machine Delivery {
+    events { Send; }
+    state Ready;
+    parallel state Working {
+//  ^^^^^^^^ variable.language.contextual.hew
+        region payment {
+//      ^^^^^^ variable.language.contextual.hew
+            state Waiting { count: i64; }
+            initial Waiting { count: 0 };
+//          ^^^^^^^ variable.language.contextual.hew
+            final state Paid;
+//          ^^^^^ variable.language.contextual.hew
+        }
+        region stock { initial state Empty; final state Reserved; }
+    }
+    final state Finished;
+    on Send: Ready => Working history reenter;
+//                            ^^^^^^^ variable.language.contextual.hew
+    on completion: Working => Finished;
+//     ^^^^^^^^^^ variable.language.contextual.hew
+    always: Ready => Finished when false;
+//  ^^^^^^ variable.language.contextual.hew
+    default { state }
+}
+
+fn history(parallel: i64) -> i64 { parallel }
+// ^^^^^^^ entity.name.function.hew
+
+// parallel region history final completion always
+// ^^^^^^^^ comment.line.double-slash.hew
+let label = "parallel region history final completion always";
+//           ^^^^^^^^ string.quoted.double.hew
