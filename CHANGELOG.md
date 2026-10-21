@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.7.4] - 2026-10-21
+
+### Changed
+- Updates the bundled Hew SDK to v0.6.3 on Linux x64/arm64, macOS arm64, and Windows x64.
+- Highlights hierarchical and parallel machines, history targets, final states, completion and eventless transitions.
+
 ## [1.7.3] - 2026-10-20
 
 ### Changed
