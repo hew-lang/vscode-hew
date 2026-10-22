@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.7.7] - 2026-10-22
+
+### Changed
+- Update the bundled Hew SDK to v0.7.1 so native WebSocket writes respect cancellation and deadlines.
+
 ## [1.7.6] - 2026-10-22
 
 ### Changed
