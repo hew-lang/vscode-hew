@@ -16,7 +16,7 @@ describe('LSP wiring', () => {
       transport: HEW_STDIO_TRANSPORT,
     })
     expect(clientOptions.documentSelector).toEqual(HEW_DOCUMENT_SELECTOR)
-    expect(clientOptions.documentSelector).toContainEqual({ language: 'hew' })
+    expect(clientOptions.documentSelector).toEqual([{ language: 'hew', scheme: 'file' }, { language: 'hew', scheme: 'untitled' }])
     expect(clientOptions.outputChannel).toBe(outputChannel)
   })
 

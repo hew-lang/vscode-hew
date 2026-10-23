@@ -186,6 +186,28 @@
           "when": "view == hewActors",
           "group": "navigation"
         }
+      ],
+      "editor/context": [
+        {
+          "command": "hew.expandMacro",
+          "when": "editorLangId == hew && resourceScheme != hew-expansion",
+          "group": "hew@0"
+        },
+        {
+          "command": "hew.expandDocument",
+          "when": "editorLangId == hew && resourceScheme != hew-expansion",
+          "group": "hew@1"
+        },
+        {
+          "command": "hew.refreshExpansion",
+          "when": "resourceScheme == hew-expansion",
+          "group": "hew@2"
+        },
+        {
+          "command": "hew.expansionSource",
+          "when": "resourceScheme == hew-expansion",
+          "group": "hew@3"
+        }
       ]
     },
     "commands": [
@@ -198,6 +220,22 @@
         "command": "hew.debug.toggleRuntimeFrames",
         "title": "Toggle Runtime Frames in Call Stack",
         "category": "Hew Debug"
+      },
+      {
+        "command": "hew.expandMacro",
+        "title": "Hew: Expand Macro at Cursor"
+      },
+      {
+        "command": "hew.expandDocument",
+        "title": "Hew: Show Expanded Document"
+      },
+      {
+        "command": "hew.refreshExpansion",
+        "title": "Hew: Refresh Expansion"
+      },
+      {
+        "command": "hew.expansionSource",
+        "title": "Hew: Go to Expansion Source"
       }
     ]
   },
