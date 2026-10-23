@@ -1,0 +1,45 @@
+// SYNTAX TEST "source.hew"
+
+let transform: fn[clone, suspends](consume Packet) -> Packet;
+//                                 ^^^^^^^ storage.modifier.parameter.hew
+//                                         ^^^^^^ entity.name.type.hew
+
+let forward = |consume packet: Packet| packet;
+//             ^^^^^^^ storage.modifier.parameter.hew
+//                     ^^^^^^ variable.parameter.hew
+
+let generic = |<T> consume value: T| value;
+//                 ^^^^^^^ storage.modifier.parameter.hew
+//                         ^^^^^ variable.parameter.hew
+
+let forward = actor |consume packet: Packet| packet;
+//                   ^^^^^^^ storage.modifier.parameter.hew
+
+fn process(
+    consume packet: Packet,
+//  ^^^^^^^ storage.modifier.parameter.hew
+    limit: i64
+) {}
+
+let tuple: fn(consume (Packet, i64)) -> Packet;
+//            ^^^^^^^ storage.modifier.parameter.hew
+
+let consume = 1;
+//  ^^^^^^^ -storage.modifier.parameter.hew
+//  ^^^^^^^ variable.other.hew
+
+let ordinary: fn(consume) -> consume;
+//              ^^^^^^^ -storage.modifier.parameter.hew
+//              ^^^^^^^ -variable.language.contextual.hew
+
+let identity = |consume| consume;
+//              ^^^^^^^ variable.parameter.hew
+
+let typed = |consume: Packet| consume;
+//           ^^^^^^^ variable.parameter.hew
+
+import ownership.{consume as take};
+//                ^^^^^^^ -storage.modifier.parameter.hew
+
+let text = "consume packet";
+//          ^^^^^^^ -storage.modifier.parameter.hew

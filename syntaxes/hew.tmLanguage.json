@@ -397,6 +397,9 @@
           }
         },
         {
+          "include": "#parameter-ownership"
+        },
+        {
           "comment": "Generator function definition (gen fn and receive gen fn)",
           "match": "\\b((?:receive\\s+)?gen)\\s+(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
           "captures": {
@@ -659,6 +662,9 @@
               "include": "#types"
             },
             {
+              "include": "#parameter-ownership"
+            },
+            {
               "name": "variable.parameter.hew",
               "match": "\\b[a-z_][a-zA-Z0-9_]*\\b"
             },
@@ -890,7 +896,7 @@
         {
           "comment": "Contextual identifiers (special meaning in specific contexts)",
           "name": "variable.language.contextual.hew",
-          "match": "\\b(always|block|clone|coalesce|completion|consume|default|drop_new|drop_old|emit|emits|error|events|export|fail|fails|fallback|final|handle|history|initial|intensity|json|mailbox|overflow|parallel|pool|reenter|region|repeated|stop|suspends|wired_to|within|yaml)\\b"
+          "match": "\\b(always|block|clone|coalesce|completion|default|drop_new|drop_old|emit|emits|error|events|export|fail|fails|fallback|final|handle|history|initial|intensity|json|mailbox|overflow|parallel|pool|reenter|region|repeated|stop|suspends|wired_to|within|yaml)\\b"
         },
         {
           "comment": "Identifier (catch-all for variables, parameters, fields)",
@@ -898,6 +904,10 @@
           "match": "\\b[a-z_][a-zA-Z0-9_]*\\b"
         }
       ]
+    },
+    "parameter-ownership": {
+      "name": "storage.modifier.parameter.hew",
+      "match": "\\bconsume\\b(?=\\s+(?!as\\b)[a-zA-Z_(])"
     },
     "callable-syntax": {
       "patterns": [
