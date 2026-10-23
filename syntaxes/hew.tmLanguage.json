@@ -2,9 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Hew",
   "scopeName": "source.hew",
-  "fileTypes": [
-    "hew"
-  ],
+  "fileTypes": ["hew"],
   "patterns": [
     {
       "include": "#comments"
@@ -174,9 +172,9 @@
     "numbers": {
       "patterns": [
         {
-          "comment": "Duration literals: 100ms, 5s, 1h",
+          "comment": "Duration literals: 100ms, 0.25s, 1.5ms",
           "name": "constant.numeric.duration.hew",
-          "match": "\\b[0-9][0-9_]*(ns|us|ms|s|m|h)\\b"
+          "match": "\\b[0-9][0-9_]*(\\.[0-9][0-9_]*)?(ns|us|ms|s|m|h)\\b"
         },
         {
           "comment": "Hex integer: 0xFF",
@@ -623,8 +621,8 @@
     "closures": {
       "patterns": [
         {
-          "comment": "Pipe closure parameters following an expression introducer, move, actor or a private capture list. Logical and bitwise operators keep their ordinary scopes.",
-          "begin": "(?<=[=(,\\[]\\s*|=>\\s*|\\bmove\\s+|\\bactor\\s+|\\bcapture\\s*\\([^)]*\\)\\s*)(\\|)(?!\\|)(?=[^|]*\\|)",
+          "comment": "Pipe closure parameters following an expression introducer, move or actor. Logical and bitwise operators keep their ordinary scopes.",
+          "begin": "(?<=[=(,\\[]\\s*|=>\\s*|\\bmove\\s+|\\bactor\\s+)(\\|)(?!\\|)(?=[^|]*\\|)",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.parameters.begin.hew"
@@ -952,39 +950,70 @@
               "include": "#punctuation"
             }
           ]
+        }
+      ]
+    },
+    "type-parameter-list": {
+      "name": "meta.type.parameters.hew",
+      "begin": "(<)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.type-parameters.begin.hew"
+        }
+      },
+      "end": "(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.type-parameters.end.hew"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#type-parameter-content"
+        }
+      ]
+    },
+    "type-parameter-content": {
+      "patterns": [
+        {
+          "include": "#comments"
         },
         {
-          "name": "meta.closure.capture.hew",
-          "begin": "(?<![.\\w])(capture)\\s*(\\()(?=\\s*var\\b)",
-          "beginCaptures": {
+          "include": "#type-parameter-list"
+        },
+        {
+          "include": "#types"
+        },
+        {
+          "include": "#punctuation"
+        }
+      ]
+    },
+    "macros": {
+      "patterns": [
+        {
+          "name": "meta.definition.macro.hew",
+          "match": "\\b(macro)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
             "1": {
-              "name": "keyword.closure.capture.hew"
+              "name": "keyword.declaration.hew"
             },
             "2": {
-              "name": "punctuation.section.parens.begin.hew"
+              "name": "entity.name.function.macro.hew"
             }
-          },
-          "end": "(\\))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.section.parens.end.hew"
-            }
-          },
-          "patterns": [
-            {
-              "name": "keyword.closure.capture-mutability.hew",
-              "match": "\\bvar\\b"
-            },
-            {
-              "include": "#comments"
-            },
-            {
-              "include": "#variables"
-            },
-            {
-              "include": "#punctuation"
-            }
-          ]
+          }
+        },
+        {
+          "name": "variable.parameter.macro.hew",
+          "match": "\\$[a-zA-Z_][a-zA-Z0-9_]*"
+        },
+        {
+          "name": "support.function.macro.hew",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=!\\s*\\()"
+        },
+        {
+          "name": "keyword.operator.macro.hew",
+          "match": "\\$(?=\\()"
         }
       ]
     },

@@ -1,7 +1,8 @@
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node';
 
 export const HEW_DOCUMENT_SELECTOR: LanguageClientOptions['documentSelector'] = [
-    { language: 'hew' }
+    { language: 'hew', scheme: 'file' },
+    { language: 'hew', scheme: 'untitled' }
 ];
 // `TransportKind.stdio` in vscode-languageclient is numeric value 0.
 // Keep this as a plain constant to avoid loading VS Code runtime modules in unit tests.

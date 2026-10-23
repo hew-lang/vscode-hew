@@ -197,3 +197,17 @@ npm test
 Consuming receivers use `consume self`. Generators use `gen fn`, and stream
 iteration uses plain `for`. The retired `async gen fn`, `for await` and infix
 `| after` forms are highlighted as errors.
+
+## Macro expansion views
+
+With a compiler that supports expansion metadata, use **Hew: Expand Macro at
+Cursor** for the selected invocation or **Hew: Show Expanded Document** for the
+whole source file. The read-only Hew view opens beside your source and refreshes
+after source analysis. **Hew: Refresh Expansion** requests another view, and
+**Hew: Go to Expansion Source** opens the original document, an invocation or
+its selected rule.
+
+Expansion views are for inspection. Context comments distinguish hygienic names
+but do not make the rendered text a standalone equivalent program. Diagnostics
+and test execution use the original Hew source. Test imported macros in ordinary
+`#[test]` functions and run them through the existing Testing panel.

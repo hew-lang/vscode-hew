@@ -1,0 +1,14 @@
+// SYNTAX TEST "source.hew"
+
+fn wait(delay: duration = 0.25s, attempts: i64 = 2) {}
+// ^^^^ entity.name.function.hew
+//             ^^^^^^^^ storage.type.primitive.hew
+//                        ^^^^^ constant.numeric.duration.hew
+//                                         ^^^ storage.type.numeric.hew
+
+let invoke = |value: i64| value;
+//           ^ punctuation.definition.parameters.begin.hew
+
+wait(delay: 1.5ms);
+// <- entity.name.function.call.hew
+//          ^^^^^ constant.numeric.duration.hew

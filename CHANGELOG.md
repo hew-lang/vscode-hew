@@ -1,5 +1,14 @@
 # Change Log
 
+## [1.8.0] - 2026-10-23
+
+### Added
+- Expand a selected macro or the complete file into a read-only Hew document, with diagnostics and navigation back to its source.
+- Run macro-generated tests through the existing test explorer.
+
+### Changed
+- Bundle Hew v0.8.0 with inferred closures, default arguments, exact time units and owned semaphore leases.
+
 ## [1.7.7] - 2026-10-22
 
 ### Changed

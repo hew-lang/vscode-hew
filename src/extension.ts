@@ -13,6 +13,7 @@ import { HewDebugSession } from './debug/hew-debug-session';
 import { checkBackendAvailability, DebuggerBackendPreference } from './debug/mi-backend';
 import { HewActorsProvider, ActorTreeItem } from './debug/actors-tree-view';
 import { registerHewTests } from './testing';
+import { registerMacroExpansion } from './macro-expansion';
 
 let client: LanguageClient | undefined;
 const ALLOW_UNTRUSTED_WORKSPACE_BINARIES_SETTING = 'hew.allowUntrustedWorkspaceBinaries';
@@ -67,6 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }));
 
+        registerMacroExpansion(context, client);
         clientStart = client.start();
         clientStart.catch(err => {
             statusBar.text = '$(error) Hew';

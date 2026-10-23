@@ -7,10 +7,12 @@ let finish: fn[once]() -> i64;
 //             ^^^^ keyword.callable-capability.hew
 let read: fn[clone]() -> i64;
 //           ^^^^^ keyword.callable-capability.hew
-let next = capture(var count) |step: i64| { count = count + step; count };
-//         ^^^^^^^ keyword.closure.capture.hew
-//                            ^ punctuation.definition.parameters.begin.hew
-//                             ^^^^ variable.parameter.hew
+let next = |step: i64| { count = count + step; count };
+//         ^ punctuation.definition.parameters.begin.hew
+//          ^^^^ variable.parameter.hew
+let retired = capture(var count) |step: i64| { count + step };
+//            ^^^^^^^ -keyword.closure.capture.hew
+//                               ^ -punctuation.definition.parameters.begin.hew
 fn capture(once: i64) -> i64 { once }
 // ^^^^^^^ entity.name.function.hew
 //         ^^^^ -keyword.callable-capability.hew
