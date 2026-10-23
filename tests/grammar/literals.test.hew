@@ -70,3 +70,23 @@ false
 
 None
 // <- constant.language.none.hew
+
+// -- Exact decimal duration literals --
+
+    0.25s
+//  ^^^^^ constant.numeric.duration.hew
+
+    1.5ms
+//  ^^^^^ constant.numeric.duration.hew
+
+    0.1us
+//  ^^^^^ constant.numeric.duration.hew
+
+    2_000.000_001ms
+//  ^^^^^^^^^^^^^^^ constant.numeric.duration.hew
+
+    "0.25s"
+//  ^^^^^^^ string.quoted.double.hew
+
+// 0.25s
+// ^^^^^ comment.line.double-slash.hew
