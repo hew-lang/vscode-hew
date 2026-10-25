@@ -89,7 +89,7 @@ describe('SDK JSONL connection', () => {
         connections.push(connection);
         await expect(new LiveSession(connection).refresh()).resolves.toEqual({ epoch: 4, digest: a });
         connection.dispose();
-        await exit;
+        await expect(exit).resolves.toBe(0);
     });
 });
 

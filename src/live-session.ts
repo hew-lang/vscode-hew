@@ -43,7 +43,7 @@ export class LiveConnection {
     }
 
     dispose(): void {
-        this.fail(new Error('Live session disconnected.'));
+        this.fail(new Error('Live session disconnected.'), true);
     }
 
     private receive(line: string): void {
@@ -68,7 +68,7 @@ export class LiveConnection {
         }
     }
 
-    private fail(error: Error): void {
+    private fail(error: Error, graceful = false): void {
         if (this.failure) return;
         this.failure = error;
         for (const pending of this.pending.values()) {
@@ -78,7 +78,16 @@ export class LiveConnection {
         }
         this.pending.clear();
         this.lines.close();
-        this.child.kill();
+        if (graceful) {
+            // EOF lets the SDK release its owned node resources. Bound only
+            // teardown of this extension's child if it cannot finish cleanup.
+            this.child.stdin.end();
+            const deadline = setTimeout(() => this.child.kill(), 5_000);
+            deadline.unref();
+            this.child.once('close', () => clearTimeout(deadline));
+        } else {
+            this.child.kill();
+        }
         this.closed(error);
     }
 }

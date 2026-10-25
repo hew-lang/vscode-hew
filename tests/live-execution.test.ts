@@ -107,7 +107,9 @@ it('prepares saved source, invalidates it after an imported edit and activates o
     expect(requests.at(-1)).toMatchObject({ op: 'replace', digest: b, predecessor: 4, within_ms: 5000 });
     expect(host.indicator.text).toContain('epoch 5');
     await run('disconnect');
-    expect(child.kill).toHaveBeenCalledOnce();
+    expect(child.stdin.writableEnded).toBe(true);
+    expect(child.kill).not.toHaveBeenCalled();
+    child.emit('close', 0, null);
     expect(host.indicator.visible).toBe(false);
     expect(host.warnings).toHaveLength(0);
 });
