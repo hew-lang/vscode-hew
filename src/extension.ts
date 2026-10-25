@@ -14,12 +14,14 @@ import { checkBackendAvailability, DebuggerBackendPreference } from './debug/mi-
 import { HewActorsProvider, ActorTreeItem } from './debug/actors-tree-view';
 import { registerHewTests } from './testing';
 import { registerMacroExpansion } from './macro-expansion';
+import { registerLiveExecution } from './live-execution';
 
 let client: LanguageClient | undefined;
 const ALLOW_UNTRUSTED_WORKSPACE_BINARIES_SETTING = 'hew.allowUntrustedWorkspaceBinaries';
 const blockedWorkspaceBinaryWarnings = new Set<string>();
 
 export function activate(context: vscode.ExtensionContext) {
+    registerLiveExecution(context);
     let clientStart: Promise<void> | undefined;
     const outputChannel = vscode.window.createOutputChannel('Hew Language Server');
     context.subscriptions.push(outputChannel);

@@ -42,6 +42,7 @@
         "hew.lsp.serverPath",
         "hew.formatterPath",
         "hew.debugger.hewPath",
+        "hew.live.executable",
         "hew.allowUntrustedWorkspaceBinaries"
       ]
     }
@@ -93,6 +94,21 @@
           "type": "boolean",
           "default": false,
           "description": "Allow auto-discovering hew from workspace target/release and target/debug even when the workspace is untrusted. User setting only in Restricted Mode."
+        },
+        "hew.live.executable": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the experimental hew-live-node SDK companion. Empty uses PATH. The companion uses the existing Hew node configuration and SDK environment."
+        },
+        "hew.live.endpoint": {
+          "type": "string",
+          "default": "",
+          "description": "Default node endpoint offered by Hew: Attach Live Node."
+        },
+        "hew.live.node": {
+          "type": "string",
+          "default": "",
+          "description": "Default authenticated NodeId offered by Hew: Attach Live Node."
         },
         "hew.pkgPath": {
           "type": "string",
@@ -220,6 +236,26 @@
         "command": "hew.debug.toggleRuntimeFrames",
         "title": "Toggle Runtime Frames in Call Stack",
         "category": "Hew Debug"
+      },
+      {
+        "command": "hew.live.attach",
+        "title": "Hew: Attach Live Node"
+      },
+      {
+        "command": "hew.live.prepare",
+        "title": "Hew: Prepare Live Source"
+      },
+      {
+        "command": "hew.live.activate",
+        "title": "Hew: Activate Prepared Source"
+      },
+      {
+        "command": "hew.live.status",
+        "title": "Hew: Show Live Status"
+      },
+      {
+        "command": "hew.live.disconnect",
+        "title": "Hew: Disconnect Live Node"
       },
       {
         "command": "hew.expandMacro",
