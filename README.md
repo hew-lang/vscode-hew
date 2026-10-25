@@ -222,6 +222,15 @@ can be supplied through `HEW_LIVE_NODE_MODULE`, `HEW_LIVE_RUNTIME`,
 from a development SDK. Set `hew.live.executable` if the companion is not on
 PATH; `hew.live.endpoint` and `hew.live.node` supply connection defaults.
 
+When an ordinary Hew file is open, attachment obtains the SDK's generated
+service context and starts its selected compiler as the language server.
+Diagnostics and service completions use the same virtual module as component
+builds. Definitions open the exact SDK source in a read-only document; no
+generated files are added to the project. Dirty editor buffers take precedence.
+Disconnecting removes the analysis context and clears its generated views.
+An older bundled language server cannot provide this experimental context;
+use a matching live SDK rather than a stable compiler fallback.
+
 Open a saved `.hew` component and run **Hew: Prepare Live Source**. Subsequent
 saves prepare it again through the ordinary compiler, including its imports.
 An edit invalidates the previous preparation. Compilation errors appear in

@@ -7,7 +7,7 @@ const host = vi.hoisted(() => ({
     inputs: [] as string[], errors: [] as string[], warnings: [] as string[], output: '',
     documents: [] as any[], trusted: true, spawn: vi.fn(),
     changed: undefined as any, saved: undefined as any, indicator: undefined as any,
-    subscriptions: [] as any[],
+    subscriptions: [] as any[], analysis: { apply: vi.fn(), clear: vi.fn() },
 }));
 vi.mock('child_process', () => ({ spawn: host.spawn }));
 vi.mock('vscode', () => ({
@@ -61,7 +61,8 @@ beforeEach(() => {
             const request = JSON.parse(line);
             requests.push(request);
             let result: unknown;
-            if (request.op === 'status') result = { epoch, digest: identity };
+            if (request.op === 'context') result = { version: 1, compiler: '/sdk/bin/hew', sources: [{ path: '/workspace/router_services.hew', source: 'canonical SDK source' }] };
+            else if (request.op === 'status') result = { epoch, digest: identity };
             else if (request.op === 'build_prepare') result = { digest: b };
             else if (request.op === 'replace') {
                 epoch++; identity = request.digest;
@@ -73,7 +74,9 @@ beforeEach(() => {
         }
     });
     host.spawn.mockReset().mockReturnValue(child);
-    registerLiveExecution({ subscriptions: host.subscriptions } as any);
+    host.analysis.apply.mockReset().mockResolvedValue(undefined);
+    host.analysis.clear.mockReset().mockResolvedValue(undefined);
+    registerLiveExecution({ subscriptions: host.subscriptions } as any, host.analysis);
 });
 
 afterEach(() => { for (const subscription of host.subscriptions) subscription.dispose(); });
@@ -91,14 +94,14 @@ it('prepares saved source, invalidates it after an imported edit and activates o
         ['attach', '--endpoint', '127.0.0.1:7000', '--node', 'node-id'],
         { cwd: '/workspace', stdio: 'pipe', windowsHide: true }]);
     await run('prepare');
-    expect(requests.map(request => request.op)).toEqual(['status', 'build_prepare']);
+    expect(requests.map(request => request.op)).toEqual(['status', 'context', 'context', 'build_prepare']);
     expect(host.indicator.text).toContain('prepared');
     const helper = host.documents[1];
     helper.isDirty = true;
     host.changed({ document: helper });
     await run('activate');
     expect(host.errors.at(-1)).toContain('Prepare the saved source');
-    expect(requests).toHaveLength(2);
+    expect(requests).toHaveLength(4);
     helper.isDirty = false;
     await saved(helper);
     expect(requests.at(-1)).toMatchObject({ op: 'build_prepare', source: '/workspace/router.hew' });
@@ -112,6 +115,8 @@ it('prepares saved source, invalidates it after an imported edit and activates o
     child.emit('close', 0, null);
     expect(host.indicator.visible).toBe(false);
     expect(host.warnings).toHaveLength(0);
+    expect(host.analysis.apply).toHaveBeenCalledWith(host.documents[0].uri, expect.objectContaining({ compiler: '/sdk/bin/hew' }));
+    expect(host.analysis.clear).toHaveBeenCalled();
 });
 
 it('shows source errors while retaining the running epoch and refusing stale activation', async () => {
@@ -137,6 +142,24 @@ it('refuses preparation while an import is unsaved', async () => {
     await run('attach');
     host.documents[1].isDirty = true;
     await run('prepare');
-    expect(requests.map(request => request.op)).toEqual(['status']);
+    expect(requests.map(request => request.op)).toEqual(['status', 'context']);
     expect(host.errors.at(-1)).toContain('edited imports');
+});
+
+it('clears generated context when the companion disconnects unexpectedly', async () => {
+    await run('attach');
+    host.analysis.clear.mockClear();
+    child.emit('close', 1, null);
+    await new Promise(resolve => setImmediate(resolve));
+    expect(host.analysis.clear).toHaveBeenCalledOnce();
+    expect(host.indicator.visible).toBe(false);
+});
+
+it('refuses live authoring when the SDK cannot provide a compatible analysis context', async () => {
+    host.analysis.apply.mockRejectedValue(new Error('incompatible SDK LSP'));
+    await run('attach');
+    expect(host.errors.at(-1)).toContain('incompatible SDK LSP');
+    expect(host.analysis.clear).toHaveBeenCalled();
+    expect(child.stdin.writableEnded).toBe(true);
+    expect(host.indicator.visible).toBe(false);
 });

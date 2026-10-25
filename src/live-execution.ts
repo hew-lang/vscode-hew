@@ -2,8 +2,9 @@ import { spawn } from 'child_process';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { LiveConnection, LiveSession } from './live-session';
+import type { LiveAnalysis } from './live-analysis';
 
-export function registerLiveExecution(context: vscode.ExtensionContext): void {
+export function registerLiveExecution(context: vscode.ExtensionContext, analysis: Pick<LiveAnalysis, 'apply' | 'clear'>): void {
     const output = vscode.window.createOutputChannel('Hew Live');
     const indicator = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
     indicator.command = 'hew.live.status';
@@ -34,7 +35,7 @@ export function registerLiveExecution(context: vscode.ExtensionContext): void {
         indicator.show();
     }
 
-    function disconnect(): void {
+    async function disconnect(): Promise<void> {
         const previous = connection;
         connection = undefined;
         session = undefined;
@@ -44,6 +45,7 @@ export function registerLiveExecution(context: vscode.ExtensionContext): void {
         replacing = false;
         previous?.dispose();
         render();
+        await analysis.clear();
     }
 
     async function prepare(document: vscode.TextDocument): Promise<void> {
@@ -64,6 +66,11 @@ export function registerLiveExecution(context: vscode.ExtensionContext): void {
                     current.invalidate(next.uri.fsPath);
                     continue;
                 }
+                const attached = connection!;
+                const context = await attached.request('context', { source: next.uri.fsPath });
+                if (current !== session) break;
+                await analysis.apply(next.uri, context);
+                if (current !== session) break;
                 const prepared = await current.prepare(next.uri.fsPath);
                 if (prepared) output.appendLine(`Prepared ${next.uri.fsPath}: ${current.prepared!.digest}`);
             }
@@ -85,7 +92,7 @@ export function registerLiveExecution(context: vscode.ExtensionContext): void {
         });
     }
 
-    context.subscriptions.push(output, indicator, { dispose: disconnect },
+    context.subscriptions.push(output, indicator, { dispose: () => { void disconnect(); } },
         command('hew.live.attach', async () => {
             if (!vscode.workspace.isTrusted) throw new Error('Trust the workspace before running a live SDK session.');
             const document = vscode.window.activeTextEditor?.document;
@@ -98,7 +105,7 @@ export function registerLiveExecution(context: vscode.ExtensionContext): void {
             const node = await vscode.window.showInputBox({ prompt: 'Authenticated Hew NodeId',
                 value: config.get<string>('live.node', ''), ignoreFocusOut: true });
             if (!node?.trim()) return;
-            disconnect();
+            await disconnect();
             workspace = folder?.uri.toString();
             const executable = config.get<string>('live.executable', '').trim() || 'hew-live-node';
             const child = spawn(executable, ['attach', '--endpoint', endpoint.trim(), '--node', node.trim()], {
@@ -108,10 +115,7 @@ export function registerLiveExecution(context: vscode.ExtensionContext): void {
             const attached = new LiveConnection(child, text => output.append(text), error => {
                 if (connection !== attached) return;
                 output.appendLine(error.message);
-                connection = undefined;
-                session = undefined;
-                queued = undefined;
-                workspace = undefined;
+                void disconnect();
                 void vscode.window.showWarningMessage(`Hew Live disconnected: ${error.message}`);
                 render();
             });
@@ -119,6 +123,17 @@ export function registerLiveExecution(context: vscode.ExtensionContext): void {
             const current = session = new LiveSession(attached);
             render();
             const status = await current.refresh();
+            if (document?.languageId === 'hew' && document.uri.scheme === 'file') {
+                try {
+                    const context = await attached.request('context', { source: document.uri.fsPath });
+                    if (connection !== attached) return;
+                    await analysis.apply(document.uri, context);
+                } catch (error) {
+                    await disconnect();
+                    throw error;
+                }
+            }
+
             output.appendLine(`Attached ${node.trim()} at ${endpoint.trim()}: epoch ${status.epoch}, ${status.digest}`);
             render();
         }),
@@ -151,7 +166,7 @@ export function registerLiveExecution(context: vscode.ExtensionContext): void {
             output.show(true);
             render();
         }),
-        command('hew.live.disconnect', async () => disconnect()),
+        command('hew.live.disconnect', disconnect),
         vscode.workspace.onDidChangeTextDocument(event => {
             // Imported source can change the component too. Preparation always
             // goes back through the compiler's ordinary dependency resolver.

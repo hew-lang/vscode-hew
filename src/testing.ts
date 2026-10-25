@@ -17,7 +17,7 @@ interface DiscoveredTest {
 }
 
 export function registerHewTests(
-    context: vscode.ExtensionContext,
+    context: Pick<vscode.ExtensionContext, 'subscriptions'>,
     client: LanguageClient,
     hewPath: string,
     output: vscode.OutputChannel

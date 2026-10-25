@@ -15,14 +15,16 @@ import { HewActorsProvider, ActorTreeItem } from './debug/actors-tree-view';
 import { registerHewTests } from './testing';
 import { registerMacroExpansion } from './macro-expansion';
 import { registerLiveExecution } from './live-execution';
+import { LiveAnalysis } from './live-analysis';
 
 let client: LanguageClient | undefined;
 const ALLOW_UNTRUSTED_WORKSPACE_BINARIES_SETTING = 'hew.allowUntrustedWorkspaceBinaries';
 const blockedWorkspaceBinaryWarnings = new Set<string>();
 
 export function activate(context: vscode.ExtensionContext) {
-    registerLiveExecution(context);
-    let clientStart: Promise<void> | undefined;
+    let selectedCompiler: string | undefined;
+    let clientJobs = Promise.resolve();
+    let features: vscode.Disposable[] = [];
     const outputChannel = vscode.window.createOutputChannel('Hew Language Server');
     context.subscriptions.push(outputChannel);
 
@@ -48,45 +50,52 @@ export function activate(context: vscode.ExtensionContext) {
     );
     const serverPath = serverPathResult.path;
 
-    if (serverPath) {
-        const config = vscode.workspace.getConfiguration('hew');
-        const pkgPath = config.get<string>('pkgPath', '').trim() || undefined;
-        const { serverOptions, clientOptions } = createLspWiring(serverPath, outputChannel, { pkgPath });
-
-        client = new HewLanguageClient(
-            'hewLanguageServer',
-            'Hew Language Server',
-            serverOptions,
-            clientOptions
-        );
-
-        context.subscriptions.push(client.onDidChangeState(({ newState }) => {
-            if (newState === State.Running) {
-                statusBar.text = '$(zap) Hew';
-                statusBar.tooltip = 'Hew Language Server active';
-            } else if (newState === State.Stopped) {
-                statusBar.text = '$(warning) Hew';
-                statusBar.tooltip = 'Hew Language Server stopped';
+    function selectCompiler(compiler: string): Promise<LanguageClient> {
+        const job = clientJobs.then(async () => {
+            if (client?.isRunning() && selectedCompiler === compiler) return client;
+            for (const feature of features.splice(0)) feature.dispose();
+            if (client) await client.stop();
+            const config = vscode.workspace.getConfiguration('hew');
+            const pkgPath = config.get<string>('pkgPath', '').trim() || undefined;
+            const { serverOptions, clientOptions } = createLspWiring(compiler, outputChannel, {
+                pkgPath, mapDefinitionUri: uri => analysis.definitionUri(uri),
+            });
+            const next = new HewLanguageClient('hewLanguageServer', 'Hew Language Server', serverOptions, clientOptions);
+            client = next;
+            selectedCompiler = undefined;
+            features.push(next.onDidChangeState(({ newState }) => {
+                statusBar.text = newState === State.Running ? '$(zap) Hew' : '$(warning) Hew';
+                statusBar.tooltip = newState === State.Running ? `Hew Language Server: ${compiler}` : 'Hew Language Server stopped';
+            }));
+            try {
+                await next.start();
+                selectedCompiler = compiler;
+                const featureContext = { subscriptions: features };
+                registerMacroExpansion(featureContext, next);
+                registerHewTests(featureContext, next, compiler, outputChannel);
+                return next;
+            } catch (error) {
+                statusBar.text = '$(error) Hew';
+                statusBar.tooltip = `Hew LSP failed: ${String(error)}`;
+                throw error;
             }
-        }));
-
-        registerMacroExpansion(context, client);
-        clientStart = client.start();
-        clientStart.catch(err => {
-            statusBar.text = '$(error) Hew';
-            statusBar.tooltip = `Hew LSP failed: ${err.message}`;
-            outputChannel.appendLine(`Failed to start hew lsp: ${err.message}`);
-            vscode.window.showErrorMessage(`Hew LSP failed to start: ${err.message}`);
         });
-
-        context.subscriptions.push(client);
+        clientJobs = job.then(() => undefined, () => undefined);
+        return job;
+    }
+    const analysis = new LiveAnalysis(context, selectCompiler);
+    registerLiveExecution(context, analysis);
+    context.subscriptions.push({ dispose: () => { for (const feature of features.splice(0)) feature.dispose(); } });
+    if (serverPath) {
+        void selectCompiler(serverPath).catch(error => {
+            outputChannel.appendLine(`Failed to start hew lsp: ${String(error)}`);
+            void vscode.window.showErrorMessage(`Hew LSP failed to start: ${String(error)}`);
+        });
     } else {
         statusBar.text = '$(warning) Hew';
         statusBar.tooltip = 'hew not found (formatter still available)';
         outputChannel.appendLine('hew not found. LSP features are disabled until it is installed.');
-        vscode.window.showWarningMessage(
-            getMissingBinaryMessage('hew', 'hew.lsp.serverPath', serverPathResult)
-        );
+        void vscode.window.showWarningMessage(getMissingBinaryMessage('hew', 'hew.lsp.serverPath', serverPathResult));
     }
 
     statusBar.show();
@@ -98,11 +107,6 @@ export function activate(context: vscode.ExtensionContext) {
     // Pass the hew compiler path to the debug session via environment variable
     if (hewPath) {
         process.env['HEW_COMPILER_PATH'] = hewPath;
-        if (client && clientStart) {
-            const testClient = client;
-            void clientStart.then(() => registerHewTests(context, testClient, hewPath, outputChannel))
-                .catch(() => undefined);
-        }
     }
 
     context.subscriptions.push(

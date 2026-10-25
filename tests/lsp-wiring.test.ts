@@ -6,6 +6,16 @@ import {
 } from '../src/lsp-wiring'
 
 describe('LSP wiring', () => {
+  it('maps generated definitions to the registered read-only SDK view', async () => {
+    const original = { scheme: 'file', path: '/app/router_services.hew' } as any
+    const virtual = { scheme: 'hew-sdk-context', path: original.path } as any
+    const { clientOptions } = createLspWiring('/sdk/hew', undefined, { mapDefinitionUri: () => virtual })
+    const provider = clientOptions.middleware!.provideDefinition!
+    const next = async () => [{ targetUri: original, targetRange: {}, targetSelectionRange: {} }]
+    const definitions = await provider({} as any, {} as any, {} as any, next as any)
+    expect(definitions).toMatchObject([{ targetUri: virtual }])
+  })
+
   it('builds server/client options for Hew language features', () => {
     const outputChannel = { appendLine: () => {} } as any
     const { serverOptions, clientOptions } = createLspWiring('/tmp/hew', outputChannel)
