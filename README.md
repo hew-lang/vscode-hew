@@ -211,3 +211,35 @@ Expansion views are for inspection. Context comments distinguish hygienic names
 but do not make the rendered text a standalone equivalent program. Diagnostics
 and test execution use the original Hew source. Test imported macros in ordinary
 `#[test]` functions and run them through the existing Testing panel.
+
+## Experimental live source
+
+With the live-execution SDK installed, run **Hew: Attach Live Node** and enter
+the node endpoint and its authenticated `NodeId`. The SDK uses the existing
+`HEW_NODE_CONFIG` for your local identity and grants. Its documented SDK paths
+can be supplied through `HEW_LIVE_NODE_MODULE`, `HEW_LIVE_RUNTIME`,
+`HEW_LIVE_COMPILER`, `HEW_WASI_SDK` and `HEW_LIVE_WASM_LIB_DIR` when running
+from a development SDK. Set `hew.live.executable` if the companion is not on
+PATH; `hew.live.endpoint` and `hew.live.node` supply connection defaults.
+
+When an ordinary Hew file is open, attachment obtains the SDK's generated
+service context and starts its selected compiler as the language server.
+Diagnostics and service completions use the same virtual module as component
+builds. Definitions open the exact SDK source in a read-only document; no
+generated files are added to the project. Dirty editor buffers take precedence.
+Disconnecting removes the analysis context and clears its generated views.
+An older bundled language server cannot provide this experimental context;
+use a matching live SDK rather than a stable compiler fallback.
+
+Open a saved `.hew` component and run **Hew: Prepare Live Source**. Subsequent
+saves prepare it again through the ordinary compiler, including its imports.
+An edit invalidates the previous preparation. Compilation errors appear in
+**Hew Live** output and leave the running version in place.
+
+Run **Hew: Activate Prepared Source** when ready. The SDK checks the observed
+predecessor epoch and applies the replacement with a five-second drain budget.
+The status bar shows the active epoch and whether a new component is prepared.
+**Hew: Show Live Status** requests the current node status. If the connection
+is lost during activation, reconnect and check that status before continuing;
+the extension never automatically retries an activation. Use **Hew: Disconnect
+Live Node** to close the local companion.

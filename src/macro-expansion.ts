@@ -11,7 +11,7 @@ interface View { source: vscode.Uri; position?: vscode.Position; expansion?: Exp
 const scheme = 'hew-expansion';
 
 /** Inspection documents never enter the language server as authored Hew. */
-export function registerMacroExpansion(context: vscode.ExtensionContext, client: LanguageClient): void {
+export function registerMacroExpansion(context: Pick<vscode.ExtensionContext, 'subscriptions'>, client: LanguageClient): void {
     const views = new Map<string, View>();
     const changed = new vscode.EventEmitter<vscode.Uri>();
     const provider: vscode.TextDocumentContentProvider = {
