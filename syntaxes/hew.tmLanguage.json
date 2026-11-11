@@ -2,7 +2,9 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Hew",
   "scopeName": "source.hew",
-  "fileTypes": ["hew"],
+  "fileTypes": [
+    "hew"
+  ],
   "patterns": [
     {
       "include": "#comments"
@@ -896,7 +898,7 @@
         {
           "comment": "Contextual identifiers (special meaning in specific contexts)",
           "name": "variable.language.contextual.hew",
-          "match": "\\b(always|block|clone|coalesce|completion|default|drop_new|drop_old|emit|emits|error|events|export|fail|fails|fallback|final|handle|history|initial|intensity|json|mailbox|overflow|parallel|pool|reenter|region|repeated|stop|suspends|wired_to|within|yaml)\\b"
+          "match": "\\b(always|backoff|block|clone|coalesce|completion|default|drop_new|drop_old|emit|emits|error|events|export|fail|fails|fallback|final|handle|history|initial|intensity|json|mailbox|overflow|parallel|pool|reenter|region|repeated|stop|suspends|wired_to|within|yaml)\\b"
         },
         {
           "comment": "Identifier (catch-all for variables, parameters, fields)",
@@ -960,70 +962,6 @@
               "include": "#punctuation"
             }
           ]
-        }
-      ]
-    },
-    "type-parameter-list": {
-      "name": "meta.type.parameters.hew",
-      "begin": "(<)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.type-parameters.begin.hew"
-        }
-      },
-      "end": "(>)",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.type-parameters.end.hew"
-        }
-      },
-      "patterns": [
-        {
-          "include": "#type-parameter-content"
-        }
-      ]
-    },
-    "type-parameter-content": {
-      "patterns": [
-        {
-          "include": "#comments"
-        },
-        {
-          "include": "#type-parameter-list"
-        },
-        {
-          "include": "#types"
-        },
-        {
-          "include": "#punctuation"
-        }
-      ]
-    },
-    "macros": {
-      "patterns": [
-        {
-          "name": "meta.definition.macro.hew",
-          "match": "\\b(macro)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
-          "captures": {
-            "1": {
-              "name": "keyword.declaration.hew"
-            },
-            "2": {
-              "name": "entity.name.function.macro.hew"
-            }
-          }
-        },
-        {
-          "name": "variable.parameter.macro.hew",
-          "match": "\\$[a-zA-Z_][a-zA-Z0-9_]*"
-        },
-        {
-          "name": "support.function.macro.hew",
-          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=!\\s*\\()"
-        },
-        {
-          "name": "keyword.operator.macro.hew",
-          "match": "\\$(?=\\()"
         }
       ]
     },

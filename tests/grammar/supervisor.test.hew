@@ -3,6 +3,9 @@
 supervisor AppSup {
 // <- keyword.supervisor.hew
 
+    backoff: restart.exponential(initial: 100ms);
+//  ^^^^^^^ variable.language.contextual.hew
+
     strategy: one_for_one;
 //  ^^^^^^^^ keyword.supervisor.hew
 //            ^^^^^^^^^^^ constant.language.strategy.hew
