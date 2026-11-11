@@ -9,10 +9,17 @@ let staging = Endpoint { ..site, host, port: 8443 };
 let circle = Shape.Circle { radius };
 //                          ^^^^^^ variable.other.hew
 
-let counter = spawn Counter(count, label);
+let counter = spawn Counter { count, label };
 //            ^^^^^ keyword.actor.hew
-//                          ^^^^^ variable.other.hew
-//                                 ^^^^^ variable.other.hew
+//                  ^^^^^^^ entity.name.type.hew
+//                            ^^^^^ variable.other.hew
+//                                   ^^^^^ variable.other.hew
+
+child role: RoleWorker { plan, limit: 3 } restart: transient;
+//                       ^^^^ variable.other.hew
+
+on Open { by }: Shut => Ajar { by: by }
+//        ^^ variable.other.hew
 
 emit Alarm { value, peak };
 // <- variable.language.contextual.hew
