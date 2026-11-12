@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.10.0] - 2026-11-11
+
+### Added
+- Prepare and activate Hew source against an authenticated live node, with diagnostics and navigation for generated service imports. This experimental workflow requires the matching live SDK.
+
+### Changed
+- Bundle Hew v0.10.0 for Linux x64/arm64, macOS arm64 and Windows x64.
+
 ## [1.8.0] - 2026-10-23
 
 ### Added
