@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.11.0] - 2026-11-12
+
+### Changed
+- Bundle Hew v0.11.0 for Linux x64/arm64, macOS arm64 and Windows x64.
+
 ## [1.10.0] - 2026-11-11
 
 ### Added
