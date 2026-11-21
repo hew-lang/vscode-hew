@@ -1,0 +1,17 @@
+// SYNTAX TEST "source.hew"
+
+type Slot {
+    private value: i64;
+//  ^^^^^^^ storage.modifier.private.hew
+    private: i64;
+//  ^^^^^^^ variable.other.hew
+}
+fn private(private: Slot) -> i64 {
+// ^^^^^^^ entity.name.function.hew
+    let private = private.private;
+    let label = "private value: i64;";
+//               ^^^^^^^ string.quoted.double.hew
+    // private value: i64;
+//     ^^^^^^^ comment.line.double-slash.hew
+    private
+}
