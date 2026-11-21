@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.11.1] - 2026-11-21
+
+### Fixed
+
+- Start the Hew language server with its default stdio transport and show each diagnostic once.
+- Keep test failure diagnostics tied to the current source and underline the assertion that failed.
+
+### Changed
+
+- Bundle Hew v0.11.1 for Linux x64 and arm64, macOS arm64, and Windows x64.
+
 ## [1.11.0] - 2026-11-12
 
 ### Changed
