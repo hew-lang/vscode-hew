@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest'
 import {
   createLspWiring,
   HEW_DOCUMENT_SELECTOR,
-  HEW_STDIO_TRANSPORT,
 } from '../src/lsp-wiring'
 
 describe('LSP wiring', () => {
@@ -16,14 +15,13 @@ describe('LSP wiring', () => {
     expect(definitions).toMatchObject([{ targetUri: virtual }])
   })
 
-  it('builds server/client options for Hew language features', () => {
+  it('uses the default executable transport without adding --stdio', () => {
     const outputChannel = { appendLine: () => {} } as any
     const { serverOptions, clientOptions } = createLspWiring('/tmp/hew', outputChannel)
 
     expect(serverOptions).toEqual({
       command: '/tmp/hew',
       args: ['lsp'],
-      transport: HEW_STDIO_TRANSPORT,
     })
     expect(clientOptions.documentSelector).toEqual(HEW_DOCUMENT_SELECTOR)
     expect(clientOptions.documentSelector).toEqual([{ language: 'hew', scheme: 'file' }, { language: 'hew', scheme: 'untitled' }])
@@ -39,7 +37,6 @@ describe('LSP wiring', () => {
     expect(serverOptions).toEqual({
       command: '/tmp/hew',
       args: ['lsp', '--pkg-path', '/custom/packages'],
-      transport: HEW_STDIO_TRANSPORT,
     })
   })
 

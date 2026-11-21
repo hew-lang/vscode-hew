@@ -5,9 +5,6 @@ export const HEW_DOCUMENT_SELECTOR: LanguageClientOptions['documentSelector'] = 
     { language: 'hew', scheme: 'file' },
     { language: 'hew', scheme: 'untitled' }
 ];
-// `TransportKind.stdio` in vscode-languageclient is numeric value 0.
-// Keep this as a plain constant to avoid loading VS Code runtime modules in unit tests.
-export const HEW_STDIO_TRANSPORT = 0;
 
 export interface LspWiringOptions {
     /** Extra package search directory (mirrors `hew check --pkg-path`). */
@@ -25,11 +22,9 @@ export function createLspWiring(
         args.push('--pkg-path', options.pkgPath);
     }
     return {
-        serverOptions: {
-            command: serverPath,
-            args,
-            transport: HEW_STDIO_TRANSPORT,
-        } as ServerOptions,
+        // Executable options use stdio by default. An explicit TransportKind.stdio
+        // makes vscode-languageclient append --stdio, which Hew does not accept.
+        serverOptions: { command: serverPath, args },
         clientOptions: {
             documentSelector: HEW_DOCUMENT_SELECTOR,
             outputChannel,
