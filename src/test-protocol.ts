@@ -1,3 +1,11 @@
+import * as path from 'path';
+
+interface TestSite {
+    file: string;
+    line: number;
+    col: number;
+}
+
 /** Events written by `hew test --format json`, one JSON object per line. */
 export type TestEvent =
     | { event: 'run_started'; tests: number }
@@ -15,6 +23,7 @@ export type TestEvent =
         output: string;
         report: {
             seed?: string | null;
+            site?: TestSite | null;
             site_offset?: number | null;
             assertion?: { operator: string; left: string; right: string } | null;
         } | null;
@@ -30,21 +39,45 @@ export function utf16OffsetAtUtf8Byte(source: string, offset: number): number {
 }
 
 /** Project one failed runner event onto the editor's source and message. */
-export function renderTestFailure(event: FinishedTestEvent, source: string): {
+export function renderTestFailure(event: FinishedTestEvent, file: string, source: string): {
     offset: number | null;
     message: string;
     seed?: string;
 } | undefined {
     if (event.outcome !== 'failed') return undefined;
     const byteOffset = event.report?.site_offset;
-    const offset = typeof byteOffset === 'number' && Number.isInteger(byteOffset) && byteOffset >= 0
-        ? utf16OffsetAtUtf8Byte(source, byteOffset) : null;
+    const site = event.report?.site;
+    const offset = site ? offsetAtSite(file, source, site)
+        : typeof byteOffset === 'number' && Number.isInteger(byteOffset) && byteOffset >= 0
+            ? utf16OffsetAtUtf8Byte(source, byteOffset) : null;
     let message = event.message ?? event.kind ?? 'Test failed';
     const assertion = event.report?.assertion;
     if (assertion && !message.includes('left:') && !message.includes('right:')) {
         message += `\nleft: ${assertion.left}\nright: ${assertion.right}`;
     }
     return { offset, message, seed: event.report?.seed ?? undefined };
+}
+
+function offsetAtSite(file: string, source: string, site: TestSite): number | null {
+    if (typeof site.file !== 'string' || !site.file) return null;
+    const sameFile = path.isAbsolute(site.file) ? !path.relative(file, site.file)
+        : path.normalize(file).endsWith(path.sep + path.normalize(site.file));
+    if (!sameFile || !Number.isInteger(site.line) || site.line < 1 || !Number.isInteger(site.col) || site.col < 1) return null;
+
+    let start = 0;
+    for (let line = 1; line < site.line; line++) {
+        const newline = source.indexOf('\n', start);
+        if (newline === -1) return null;
+        start = newline + 1;
+    }
+    let offset = start;
+    // The runner reports one-based Unicode scalar columns. VS Code counts UTF-16 code units.
+    for (let column = 1; column < site.col; column++) {
+        const scalar = source.codePointAt(offset);
+        if (scalar === undefined || scalar === 10 || scalar === 13) return null;
+        offset += scalar > 0xffff ? 2 : 1;
+    }
+    return offset;
 }
 
 export function parseTestEvent(line: string): TestEvent | undefined {
