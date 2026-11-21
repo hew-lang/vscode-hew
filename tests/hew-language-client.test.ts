@@ -4,11 +4,13 @@ import { describe, expect, it, vi } from 'vitest'
 // Each enabled feature registers a provider when the server advertises it.
 vi.mock('vscode-languageclient/node', () => {
   const formatting = 'textDocument/formatting'
+  const diagnostic = 'textDocument/diagnostic'
   class LanguageClient {
     features: any[] = []
 
     constructor() {
       this.registerFeature({ registrationType: { method: formatting } })
+      this.registerFeature({ registrationType: { method: diagnostic } })
       this.registerFeature({ registrationType: { method: 'textDocument/hover' } })
       this.registerFeature({ registrationType: { method: 'textDocument/rangeFormatting' } })
       this.registerFeature({ initialize: () => 'static feature' })
@@ -21,6 +23,7 @@ vi.mock('vscode-languageclient/node', () => {
     initialize(capabilities: Record<string, boolean>, providers: string[]) {
       const enabled: Record<string, string> = {
         [formatting]: 'documentFormattingProvider',
+        [diagnostic]: 'diagnosticProvider',
         'textDocument/hover': 'hoverProvider',
         'textDocument/rangeFormatting': 'documentRangeFormattingProvider',
       }
@@ -34,6 +37,7 @@ vi.mock('vscode-languageclient/node', () => {
     LanguageClient,
     DynamicFeature: { is: (feature: any) => feature.registrationType !== undefined },
     DocumentFormattingRequest: { method: formatting },
+    DocumentDiagnosticRequest: { method: diagnostic },
   }
 })
 
@@ -44,7 +48,7 @@ function initialize(Client: typeof LanguageClient) {
   const client = new Client('hew', 'Hew', {} as any, {}) as any
   const providers = ['compiler formatter']
   client.initialize({ documentFormattingProvider: true, hoverProvider: true,
-    documentRangeFormattingProvider: true }, providers)
+    documentRangeFormattingProvider: true, diagnosticProvider: true }, providers)
   return { client, providers }
 }
 
@@ -57,6 +61,11 @@ describe('Hew language-client provider registration', () => {
       || provider === 'textDocument/formatting')).toEqual(['compiler formatter'])
     expect(providers).toContain('textDocument/hover')
     expect(providers).toContain('textDocument/rangeFormatting')
+  })
+
+  it('keeps the push diagnostics as Hew’s only diagnostic stream', () => {
+    expect(initialize(LanguageClient).providers).toContain('textDocument/diagnostic')
+    expect(initialize(HewLanguageClient).providers).not.toContain('textDocument/diagnostic')
   })
 
   it('preserves other static and subsequently registered features', () => {
