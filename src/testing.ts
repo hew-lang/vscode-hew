@@ -27,6 +27,8 @@ export function registerHewTests(
     const diagnostics = vscode.languages.createDiagnosticCollection('hew test');
     const lensChanges = new vscode.EventEmitter<void>();
     const failures = new Map<string, Map<string, { diagnostic: vscode.Diagnostic; seed?: string }>>();
+    const activeRuns = new Map<string, symbol>();
+    let sourceRevision = 0;
     context.subscriptions.push(diagnostics, lensChanges);
 
     function publish(uri: vscode.Uri): void {
@@ -36,12 +38,14 @@ export function registerHewTests(
 
     function clear(item: vscode.TestItem): void {
         const uri = item.uri!;
-        failures.get(uri.toString())?.delete(item.id.slice('test:'.length));
+        const entries = failures.get(uri.toString());
+        if (!entries?.delete(item.id.slice('test:'.length))) return;
+        if (!entries.size) failures.delete(uri.toString());
         publish(uri);
     }
 
     function record(item: vscode.TestItem, event: FinishedTest, document: vscode.TextDocument): void {
-        const failure = renderTestFailure(event, document.getText());
+        const failure = renderTestFailure(event, document.uri.fsPath, document.getText());
         if (!failure) return;
         const uri = item.uri!;
         const range = failure.offset !== null
@@ -57,11 +61,50 @@ export function registerHewTests(
         publish(uri);
     }
 
-    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(change => {
-        if (!failures.delete(change.document.uri.toString())) return;
-        diagnostics.delete(change.document.uri);
+    function invalidateDiagnostics(): void {
+        sourceRevision++;
+        if (!failures.size) return;
+        failures.clear();
+        diagnostics.clear();
         lensChanges.fire();
+    }
+
+    function isTestInput(document: vscode.TextDocument): boolean {
+        const name = path.basename(document.uri.fsPath);
+        return document.languageId === 'hew' || name === 'hew.toml' || name === 'hew.lock';
+    }
+
+    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(change => {
+        if (isTestInput(change.document) && change.contentChanges.length) invalidateDiagnostics();
     }));
+
+    async function runSavedTest(
+        item: vscode.TestItem, run: vscode.TestRun, token: vscode.CancellationToken, seed?: string
+    ): Promise<void> {
+        const document = await vscode.workspace.openTextDocument(item.uri!);
+        if (document.isDirty && !await document.save()) {
+            run.errored(item, new vscode.TestMessage('Save the Hew file before running its tests.'));
+            return;
+        }
+        if (token.isCancellationRequested) {
+            run.skipped(item);
+            return;
+        }
+        clear(item);
+        const revision = sourceRevision;
+        const saved = !vscode.workspace.textDocuments.some(document => document.isDirty && isTestInput(document));
+        const active = Symbol();
+        activeRuns.set(item.id, active);
+        try {
+            await runOne(item, hewPath, run, token, event => {
+                if (saved && sourceRevision === revision && activeRuns.get(item.id) === active && !token.isCancellationRequested) {
+                    record(item, event, document);
+                }
+            }, seed);
+        } finally {
+            if (activeRuns.get(item.id) === active) activeRuns.delete(item.id);
+        }
+    }
 
     context.subscriptions.push(vscode.languages.registerCodeLensProvider('hew', {
         onDidChangeCodeLenses: lensChanges.event,
@@ -103,11 +146,21 @@ export function registerHewTests(
     }
 
     controller.resolveHandler = discover;
-    const watcher = vscode.workspace.createFileSystemWatcher('**/*.hew');
-    context.subscriptions.push(watcher);
-    for (const event of [watcher.onDidCreate, watcher.onDidChange, watcher.onDidDelete]) {
-        context.subscriptions.push(event(() => { void discover(); }));
-    }
+    const watcher = vscode.workspace.createFileSystemWatcher('**/{*.hew,hew.toml,hew.lock}');
+    context.subscriptions.push(
+        watcher,
+        watcher.onDidCreate(() => { invalidateDiagnostics(); void discover(); }),
+        watcher.onDidChange(uri => {
+            // Open source edits are already observed by onDidChangeTextDocument.
+            // The filesystem watcher also covers closed inputs and manifests.
+            const openInput = vscode.workspace.textDocuments.some(
+                document => isTestInput(document) && document.uri.toString() === uri.toString()
+            );
+            if (!openInput) invalidateDiagnostics();
+            void discover();
+        }),
+        watcher.onDidDelete(() => { invalidateDiagnostics(); void discover(); })
+    );
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(document => {
         if (document.languageId === 'hew') void discover();
     }));
@@ -140,13 +193,7 @@ export function registerHewTests(
                     run.skipped(item);
                     continue;
                 }
-                const document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === item.uri?.toString());
-                if (document?.isDirty && !await document.save()) {
-                    run.errored(item, new vscode.TestMessage('Save the Hew file before running its tests.'));
-                    continue;
-                }
-                clear(item);
-                await runOne(item, hewPath, run, token, record);
+                await runSavedTest(item, run, token);
             }
         } finally {
             run.end();
@@ -163,13 +210,7 @@ export function registerHewTests(
         const run = controller.createTestRun(new vscode.TestRunRequest([item]));
         const cancellation = new vscode.CancellationTokenSource();
         try {
-            const document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === item?.uri?.toString());
-            if (document?.isDirty && !await document.save()) {
-                run.errored(item, new vscode.TestMessage('Save the Hew file before running its tests.'));
-                return;
-            }
-            clear(item);
-            await runOne(item, hewPath, run, cancellation.token, record, seed);
+            await runSavedTest(item, run, cancellation.token, seed);
         } finally {
             cancellation.dispose();
             run.end();
@@ -182,15 +223,13 @@ async function runOne(
     hewPath: string,
     run: vscode.TestRun,
     token: vscode.CancellationToken,
-    onFinished: (item: vscode.TestItem, event: FinishedTest, document: vscode.TextDocument) => void,
+    onFinished: (event: FinishedTest) => void,
     seed?: string
 ): Promise<void> {
     const uri = item.uri!;
     const selector = item.id.slice('test:'.length);
     const folder = vscode.workspace.getWorkspaceFolder(uri);
     const cwd = folder?.uri.fsPath ?? path.dirname(uri.fsPath);
-    const document = await vscode.workspace.openTextDocument(uri);
-    const sourceSnapshot = document.getText();
     run.started(item);
     await new Promise<void>(resolve => {
         const args = ['test', selector, '--format', 'json', '--color', 'never'];
@@ -211,7 +250,7 @@ async function runOne(
                 compileError = event.diagnostics || 'Test compilation failed';
             } else if (event.event === 'test_finished') {
                 finished = true;
-                if (document.getText() === sourceSnapshot) onFinished(item, event, document);
+                onFinished(event);
                 if (event.output) run.appendOutput(event.output.replace(/\n/g, '\r\n'), undefined, item);
                 if (event.outcome === 'passed') {
                     run.passed(item, event.duration_ms);

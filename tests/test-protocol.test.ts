@@ -47,7 +47,7 @@ describe('Hew test stream', () => {
     (process.env.HEW_TEST_COMPILER ? it : it.skip)('maps an executed Hew assertion to the editor', () => {
         const root = mkdtempSync(join(tmpdir(), 'hew-vscode-test-'));
         try {
-            const source = '// café\n#[test]\nfn fails() { assert(1 == 2); }\n';
+            const source = '// café\n#[test]\nfn fails() { println("💡"); assert(1 == 2); }\n';
             const file = join(root, 'main.hew');
             writeFileSync(file, source);
             const run = spawnSync(process.env.HEW_TEST_COMPILER!,
@@ -58,8 +58,9 @@ describe('Hew test stream', () => {
                 .find(event => event?.event === 'test_finished');
             expect(finished?.event).toBe('test_finished');
             if (finished?.event !== 'test_finished') return;
-            const diagnostic = renderTestFailure(finished, source);
+            const diagnostic = renderTestFailure(finished, file, source);
             expect(diagnostic?.offset).toBe(source.indexOf('assert'));
+            expect(renderTestFailure(finished, join(root, 'different.hew'), source)?.offset).toBeNull();
             expect(diagnostic?.message).toContain('left: 1');
             expect(diagnostic?.message).toContain('right: 2');
             expect(diagnostic?.seed).toMatch(/^\d+$/);
