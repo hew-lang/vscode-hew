@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.11.2] - 2026-11-23
+
+### Changed
+
+- Bundle Hew v0.11.2 for Linux x64 and arm64, macOS arm64, and Windows x64:
+  - Support module-private record fields in the compiler, LSP completions, hover documentation, and semantic tokens.
+  - Colour contextual failure syntax (`fails` and `return error`) accurately in semantic highlighting and end import folding spans at their semicolon.
+  - Preserve source grouping, macro input, and comments in `hew fmt`, and reuse document line offsets and source snapshots in the language server.
+  - Retire the top-level `hew compile` and `hew playground verify` CLI aliases in favour of `hew build`, `hew tool compile`, and `hew tool playground-verify`.
+  - Update `std.cache.Cache` with private fields (`capacity()`, `ttl()`, `set_limits(capacity, ttl)`), `touch(key)`, and `.Lru` eviction, alongside faster native release builds and runtime fixes.
+
 ## [1.11.1] - 2026-11-21
 
 ### Fixed
